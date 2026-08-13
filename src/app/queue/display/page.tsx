@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { HeartPulse, Volume2, Clock, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { getQueuesAction } from "@/server/actions/queue";
-import { QueueStatus } from "@prisma/client";
+import { QueueStatus, QueueType } from "@/generated/client";
 
 export default function PublicQueueDisplayPage() {
   const [calledQueues, setCalledQueues] = useState<any[]>([]);

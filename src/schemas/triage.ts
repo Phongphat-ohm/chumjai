@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TriageUrgency } from "@prisma/client";
+import { TriageUrgency } from "@/generated/client";
 
 export const triageRecordSchema = z.object({
   visitId: z.string().min(1, "กรุณาระบุรหัส Visit"),

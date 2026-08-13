@@ -26,7 +26,7 @@ import {
   callQueueAction,
   updateQueueStatusAction,
 } from "@/server/actions/queue";
-import { QueueStatus } from "@prisma/client";
+import { QueueStatus, QueueType } from "@/generated/client";
 
 export default function QueueManagementPage() {
   const [activeTab, setActiveTab] = useState<"TRIAGE" | "DOC" | "PHARM">("TRIAGE");

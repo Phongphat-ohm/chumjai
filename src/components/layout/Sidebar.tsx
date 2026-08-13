@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 import {
   LayoutDashboard,
   Users,

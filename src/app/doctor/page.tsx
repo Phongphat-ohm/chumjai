@@ -30,7 +30,7 @@ import { getPrescriptionByVisitAction } from "@/server/actions/prescription";
 import { Icd10SearchDialog } from "@/components/doctor/Icd10SearchDialog";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
 import { Icd10Item } from "@/lib/icd10-data";
-import { DiagnosisType } from "@prisma/client";
+import { DiagnosisType } from "@/generated/client";
 
 export default function DoctorConsultationPage() {
   const [isPending, startTransition] = useTransition();

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ReferralStatus } from "@prisma/client";
+import { ReferralStatus } from "@/generated/client";
 
 export const createReferralSchema = z.object({
   patientId: z.string().min(1, "กรุณาเลือกผู้ป่วย"),

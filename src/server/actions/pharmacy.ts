@@ -9,7 +9,7 @@ import {
   QueueStatus,
   PrescriptionStatus,
   InventoryTransactionType,
-} from "@prisma/client";
+} from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

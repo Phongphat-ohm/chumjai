@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Gender, RightsType } from "@prisma/client";
+import { Gender, RightsType } from "@/generated/client";
 
 export const patientSchema = z.object({
   hn: z.string().optional(),

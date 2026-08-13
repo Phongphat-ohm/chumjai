@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, requirePermission } from "@/server/permissions/guard";
 import { callQueueSchema, updateQueueStatusSchema, transferQueueSchema } from "@/schemas/queue";
-import { QueueStatus, VisitStatus } from "@prisma/client";
+import { QueueStatus, VisitStatus } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

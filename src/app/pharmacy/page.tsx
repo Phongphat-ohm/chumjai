@@ -25,7 +25,7 @@ import {
 } from "@/server/actions/pharmacy";
 import { DrugLabelModal } from "@/components/pharmacy/DrugLabelModal";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
-import { VisitStatus } from "@prisma/client";
+import { VisitStatus } from "@/generated/client";
 
 export default function PharmacistDispensingPage() {
   const [isPending, startTransition] = useTransition();

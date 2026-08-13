@@ -23,7 +23,7 @@ import { getPatientsAction } from "@/server/actions/patient";
 import { getVisitsAction, updateVisitStatusAction } from "@/server/actions/visit";
 import { CreateVisitDialog } from "@/components/registration/CreateVisitDialog";
 import { PatientFormDialog } from "@/components/patients/PatientFormDialog";
-import { VisitStatus } from "@prisma/client";
+import { VisitStatus } from "@/generated/client";
 
 export default function RegistrationPage() {
   const [isPending, startTransition] = useTransition();

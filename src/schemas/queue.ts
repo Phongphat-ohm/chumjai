@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { QueueStatus } from "@prisma/client";
+import { QueueStatus } from "@/generated/client";
 
 export const callQueueSchema = z.object({
   queueId: z.string().min(1, "กรุณาระบุรหัสคิว"),

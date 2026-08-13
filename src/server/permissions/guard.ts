@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 import { getSession, UserSessionPayload } from "@/lib/auth";
 import { checkUserHasPermission } from "@/server/services/permission";
 

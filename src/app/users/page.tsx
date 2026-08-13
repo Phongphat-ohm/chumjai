@@ -22,7 +22,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 import {
   getUsersAction,
   createUserAction,

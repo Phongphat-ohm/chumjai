@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/server/permissions/guard";
 import { createReferralSchema, updateReferralStatusSchema } from "@/schemas/referral";
-import { ReferralStatus } from "@prisma/client";
+import { ReferralStatus } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

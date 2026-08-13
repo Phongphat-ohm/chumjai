@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/server/permissions/guard";
 import { soapNoteSchema } from "@/schemas/doctor";
-import { VisitStatus, QueueStatus, DiagnosisType } from "@prisma/client";
+import { VisitStatus, QueueStatus, DiagnosisType } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

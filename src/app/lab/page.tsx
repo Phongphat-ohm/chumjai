@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { getLabOrdersAction } from "@/server/actions/lab";
 import { CreateLabOrderModal } from "@/components/lab/CreateLabOrderModal";
 import { RecordLabResultModal } from "@/components/lab/RecordLabResultModal";
-import { LabOrderStatus } from "@prisma/client";
+import { LabOrderStatus } from "@/generated/client";
 
 const LabReportModal = dynamic(
   () => import("@/components/lab/LabReportModal").then((mod) => mod.LabReportModal),

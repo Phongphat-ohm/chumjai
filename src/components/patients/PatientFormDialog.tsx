@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { UserPlus, Loader2, AlertCircle, CheckCircle2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Gender, RightsType } from "@prisma/client";
+import { Gender, RightsType } from "@/generated/client";
 import { createPatientAction } from "@/server/actions/patient";
 
 interface PatientFormDialogProps {

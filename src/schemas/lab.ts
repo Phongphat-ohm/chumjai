@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LabOrderStatus } from "@prisma/client";
+import { LabOrderStatus } from "@/generated/client";
 
 export const createLabOrderSchema = z.object({
   patientId: z.string().min(1, "กรุณาเลือกผู้ป่วย"),

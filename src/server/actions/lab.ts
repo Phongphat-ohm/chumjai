@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/server/permissions/guard";
 import { createLabOrderSchema, recordLabResultSchema } from "@/schemas/lab";
-import { LabOrderStatus } from "@prisma/client";
+import { LabOrderStatus } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

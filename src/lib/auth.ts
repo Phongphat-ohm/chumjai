@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 
 const COOKIE_NAME = "chunjai_session";
 const JWT_SECRET = new TextEncoder().encode(

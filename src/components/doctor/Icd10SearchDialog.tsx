@@ -5,7 +5,7 @@ import { Search, Plus, X, Stethoscope, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { searchIcd10Codes, Icd10Item } from "@/lib/icd10-data";
-import { DiagnosisType } from "@prisma/client";
+import { DiagnosisType } from "@/generated/client";
 
 interface Icd10SearchDialogProps {
   isOpen: boolean;

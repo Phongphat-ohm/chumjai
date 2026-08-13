@@ -29,7 +29,7 @@ import type {
   AuditLog,
   ClinicSetting,
   SystemSetting,
-} from "@prisma/client";
+} from "@/generated/client";
 
 export type {
   User,

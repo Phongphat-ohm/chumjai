@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { VisitStatus } from "@prisma/client";
+import { VisitStatus } from "@/generated/client";
 
 export const createVisitSchema = z.object({
   patientId: z.string().min(1, "กรุณาระบุผู้ป่วย"),

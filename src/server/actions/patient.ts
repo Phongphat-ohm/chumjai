@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, requirePermission } from "@/server/permissions/guard";
 import { patientSchema, patientAllergySchema, patientConditionSchema } from "@/schemas/patient";
-import { RightsType, Gender } from "@prisma/client";
+import { RightsType, Gender } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

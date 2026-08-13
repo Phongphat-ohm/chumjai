@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getReferralsAction, updateReferralStatusAction } from "@/server/actions/referral";
 import { CreateReferralModal } from "@/components/referral/CreateReferralModal";
-import { ReferralStatus } from "@prisma/client";
+import { ReferralStatus } from "@/generated/client";
 
 const ReferralLetterModal = dynamic(
   () => import("@/components/referral/ReferralLetterModal").then((mod) => mod.ReferralLetterModal),

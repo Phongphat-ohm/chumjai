@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_ROLE_PERMISSIONS } from "@/lib/permissions";
 

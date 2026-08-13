@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { maskNationalId, maskPhoneNumber } from "@/lib/masking";
 import { PatientFormDialog } from "@/components/patients/PatientFormDialog";
 import { getPatientsAction } from "@/server/actions/patient";
-import { RightsType } from "@prisma/client";
+import { RightsType } from "@/generated/client";
 
 export default function PatientListPage() {
   const [isPending, startTransition] = useTransition();

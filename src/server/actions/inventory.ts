@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/server/permissions/guard";
 import { createDrugSchema, stockInSchema, adjustStockSchema } from "@/schemas/inventory";
-import { InventoryTransactionType } from "@prisma/client";
+import { InventoryTransactionType } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;

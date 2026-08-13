@@ -25,7 +25,7 @@ import {
   updateAppointmentStatusAction,
 } from "@/server/actions/appointment";
 import { CreateAppointmentModal } from "@/components/appointment/CreateAppointmentModal";
-import { AppointmentStatus } from "@prisma/client";
+import { AppointmentStatus } from "@/generated/client";
 
 const AppointmentSlipModal = dynamic(
   () => import("@/components/appointment/AppointmentSlipModal").then((mod) => mod.AppointmentSlipModal),

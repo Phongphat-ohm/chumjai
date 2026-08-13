@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DiagnosisType } from "@prisma/client";
+import { DiagnosisType } from "@/generated/client";
 
 export const diagnosisItemSchema = z.object({
   icd10Code: z.string().min(1, "กรุณาระบุรหัส ICD-10"),
