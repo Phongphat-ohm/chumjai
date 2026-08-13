@@ -1,0 +1,323 @@
+"use client";
+
+import React, { useState, useEffect, useTransition } from "react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import {
+  User,
+  ArrowLeft,
+  ShieldAlert,
+  Plus,
+  Eye,
+  EyeOff,
+  Phone,
+  MapPin,
+  Calendar,
+  CreditCard,
+  Activity,
+  Clock,
+  HeartPulse,
+  CheckCircle2,
+  FileText,
+  Loader2,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { maskNationalId, maskPhoneNumber } from "@/lib/masking";
+import { getPatientDetailAction } from "@/server/actions/patient";
+import { AddAllergyDialog } from "@/components/patients/AddAllergyDialog";
+
+export default function PatientDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const patientId = params.id as string;
+
+  const [isPending, startTransition] = useTransition();
+  const [patient, setPatient] = useState<any | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showSensitiveData, setShowSensitiveData] = useState(false);
+  const [isAllergyDialogOpen, setIsAllergyDialogOpen] = useState(false);
+
+  const fetchDetail = () => {
+    startTransition(async () => {
+      const res = await getPatientDetailAction(patientId);
+      if (res.success && res.data) {
+        setPatient(res.data);
+      } else {
+        setErrorMessage(res.error || "ไม่สามารถดึงข้อมูลโปรไฟล์ผู้ป่วยได้");
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (patientId) {
+      fetchDetail();
+    }
+  }, [patientId]);
+
+  if (isPending && !patient) {
+    return (
+      <div className="flex h-96 items-center justify-center space-y-2 text-slate-400">
+        <Loader2 className="h-8 w-8 animate-spin text-chunjai-600" />
+        <p className="text-xs font-medium ml-2">กำลังโหลดโปรไฟล์ผู้ป่วย...</p>
+      </div>
+    );
+  }
+
+  if (errorMessage || !patient) {
+    return (
+      <div className="max-w-md mx-auto my-12 p-6 bg-white rounded-xl border border-slate-200 text-center space-y-4">
+        <ShieldAlert className="mx-auto h-10 w-10 text-rose-500" />
+        <h2 className="text-lg font-bold text-slate-900">เกิดข้อผิดพลาด</h2>
+        <p className="text-xs text-slate-500">{errorMessage || "ไม่พบผู้ป่วยที่ระบุ"}</p>
+        <Link href="/patient">
+          <Button variant="outline" className="text-xs">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            กลับไปหน้าทะเบียนผู้ป่วย
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const hasAllergies = patient.allergies && patient.allergies.length > 0;
+  const birthYear = new Date(patient.dateOfBirth).getFullYear();
+  const ageYears = new Date().getFullYear() - birthYear;
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Top Navigation & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Link href="/patient">
+            <Button variant="outline" size="icon" className="h-9 w-9">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-chunjai-950">
+                {patient.firstName} {patient.lastName}
+              </h1>
+              <Badge variant="default" className="bg-chunjai-600 text-white font-mono text-xs">
+                {patient.hn}
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-500">
+              โปรไฟล์ผู้ป่วยและประวัติสุขภาพชุมชน
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSensitiveData(!showSensitiveData)}
+            className="text-xs"
+          >
+            {showSensitiveData ? (
+              <>
+                <EyeOff className="mr-1.5 h-3.5 w-3.5 text-chunjai-600" />
+                ซ่อนข้อมูล PDPA
+              </>
+            ) : (
+              <>
+                <Eye className="mr-1.5 h-3.5 w-3.5 text-chunjai-600" />
+                แสดงข้อมูลเต็ม
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={() => setIsAllergyDialogOpen(true)}
+            variant="destructive"
+            size="sm"
+            className="text-xs font-semibold"
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            เพิ่มประวัติแพ้ยา
+          </Button>
+        </div>
+      </div>
+
+      {/* High Warning Banner if Allergic */}
+      {hasAllergies && (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 shadow-sm flex items-start gap-3">
+          <ShieldAlert className="h-6 w-6 text-rose-600 shrink-0 mt-0.5 animate-bounce" />
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-rose-950">
+              คำเตือนการแพ้ยา / แพ้อาหาร (Drug Allergies Alert)
+            </h3>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {patient.allergies.map((allergy: any) => (
+                <span
+                  key={allergy.id}
+                  className="inline-flex items-center rounded-md bg-rose-600 text-white px-2.5 py-1 text-xs font-bold shadow-xs"
+                >
+                  ⚠️ {allergy.allergen} ({allergy.reaction || "ไม่ระบุอาการ"})
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Grid: Profile Info & Medical History */}
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Left Column: Personal Data Card */}
+        <Card className="md:col-span-1">
+          <CardHeader className="pb-3 border-b border-slate-100">
+            <CardTitle className="text-base font-bold text-chunjai-950 flex items-center gap-2">
+              <User className="h-5 w-5 text-chunjai-600" />
+              ข้อมูลส่วนบุคคล
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3 text-xs">
+            <div className="flex justify-between border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">เลขบัตรประชาชน:</span>
+              <span className="font-mono font-semibold text-slate-800">
+                {showSensitiveData
+                  ? patient.nationalId || "-"
+                  : maskNationalId(patient.nationalId)}
+              </span>
+            </div>
+
+            <div className="flex justify-between border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">เพศ / อายุ:</span>
+              <span className="font-semibold text-slate-800">
+                {patient.gender === "MALE" ? "ชาย" : "หญิง"} ({ageYears} ปี)
+              </span>
+            </div>
+
+            <div className="flex justify-between border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">หมู่เลือด:</span>
+              <Badge variant="secondary" className="font-bold">
+                {patient.bloodType || "-"}
+              </Badge>
+            </div>
+
+            <div className="flex justify-between border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">เบอร์โทรศัพท์:</span>
+              <span className="font-semibold text-slate-800">
+                {showSensitiveData
+                  ? patient.phoneNumber
+                  : maskPhoneNumber(patient.phoneNumber)}
+              </span>
+            </div>
+
+            <div className="flex justify-between border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">สิทธิการรักษา:</span>
+              <Badge variant="outline" className="text-[10px]">
+                {patient.rightsType}
+              </Badge>
+            </div>
+
+            <div className="space-y-1 pt-1">
+              <span className="text-slate-500 font-medium block">ที่อยู่:</span>
+              <p className="text-slate-700 bg-slate-50 p-2 rounded-md leading-relaxed">
+                {patient.address || "ไม่ระบุที่อยู่"}
+              </p>
+            </div>
+
+            <div className="space-y-1 pt-1 border-t border-slate-100">
+              <span className="text-slate-500 font-medium block">ผู้ติดต่อฉุกเฉิน:</span>
+              <p className="text-slate-700 font-semibold">
+                {patient.emergencyContact || "-"} ({patient.emergencyPhone || "-"})
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right Column: Medical History & Visits */}
+        <div className="md:col-span-2 space-y-6">
+          {/* Chronic Diseases & Conditions */}
+          <Card>
+            <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-bold text-chunjai-950 flex items-center gap-2">
+                <Activity className="h-5 w-5 text-chunjai-600" />
+                โรคประจำตัว (Chronic Conditions)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              {patient.conditions && patient.conditions.length > 0 ? (
+                <div className="space-y-2">
+                  {patient.conditions.map((cond: any) => (
+                    <div
+                      key={cond.id}
+                      className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/60 text-xs"
+                    >
+                      <div className="space-y-0.5">
+                        <p className="font-semibold text-slate-900">{cond.condition}</p>
+                        {cond.icd10Code && (
+                          <span className="text-[10px] font-mono text-chunjai-600">
+                            ICD-10: {cond.icd10Code}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 text-center py-4">
+                  ไม่มีประวัติโรคประจำตัวในระบบ
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Visit History */}
+          <Card>
+            <CardHeader className="pb-3 border-b border-slate-100">
+              <CardTitle className="text-base font-bold text-chunjai-950 flex items-center gap-2">
+                <Clock className="h-5 w-5 text-chunjai-600" />
+                ประวัติการรับบริการล่าสุด (Recent Visits)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              {patient.visits && patient.visits.length > 0 ? (
+                <div className="space-y-3">
+                  {patient.visits.map((visit: any) => (
+                    <div
+                      key={visit.id}
+                      className="p-3 rounded-lg border border-chunjai-100 bg-white shadow-2xs space-y-1 text-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-chunjai-700">
+                          {visit.visitNumber}
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          {new Date(visit.createdAt).toLocaleDateString("th-TH")}
+                        </span>
+                      </div>
+                      <p className="text-slate-700">
+                        <strong>อาการสำคัญ:</strong> {visit.chiefComplaint || "ไม่ระบุ"}
+                      </p>
+                      <Badge variant="secondary" className="text-[10px]">
+                        สถานะ: {visit.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 text-center py-4">
+                  ยังไม่มีประวัติการรับบริการในคลินิก
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Add Allergy Modal Dialog */}
+      <AddAllergyDialog
+        isOpen={isAllergyDialogOpen}
+        patientId={patient.id}
+        patientName={`${patient.firstName} ${patient.lastName}`}
+        onClose={() => setIsAllergyDialogOpen(false)}
+        onSuccess={() => fetchDetail()}
+      />
+    </div>
+  );
+}
