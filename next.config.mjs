@@ -8,6 +8,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    webpackBuildWorker: false,
+    cpus: 1,
+  },
+  poweredByHeader: false,
 };
 
 export default nextConfig;
