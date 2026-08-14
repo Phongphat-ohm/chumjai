@@ -589,7 +589,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\.PHONGPHAT\\chumjai\\src\\generated\\client",
+      "value": "/workspaces/chumjai/src/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -598,12 +598,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-1.1.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\.PHONGPHAT\\chumjai\\prisma\\schema.prisma",
+    "sourceFilePath": "/workspaces/chumjai/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

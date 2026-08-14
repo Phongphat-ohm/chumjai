@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/client";
 
 /**
  * Default permissions mapping by User Role (Least Privilege Principle)
