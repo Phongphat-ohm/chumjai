@@ -18,6 +18,9 @@ const sarabun = Sarabun({
   display: "swap",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "ชุมใจ | ระบบจัดการคลินิกชุมชน",
   description: "Chunjai — Community Clinic & Smart Health Tracking System",
