@@ -22,18 +22,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Public Routes
-  const isLoginPage = pathname.startsWith("/login");
+  // Public Routes (no authentication required)
+  const isPublicRoute =
+    pathname.startsWith("/login") || pathname.startsWith("/queue/display");
 
   // If trying to access protected route while unauthenticated
-  if (!isAuthenticated && !isLoginPage) {
-    const loginUrl = new URL("/login", request.url);
+  if (!isAuthenticated && !isPublicRoute) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
     return NextResponse.redirect(loginUrl);
   }
 
   // If already authenticated and trying to access login page
-  if (isAuthenticated && isLoginPage) {
-    const dashboardUrl = new URL("/", request.url);
+  if (isAuthenticated && pathname.startsWith("/login")) {
+    const dashboardUrl = request.nextUrl.clone();
+    dashboardUrl.pathname = "/";
     return NextResponse.redirect(dashboardUrl);
   }
 

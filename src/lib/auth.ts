@@ -67,7 +67,7 @@ export async function setSessionCookie(payload: UserSessionPayload) {
 
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.COOKIE_SECURE === "true",
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24, // 24 hours

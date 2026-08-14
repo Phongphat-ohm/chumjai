@@ -39,12 +39,17 @@ export default function LoginPage() {
     formData.append("password", password);
 
     startTransition(async () => {
-      const result = await loginAction(null, formData);
-      if (result.success) {
-        router.push("/");
-        router.refresh();
-      } else {
-        setErrorMessage(result.error || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+      try {
+        const result = await loginAction(null, formData);
+        if (result?.success) {
+          router.push("/");
+          router.refresh();
+        } else {
+          setErrorMessage(result?.error || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+        }
+      } catch (err: any) {
+        console.error("Login Error:", err);
+        setErrorMessage("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง");
       }
     });
   };
