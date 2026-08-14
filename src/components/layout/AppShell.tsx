@@ -16,7 +16,7 @@ export function AppShell({ children, userSession }: AppShellProps) {
   const pathname = usePathname();
 
   // If on login or public queue display monitor page, render standalone page content without Dashboard Header & Sidebar
-  if (pathname.startsWith("/login") || pathname.startsWith("/queue/display")) {
+  if (pathname && (pathname.startsWith("/login") || pathname.startsWith("/queue/display"))) {
     return <div className="min-h-screen bg-slate-50">{children}</div>;
   }
 
