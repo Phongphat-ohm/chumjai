@@ -9,7 +9,17 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "prisma:db-push": "prisma db push"
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed:drugs": "tsx prisma/seed-drugs.ts",
+    "db:seed:batches": "tsx prisma/seed-batches.ts",
+    "db:seed:audit": "tsx prisma/seed-audit.ts",
+    "db:setup": "prisma generate && prisma db push && tsx prisma/seed.ts",
+    "deploy:build": "npm ci && prisma generate && prisma db push && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -40,6 +50,7 @@
     "postcss": "^8.4.47",
     "prisma": "^6.3.1",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.23.12",
     "typescript": "^5.7.3"
   }
 }

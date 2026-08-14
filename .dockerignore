@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.vscode
+.env.local
+.env*.local
+*.log
+logs
+Dockerfile*
+docker-compose*.yml
+.DS_Store
+README.md
+PROJECT_HANDOVER.md
+GIT_WORKFLOW.md
+PROMPT.md
