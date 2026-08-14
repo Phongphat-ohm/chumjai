@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/server/permissions/guard";
 import { createAppointmentSchema, updateAppointmentStatusSchema } from "@/schemas/appointment";
 import { AppointmentStatus, VisitStatus, QueueStatus } from "@/generated/client";
+import { generateVisitNumber, generateTriageQueueNumber } from "@/server/actions/visit";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -136,15 +137,8 @@ export async function updateAppointmentStatusAction(
 
       // 2. If status is ARRIVED and autoCreateVisit requested
       if (newStatus === AppointmentStatus.ARRIVED && autoCreateVisit) {
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-
-        // Auto Visit Number
-        const countTodayVisits = await tx.visit.count({
-          where: { createdAt: { gte: startOfDay } },
-        });
-        const dateStr = startOfDay.toISOString().slice(0, 10).replace(/-/g, "");
-        const visitNumber = `V${dateStr}-${(countTodayVisits + 1).toString().padStart(4, "0")}`;
+        // Robust auto visit number
+        const visitNumber = await generateVisitNumber(tx);
 
         // Create Visit
         const visit = await tx.visit.create({
@@ -163,13 +157,7 @@ export async function updateAppointmentStatusAction(
         });
 
         if (triageType) {
-          const countTodayTriage = await tx.queue.count({
-            where: {
-              queueTypeId: triageType.id,
-              createdAt: { gte: startOfDay },
-            },
-          });
-          const queueNumber = `${triageType.prefix}${(countTodayTriage + 1).toString().padStart(3, "0")}`;
+          const queueNumber = await generateTriageQueueNumber(triageType, tx);
 
           await tx.queue.create({
             data: {

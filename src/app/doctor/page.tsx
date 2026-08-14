@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   UserCheck,
   Stethoscope,
@@ -17,6 +18,11 @@ import {
   Clock,
   HeartPulse,
   Pill,
+  TestTube,
+  Search,
+  RefreshCw,
+  Eye,
+  AlertTriangle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,12 +35,37 @@ import {
 import { getPrescriptionByVisitAction } from "@/server/actions/prescription";
 import { Icd10SearchDialog } from "@/components/doctor/Icd10SearchDialog";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
+import { CreateLabOrderModal } from "@/components/lab/CreateLabOrderModal";
+import { useClinicSettings } from "@/hooks/useClinicSettings";
 import { Icd10Item } from "@/lib/icd10-data";
-import { DiagnosisType } from "@/generated/client";
+import { DiagnosisType, LabOrderStatus } from "@/generated/client";
+
+const LabReportModal = dynamic(
+  () => import("@/components/lab/LabReportModal").then((mod) => mod.LabReportModal),
+  { ssr: false }
+);
+
+const DOCTOR_QUEUE_STATUS_MAP: Record<string, { label: string; bg: string }> = {
+  WAITING_DOCTOR: { label: "รอพบแพทย์", bg: "bg-amber-100 text-amber-800 border-amber-300" },
+  IN_CONSULTATION: { label: "กำลังตรวจ", bg: "bg-emerald-100 text-emerald-800 border-emerald-300" },
+  TRIAGED: { label: "คัดกรองแล้ว", bg: "bg-indigo-100 text-indigo-800 border-indigo-300" },
+  WAITING_TRIAGE: { label: "รอคัดกรอง", bg: "bg-blue-100 text-blue-800 border-blue-300" },
+  REGISTERED: { label: "ลงทะเบียนแล้ว", bg: "bg-slate-100 text-slate-700 border-slate-300" },
+};
+
+const LAB_STATUS_MAP: Record<LabOrderStatus, { label: string; bg: string; icon: string }> = {
+  ORDERED: { label: "สั่งตรวจแล้ว (รอเก็บสิ่งส่งตรวจ)", bg: "bg-amber-100 text-amber-800 border-amber-300", icon: "⏳" },
+  COLLECTED: { label: "เก็บตัวอย่างแล้ว (กำลังตรวจ)", bg: "bg-blue-100 text-blue-800 border-blue-300", icon: "🔬" },
+  COMPLETED: { label: "รายงานผลแล็บแล้ว", bg: "bg-emerald-100 text-emerald-800 border-emerald-300", icon: "✅" },
+  CANCELLED: { label: "ยกเลิกคำสั่งตรวจ", bg: "bg-rose-100 text-rose-800 border-rose-300", icon: "❌" },
+};
 
 export default function DoctorConsultationPage() {
   const [isPending, startTransition] = useTransition();
+  const { clinicInfo } = useClinicSettings();
+
   const [visits, setVisits] = useState<any[]>([]);
+  const [queueSearch, setQueueSearch] = useState("");
   const [selectedVisit, setSelectedVisit] = useState<any | null>(null);
 
   // SOAP Note Form State
@@ -49,6 +80,12 @@ export default function DoctorConsultationPage() {
   const [prescribedItems, setPrescribedItems] = useState<any[]>([]);
   const [isIcdModalOpen, setIsIcdModalOpen] = useState(false);
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
+  const [isLabModalOpen, setIsLabModalOpen] = useState(false);
+
+  // Lab Report Modal state
+  const [selectedLabOrder, setSelectedLabOrder] = useState<any | null>(null);
+  const [isLabReportModalOpen, setIsLabReportModalOpen] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -57,6 +94,13 @@ export default function DoctorConsultationPage() {
       const res = await getDoctorQueueVisitsAction();
       if (res.success && res.data) {
         setVisits(res.data);
+        // Keep selectedVisit synchronized with updated data (including fresh labOrders)
+        if (selectedVisit) {
+          const fresh = res.data.find((v: any) => v.id === selectedVisit.id);
+          if (fresh) {
+            setSelectedVisit(fresh);
+          }
+        }
       }
     });
   };
@@ -145,17 +189,22 @@ export default function DoctorConsultationPage() {
   const handleRemoveDiagnosis = (code: string) => {
     const updated = diagnoses.filter((d) => d.icd10Code !== code);
     setDiagnoses(updated);
-    setAssessment(updated.map((d) => `${d.icd10Code} (${d.icd10Name})`).join(", "));
+    const diagSummary = updated.map((d) => `${d.icd10Code} (${d.icd10Name})`).join(", ");
+    setAssessment(diagSummary);
   };
 
   const handleSubmitSoap = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedVisit) return;
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    if (!selectedVisit) {
+      setErrorMessage("กรุณาเลือกผู้ป่วยในคิวก่อนบันทึก");
+      return;
+    }
+
     if (diagnoses.length === 0) {
-      setErrorMessage("กรุณาระบุรหัสวินิจฉัยโรค ICD-10 อย่างน้อย 1 โรคหลัก");
+      setErrorMessage("กรุณาระบุการวินิจฉัยโรคตาม ICD-10 อย่างน้อย 1 รายการ");
       return;
     }
 
@@ -170,34 +219,37 @@ export default function DoctorConsultationPage() {
       });
 
       if (res.success) {
-        setSuccessMessage("บันทึกผลการตรวจรักษาและส่งต่อห้องยาสำเร็จ!");
-        setTimeout(() => {
-          setSelectedVisit(null);
-          fetchDoctorQueue();
-        }, 1200);
+        setSuccessMessage("บันทึกผลการตรวจรักษาและส่งต่อห้องยาเรียบร้อยแล้ว!");
+        fetchDoctorQueue();
       } else {
-        setErrorMessage(res.error || "ไม่สามารถบันทึกผลการตรวจรักษาได้");
+        setErrorMessage(res.error || "เกิดข้อผิดพลาดในการบันทึกผลการตรวจ");
       }
     });
   };
 
+  const handleOpenLabReport = (order: any) => {
+    setSelectedLabOrder({
+      ...order,
+      patient: selectedVisit.patient,
+      visit: selectedVisit,
+    });
+    setIsLabReportModalOpen(true);
+  };
+
   const vs = selectedVisit?.vitalSigns?.[0];
+  const labOrders = selectedVisit?.labOrders || [];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white shadow-md">
-              <UserCheck className="h-5 w-5" />
-            </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-chunjai-950">
-              ห้องตรวจแพทย์ (Doctor Consultation Hub)
-            </h1>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">
-            ตรวจรักษา บันทึกเวชระเบียน SOAP Note วินิจฉัยโรคตาม ICD-10 และสั่งยา
+          <h1 className="text-xl font-black text-slate-950 flex items-center gap-2">
+            <Stethoscope className="h-6 w-6 text-chunjai-600" />
+            ห้องตรวจแพทย์และเวชระเบียน (Doctor Consultation Room)
+          </h1>
+          <p className="text-xs text-slate-500">
+            ตรวจรักษา บันทึกเวชระเบียน SOAP Note วินิจฉัยโรคตาม ICD-10 สั่งตรวจแล็บ และสั่งยา
           </p>
         </div>
 
@@ -207,6 +259,7 @@ export default function DoctorConsultationPage() {
           onClick={() => fetchDoctorQueue()}
           className="text-xs font-semibold"
         >
+          <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${isPending ? "animate-spin" : ""}`} />
           รีเฟรชคิวแพทย์
         </Button>
       </div>
@@ -221,7 +274,31 @@ export default function DoctorConsultationPage() {
                 <Users className="h-4 w-4 text-chunjai-600" />
                 คิวผู้ป่วยรอตรวจ ({visits.length} คน)
               </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => fetchDoctorQueue()}
+                className="h-7 w-7 text-slate-500 hover:text-chunjai-600"
+                title="รีเฟรชคิว"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isPending ? "animate-spin" : ""}`} />
+              </Button>
             </CardHeader>
+
+            {/* Queue Search Input */}
+            <div className="p-2 border-b border-slate-100 bg-slate-50/50">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={queueSearch}
+                  onChange={(e) => setQueueSearch(e.target.value)}
+                  placeholder="ค้นหาชื่อ, HN, ลำดับคิว..."
+                  className="h-8 w-full rounded-lg border border-slate-200 bg-white pl-8 pr-2.5 text-xs focus:border-chunjai-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
             <CardContent className="p-2 space-y-1.5 max-h-[70vh] overflow-y-auto">
               {isPending && visits.length === 0 ? (
                 <div className="p-8 text-center text-slate-400 space-y-2">
@@ -232,49 +309,94 @@ export default function DoctorConsultationPage() {
                 <div className="p-8 text-center text-slate-400 space-y-1">
                   <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400" />
                   <p className="text-xs font-bold text-slate-700">ไม่มีคิวรอตรวจในขณะนี้</p>
+                  <p className="text-[11px] text-slate-400">เมื่อผู้ป่วยลงทะเบียนและผ่านการคัดกรอง คิวจะแสดงที่นี่</p>
                 </div>
               ) : (
-                visits.map((visit) => {
-                  const isSelected = selectedVisit?.id === visit.id;
-                  const queueNum = visit.queues?.[0]?.queueNumber || "A";
-                  const hasAllergies = visit.patient?.allergies?.length > 0;
+                visits
+                  .filter((visit) => {
+                    if (!queueSearch.trim()) return true;
+                    const q = queueSearch.toLowerCase();
+                    const name = `${visit.patient?.firstName || ""} ${visit.patient?.lastName || ""}`.toLowerCase();
+                    const hn = (visit.patient?.hn || "").toLowerCase();
+                    const qNum = (visit.queues?.[0]?.queueNumber || "").toLowerCase();
+                    const vNum = (visit.visitNumber || "").toLowerCase();
+                    return name.includes(q) || hn.includes(q) || qNum.includes(q) || vNum.includes(q);
+                  })
+                  .map((visit) => {
+                    const isSelected = selectedVisit?.id === visit.id;
+                    const queueNum = visit.queues?.[0]?.queueNumber || "A";
+                    const hasAllergies = visit.patient?.allergies?.length > 0;
+                    const statusObj = DOCTOR_QUEUE_STATUS_MAP[visit.status] || {
+                      label: visit.status,
+                      bg: "bg-slate-100 text-slate-600",
+                    };
 
-                  return (
-                    <div
-                      key={visit.id}
-                      onClick={() => handleSelectVisit(visit)}
-                      className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
-                        isSelected
-                          ? "bg-chunjai-600 text-white border-chunjai-700 shadow-md"
-                          : "bg-white text-slate-900 border-slate-200 hover:border-chunjai-300 hover:bg-chunjai-50/50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className={`font-extrabold font-mono text-sm ${isSelected ? "text-white" : "text-chunjai-700"}`}>
-                          {queueNum}
-                        </span>
-                        <span className={`text-[10px] font-mono ${isSelected ? "text-chunjai-100" : "text-slate-400"}`}>
-                          {visit.visitNumber}
-                        </span>
-                      </div>
+                    const visitLabs = visit.labOrders || [];
+                    const hasCompletedLab = visitLabs.some((l: any) => l.status === "COMPLETED");
+                    const hasPendingLab = visitLabs.some((l: any) => l.status === "ORDERED" || l.status === "COLLECTED");
 
-                      <p className="font-bold text-sm mt-1">
-                        {visit.patient?.firstName} {visit.patient?.lastName}
-                      </p>
-
-                      <p className={`text-[11px] truncate mt-0.5 ${isSelected ? "text-chunjai-100" : "text-slate-500"}`}>
-                        อาการ: {visit.chiefComplaint || "-"}
-                      </p>
-
-                      {hasAllergies && (
-                        <div className="mt-2 inline-flex items-center gap-1 rounded bg-rose-500 text-white px-2 py-0.5 text-[10px] font-bold">
-                          <ShieldAlert className="h-3 w-3" />
-                          แพ้ยา!
+                    return (
+                      <div
+                        key={visit.id}
+                        onClick={() => handleSelectVisit(visit)}
+                        className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                          isSelected
+                            ? "bg-chunjai-600 text-white border-chunjai-700 shadow-md"
+                            : "bg-white text-slate-900 border-slate-200 hover:border-chunjai-300 hover:bg-chunjai-50/50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={`font-extrabold font-mono text-sm ${isSelected ? "text-white" : "text-chunjai-700"}`}>
+                            {queueNum}
+                          </span>
+                          <span className={`text-[10px] font-mono ${isSelected ? "text-chunjai-100" : "text-slate-400"}`}>
+                            {visit.visitNumber}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  );
-                })
+
+                        <div className="flex items-baseline justify-between mt-1">
+                          <p className="font-bold text-sm">
+                            {visit.patient?.firstName} {visit.patient?.lastName}
+                          </p>
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-medium border ${
+                              isSelected ? "bg-white/20 text-white border-white/30" : statusObj.bg
+                            }`}
+                          >
+                            {statusObj.label}
+                          </span>
+                        </div>
+
+                        <p className={`text-[11px] truncate mt-0.5 ${isSelected ? "text-chunjai-100" : "text-slate-500"}`}>
+                          อาการ: {visit.chiefComplaint || "-"}
+                        </p>
+
+                        {/* Badges for Allergies & Lab Status */}
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {hasAllergies && (
+                            <div className="inline-flex items-center gap-1 rounded bg-rose-500 text-white px-2 py-0.5 text-[10px] font-bold">
+                              <ShieldAlert className="h-3 w-3" />
+                              แพ้ยา!
+                            </div>
+                          )}
+
+                          {hasCompletedLab && (
+                            <div className="inline-flex items-center gap-1 rounded bg-emerald-500 text-white px-2 py-0.5 text-[10px] font-bold">
+                              <TestTube className="h-3 w-3" />
+                              ผลแล็บพร้อมแล้ว
+                            </div>
+                          )}
+
+                          {!hasCompletedLab && hasPendingLab && (
+                            <div className="inline-flex items-center gap-1 rounded bg-amber-500 text-white px-2 py-0.5 text-[10px] font-bold">
+                              <TestTube className="h-3 w-3" />
+                              รอผลแล็บ ({visitLabs.length})
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
               )}
             </CardContent>
           </Card>
@@ -289,7 +411,7 @@ export default function DoctorConsultationPage() {
                 เลือกผู้ป่วยจากคิวทางซ้ายเพื่อเริ่มทำการตรวจรักษา
               </h3>
               <p className="text-xs max-w-sm mx-auto">
-                ระบบจะเปิดแฟ้มประวัติสุขภาพ สัญญาณชีพที่พยาบาลคัดกรอง และฟอร์มสั่งยา
+                ระบบจะเปิดแฟ้มประวัติสุขภาพ สัญญาณชีพที่พยาบาลคัดกรอง ผลการตรวจแล็บ และฟอร์มสั่งยา
               </p>
             </Card>
           ) : (
@@ -314,6 +436,16 @@ export default function DoctorConsultationPage() {
                           แพ้ยา: {selectedVisit.patient.allergies.map((a: any) => a.allergen).join(", ")}
                         </Badge>
                       )}
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsLabModalOpen(true)}
+                        className="border-chunjai-300 text-chunjai-700 hover:bg-chunjai-50 font-bold text-xs"
+                      >
+                        <TestTube className="mr-1.5 h-4 w-4 text-chunjai-600" />
+                        สั่งตรวจแล็บ
+                      </Button>
 
                       <Button
                         type="button"
@@ -366,6 +498,158 @@ export default function DoctorConsultationPage() {
                 </CardContent>
               </Card>
 
+              {/* Laboratory & Diagnostics Panel */}
+              <Card className="border-slate-200">
+                <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TestTube className="h-5 w-5 text-chunjai-600" />
+                    <div>
+                      <CardTitle className="text-sm font-bold text-slate-950">
+                        รายการตรวจทางห้องปฏิบัติการ (Laboratory & Diagnostics)
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        ติดตามสถานะและผลการตรวจวิเคราะห์ทางห้องแล็บสำหรับรอบการตรวจนี้
+                      </CardDescription>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsLabModalOpen(true)}
+                    className="h-8 text-xs font-semibold text-chunjai-700 hover:bg-chunjai-50 border-chunjai-200"
+                  >
+                    <Plus className="mr-1 h-3.5 w-3.5" />
+                    สั่งตรวจแล็บเพิ่ม
+                  </Button>
+                </CardHeader>
+
+                <CardContent className="p-4 space-y-3 text-xs">
+                  {labOrders.length === 0 ? (
+                    <div className="p-6 rounded-lg border border-dashed border-slate-200 text-center text-slate-400 space-y-1">
+                      <TestTube className="mx-auto h-6 w-6 text-slate-300" />
+                      <p className="font-semibold text-slate-600">ยังไม่มีรายการสั่งตรวจแล็บในรอบการตรวจนี้</p>
+                      <p className="text-[11px]">หากต้องการตรวจเลือด ปัสสาวะ หรือส่งแล็บ สามารถกดปุ่ม "สั่งตรวจแล็บเพิ่ม" ด้านบน</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {labOrders.map((order: any) => {
+                        const statusObj = LAB_STATUS_MAP[order.status as LabOrderStatus] || {
+                          label: order.status,
+                          bg: "bg-slate-100 text-slate-700 border-slate-300",
+                          icon: "📋",
+                        };
+                        const results = order.results || [];
+                        const isCompleted = order.status === "COMPLETED";
+
+                        return (
+                          <div
+                            key={order.id}
+                            className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs space-y-2.5"
+                          >
+                            {/* Order Header */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-slate-950 text-sm">
+                                    {order.testName}
+                                  </span>
+                                  <span
+                                    className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${statusObj.bg}`}
+                                  >
+                                    {statusObj.icon} {statusObj.label}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-slate-500 font-mono">
+                                  สั่งตรวจเมื่อ: {new Date(order.createdAt).toLocaleDateString("th-TH")}{" "}
+                                  {new Date(order.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น.
+                                  {order.notes && ` · คำสั่ง: ${order.notes}`}
+                                </p>
+                              </div>
+
+                              {isCompleted && (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleOpenLabReport(order)}
+                                  className="h-8 text-xs font-bold text-chunjai-700 hover:bg-chunjai-50 border-chunjai-200"
+                                >
+                                  <FileText className="mr-1.5 h-3.5 w-3.5 text-chunjai-600" />
+                                  ดูใบรายงานผลแล็บทางการ (PDF)
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Lab Results Table or Pending Notice */}
+                            {isCompleted && results.length > 0 ? (
+                              <div className="border border-slate-200 rounded-lg overflow-hidden">
+                                <table className="w-full text-left text-xs border-collapse">
+                                  <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-[11px]">
+                                    <tr>
+                                      <th className="px-3 py-1.5">รายการตรวจ (Parameter)</th>
+                                      <th className="px-3 py-1.5 text-right">ค่าที่ได้ (Result)</th>
+                                      <th className="px-3 py-1.5 text-center">หน่วย (Unit)</th>
+                                      <th className="px-3 py-1.5 text-center">ค่าปกติอ้างอิง (Ref Range)</th>
+                                      <th className="px-3 py-1.5 text-center">สถานะ</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-slate-100 font-medium">
+                                    {results.map((r: any) => (
+                                      <tr key={r.id} className={r.isAbnormal ? "bg-rose-50/70" : "hover:bg-slate-50"}>
+                                        <td className="px-3 py-2 text-slate-900">{r.paramName}</td>
+                                        <td
+                                          className={`px-3 py-2 text-right font-mono font-bold text-sm ${
+                                            r.isAbnormal ? "text-rose-700" : "text-slate-950"
+                                          }`}
+                                        >
+                                          {r.value}
+                                        </td>
+                                        <td className="px-3 py-2 text-center text-slate-500 font-mono">{r.unit || "-"}</td>
+                                        <td className="px-3 py-2 text-center text-slate-600 font-mono">{r.normalRange || "-"}</td>
+                                        <td className="px-3 py-2 text-center">
+                                          {r.isAbnormal ? (
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-200 text-rose-900 border border-rose-300">
+                                              ผิดปกติ
+                                            </span>
+                                          ) : (
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                              ปกติ
+                                            </span>
+                                          )}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            ) : !isCompleted ? (
+                              <div className="p-3 bg-amber-50/70 rounded-lg border border-amber-200 text-amber-900 text-xs flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Clock className="h-4 w-4 text-amber-600 shrink-0" />
+                                  <span>กำลังรอผลการตรวจวิเคราะห์จากห้องปฏิบัติการ...</span>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => fetchDoctorQueue()}
+                                  className="h-7 text-xs text-amber-800 hover:bg-amber-100"
+                                >
+                                  <RefreshCw className="mr-1 h-3 w-3" />
+                                  ตรวจสอบผลล่าสุด
+                                </Button>
+                              </div>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* SOAP Note & Diagnosis Editor Card */}
               <Card>
                 <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
@@ -398,11 +682,12 @@ export default function DoctorConsultationPage() {
                           <Pill className="h-4 w-4 text-chunjai-600" />
                           รายการสั่งยา ({prescribedItems.length} รายการ):
                         </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {prescribedItems.map((it: any) => (
-                            <Badge key={it.id} variant="secondary" className="text-[10px] bg-white border border-chunjai-200">
-                              {it.drug?.genericName || "ยา"} ({it.quantity} {it.drug?.unit || "เม็ด"}) — {it.dosage} {it.frequency}
-                            </Badge>
+                        <div className="space-y-0.5 pl-5 text-slate-700">
+                          {prescribedItems.map((item: any, idx: number) => (
+                            <p key={idx}>
+                              • {item.drug?.genericName} {item.drug?.strength} — {item.dosage} {item.frequency} (
+                              {item.quantity} {item.drug?.unit})
+                            </p>
                           ))}
                         </div>
                       </div>
@@ -552,6 +837,31 @@ export default function DoctorConsultationPage() {
           allergies={selectedVisit.patient?.allergies}
           onClose={() => setIsPrescriptionModalOpen(false)}
           onSuccess={() => fetchPrescription(selectedVisit.id)}
+        />
+      )}
+
+      {/* Lab Order Modal */}
+      {selectedVisit && (
+        <CreateLabOrderModal
+          isOpen={isLabModalOpen}
+          initialPatient={selectedVisit.patient}
+          initialVisitId={selectedVisit.id}
+          initialVisit={selectedVisit}
+          onClose={() => setIsLabModalOpen(false)}
+          onSuccess={() => fetchDoctorQueue()}
+        />
+      )}
+
+      {/* Official Printable Lab Report PDF Modal */}
+      {selectedLabOrder && (
+        <LabReportModal
+          isOpen={isLabReportModalOpen}
+          clinicInfo={clinicInfo}
+          labOrder={selectedLabOrder}
+          onClose={() => {
+            setIsLabReportModalOpen(false);
+            setSelectedLabOrder(null);
+          }}
         />
       )}
     </div>

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { getReferralsAction, updateReferralStatusAction } from "@/server/actions/referral";
 import { CreateReferralModal } from "@/components/referral/CreateReferralModal";
 import { ReferralStatus } from "@/generated/client";
+import { useClinicSettings } from "@/hooks/useClinicSettings";
 
 const ReferralLetterModal = dynamic(
   () => import("@/components/referral/ReferralLetterModal").then((mod) => mod.ReferralLetterModal),
@@ -31,6 +32,7 @@ const ReferralLetterModal = dynamic(
 
 export default function ReferralHubPage() {
   const [isPending, startTransition] = useTransition();
+  const { clinicInfo } = useClinicSettings();
 
   const [activeTab, setActiveTab] = useState<ReferralStatus | "ALL">("ALL");
   const [referrals, setReferrals] = useState<any[]>([]);
@@ -352,6 +354,7 @@ export default function ReferralHubPage() {
 
       <ReferralLetterModal
         isOpen={isLetterModalOpen}
+        clinicInfo={clinicInfo}
         referral={selectedReferral}
         onClose={() => {
           setIsLetterModalOpen(false);

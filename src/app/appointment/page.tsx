@@ -26,6 +26,7 @@ import {
 } from "@/server/actions/appointment";
 import { CreateAppointmentModal } from "@/components/appointment/CreateAppointmentModal";
 import { AppointmentStatus } from "@/generated/client";
+import { useClinicSettings } from "@/hooks/useClinicSettings";
 
 const AppointmentSlipModal = dynamic(
   () => import("@/components/appointment/AppointmentSlipModal").then((mod) => mod.AppointmentSlipModal),
@@ -34,6 +35,7 @@ const AppointmentSlipModal = dynamic(
 
 export default function AppointmentHubPage() {
   const [isPending, startTransition] = useTransition();
+  const { clinicInfo } = useClinicSettings();
   const [activeTab, setActiveTab] = useState<AppointmentStatus | "ALL">("ALL");
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().slice(0, 10)
@@ -281,6 +283,7 @@ export default function AppointmentHubPage() {
       {/* Printable Appointment Slip Modal */}
       <AppointmentSlipModal
         isOpen={isSlipModalOpen}
+        clinicInfo={clinicInfo}
         appointment={selectedAppointment}
         onClose={() => setIsSlipModalOpen(false)}
       />

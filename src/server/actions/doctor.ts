@@ -209,13 +209,17 @@ export async function getDoctorQueueVisitsAction(): Promise<ActionResult<any[]>>
   try {
     const session = await requirePermission("CONSULTATION_VIEW");
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
     const visits = await prisma.visit.findMany({
       where: {
-        createdAt: { gte: startOfDay },
-        status: { in: [VisitStatus.TRIAGED, VisitStatus.WAITING_DOCTOR, VisitStatus.IN_CONSULTATION] },
+        status: {
+          in: [
+            VisitStatus.WAITING_DOCTOR,
+            VisitStatus.IN_CONSULTATION,
+            VisitStatus.TRIAGED,
+            VisitStatus.WAITING_TRIAGE,
+            VisitStatus.REGISTERED,
+          ],
+        },
       },
       orderBy: { createdAt: "asc" },
       include: {
@@ -232,7 +236,7 @@ export async function getDoctorQueueVisitsAction(): Promise<ActionResult<any[]>>
           orderBy: { createdAt: "desc" },
         },
         queues: {
-          where: { queueType: { code: "DOC" } },
+          orderBy: { createdAt: "desc" },
           take: 1,
         },
         consultation: {
@@ -241,11 +245,18 @@ export async function getDoctorQueueVisitsAction(): Promise<ActionResult<any[]>>
             diagnoses: true,
           },
         },
+        labOrders: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            results: true,
+          },
+        },
       },
     });
 
     return { success: true, data: visits };
   } catch (error: any) {
+    console.error("Error in getDoctorQueueVisitsAction:", error);
     return { success: false, error: error.message || "เกิดข้อผิดพลาดในการดึงรายการผู้ป่วยห้องตรวจ" };
   }
 }

@@ -15,7 +15,7 @@ export interface ActionResult<T = unknown> {
 // ----------------------------------------------------
 // Helper: Auto Generate Visit Number (VYYYYMMDD-XXXX)
 // ----------------------------------------------------
-async function generateVisitNumber(): Promise<string> {
+export async function generateVisitNumber(dbClient: any = prisma): Promise<string> {
   const now = new Date();
   const year = now.getFullYear();
   const month = (now.getMonth() + 1).toString().padStart(2, "0");
@@ -23,20 +23,48 @@ async function generateVisitNumber(): Promise<string> {
   const dateStr = `${year}${month}${day}`;
   const prefix = `V${dateStr}-`;
 
-  const startOfDay = new Date(year, now.getMonth(), now.getDate(), 0, 0, 0);
-  const endOfDay = new Date(year, now.getMonth(), now.getDate(), 23, 59, 59);
-
-  const countToday = await prisma.visit.count({
-    where: {
-      createdAt: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    },
+  const lastVisit = await dbClient.visit.findFirst({
+    where: { visitNumber: { startsWith: prefix } },
+    orderBy: { visitNumber: "desc" },
+    select: { visitNumber: true },
   });
 
-  const nextSeq = (countToday + 1).toString().padStart(4, "0");
-  return `${prefix}${nextSeq}`;
+  let nextSeq = 1;
+  if (lastVisit?.visitNumber) {
+    const currentNumStr = lastVisit.visitNumber.replace(prefix, "");
+    const parsed = parseInt(currentNumStr, 10);
+    if (!isNaN(parsed)) {
+      nextSeq = parsed + 1;
+    }
+  }
+
+  return `${prefix}${nextSeq.toString().padStart(4, "0")}`;
+}
+
+export async function generateTriageQueueNumber(triageType: any, dbClient: any = prisma): Promise<string> {
+  const prefix = triageType.prefix || "T";
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const lastQueue = await dbClient.queue.findFirst({
+    where: {
+      queueTypeId: triageType.id,
+      createdAt: { gte: startOfDay },
+    },
+    orderBy: { queueNumber: "desc" },
+    select: { queueNumber: true },
+  });
+
+  let nextSeq = 1;
+  if (lastQueue?.queueNumber) {
+    const currentNumStr = lastQueue.queueNumber.replace(prefix, "");
+    const parsed = parseInt(currentNumStr, 10);
+    if (!isNaN(parsed)) {
+      nextSeq = parsed + 1;
+    }
+  }
+
+  return `${prefix}${nextSeq.toString().padStart(3, "0")}`;
 }
 
 // ----------------------------------------------------
@@ -85,10 +113,10 @@ export async function createVisitAction(formData: Record<string, any>): Promise<
       };
     }
 
-    const visitNumber = await generateVisitNumber();
-
     // Create Visit & Initial Triage Queue in DB Transaction
     const visit = await prisma.$transaction(async (tx) => {
+      const visitNumber = await generateVisitNumber(tx);
+
       const newVisit = await tx.visit.create({
         data: {
           visitNumber,
@@ -105,14 +133,7 @@ export async function createVisitAction(formData: Record<string, any>): Promise<
       });
 
       if (triageQueueType) {
-        const queueCount = await tx.queue.count({
-          where: {
-            queueTypeId: triageQueueType.id,
-            createdAt: { gte: startOfDay },
-          },
-        });
-
-        const queueNum = `${triageQueueType.prefix}${(queueCount + 1).toString().padStart(3, "0")}`;
+        const queueNum = await generateTriageQueueNumber(triageQueueType, tx);
 
         await tx.queue.create({
           data: {

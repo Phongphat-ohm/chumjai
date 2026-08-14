@@ -1,147 +1,176 @@
 "use client";
 
-import React from "react";
-import { Printer, X, HeartPulse, Pill } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Printer, Download, X, Loader2, Pill, CheckCircle2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { DocumentClinicInfo } from "@/components/documents/DocumentHeader";
+import {
+  DrugLabelTemplate,
+  type DrugLabelItem,
+} from "@/components/documents/templates/DrugLabelTemplate";
+import { printElementAsPdf, downloadElementAsPdf } from "@/lib/pdf/printPdfHelper";
 
 interface DrugLabelModalProps {
   isOpen: boolean;
+  clinicInfo: DocumentClinicInfo;
   patient: {
     hn: string;
     firstName: string;
     lastName: string;
   } | null;
-  items: {
-    id: string;
-    drug?: {
-      genericName: string;
-      tradeName?: string;
-      strength?: string;
-      unit: string;
-    };
-    quantity: number;
-    dosage: string;
-    frequency: string;
-    instruction?: string;
-  }[];
+  items: DrugLabelItem[];
   pharmacistName?: string;
   onClose: () => void;
 }
 
 export function DrugLabelModal({
   isOpen,
+  clinicInfo,
   patient,
   items,
   pharmacistName,
   onClose,
 }: DrugLabelModalProps) {
+  const printRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
   if (!isOpen || !patient || items.length === 0) return null;
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrintPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await printElementAsPdf(printRef.current, {
+        filename: `drug_label_${patient.hn}.pdf`,
+        orientation: "portrait",
+      });
+    } catch (err) {
+      console.error("PDF generation failed, falling back to window.print()", err);
+      window.print();
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
-  const todayStr = new Date().toLocaleDateString("th-TH", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  const handleDownloadPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await downloadElementAsPdf(printRef.current, `drug_label_${patient.hn}.pdf`, {
+        orientation: "portrait",
+      });
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch (err) {
+      console.error("PDF download failed", err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-3xl rounded-xl bg-white shadow-2xl border border-chunjai-100 my-6 flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-chunjai-100 px-6 py-4 bg-chunjai-50/60 rounded-t-xl shrink-0 print:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white">
-              <Printer className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-4 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-3xl rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+        {/* Header Bar */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50/90 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-chunjai-600 text-white shadow-md">
+              <Pill className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-chunjai-950">
-                ตัวอย่างฉลากยาภาษาไทย (Drug Label Preview & Print)
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-950">
+                  ฉลากยาภาษาไทย (Drug Label PDF)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
+                  {items.length} รายการยา
+                </span>
+              </div>
               <p className="text-xs text-slate-500">
-                ฉลากยาสำหรับติดซองยาตามระเบียบกระทรวงสาธารณสุข
+                ผู้ป่วย: {patient.firstName} {patient.lastName} (HN: {patient.hn}) · เภสัชกร: {pharmacistName || "ประจำคลินิก"}
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              onClick={handlePrint}
-              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs"
+              variant="outline"
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="text-xs font-semibold h-9 px-3.5 border-slate-300 hover:bg-slate-100 shadow-xs"
             >
-              <Printer className="mr-1.5 h-4 w-4" />
-              พิมพ์ฉลากยา (Print)
+              {downloadSuccess ? (
+                <>
+                  <CheckCircle2 className="mr-1.5 h-4 w-4 text-emerald-600" />
+                  บันทึกสำเร็จ
+                </>
+              ) : (
+                <>
+                  <Download className="mr-1.5 h-4 w-4" />
+                  ดาวน์โหลด PDF
+                </>
+              )}
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <Button
+              size="sm"
+              onClick={handlePrintPdf}
+              disabled={isGeneratingPdf}
+              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs h-9 px-4 shadow-sm"
+            >
+              {isGeneratingPdf ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  กำลังสร้าง PDF...
+                </>
+              ) : (
+                <>
+                  <Printer className="mr-1.5 h-4 w-4" />
+                  พิมพ์ฉลากยา (PDF Print)
+                </>
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-9 w-9 text-slate-500 hover:text-slate-900 rounded-lg ml-1"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Printable Labels List Grid */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-          {items.map((item, idx) => (
-            <div
-              key={item.id || idx}
-              className="border-2 border-slate-900 rounded-xl p-4 bg-white space-y-2 shadow-sm max-w-md mx-auto print:border-black print:shadow-none print:break-inside-avoid"
+        {/* Document Preview Workstation */}
+        <div className="p-4 sm:p-6 overflow-y-auto bg-slate-100/70 flex-1 flex justify-center items-start">
+          <div className="w-full max-w-lg">
+            <DrugLabelTemplate
+              ref={printRef}
+              clinicInfo={clinicInfo}
+              patient={patient}
+              items={items}
+              pharmacistName={pharmacistName}
+            />
+          </div>
+        </div>
+
+        {/* Bottom Control Bar */}
+        <div className="flex items-center justify-between border-t border-slate-200 px-6 py-3 bg-white text-xs text-slate-500 shrink-0">
+          <div className="flex items-center gap-1.5 font-medium">
+            <Eye className="h-3.5 w-3.5 text-slate-400" />
+            <span>มาตรฐานฉลากยาติดซองยา ฟอนต์สารบรรณ (Sarabun)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-xs font-medium text-slate-600 hover:text-slate-900"
             >
-              {/* Label Header */}
-              <div className="flex items-center justify-between border-b border-slate-300 pb-2">
-                <div className="flex items-center gap-1.5">
-                  <HeartPulse className="h-4 w-4 text-chunjai-600 font-bold" />
-                  <span className="font-bold text-slate-900 text-xs">
-                    ชุมใจคลินิก (Chunjai Clinic)
-                  </span>
-                </div>
-                <span className="text-[10px] text-slate-500 font-mono">{todayStr}</span>
-              </div>
-
-              {/* Patient Info Line */}
-              <div className="flex items-center justify-between font-bold text-slate-900 border-b border-slate-100 pb-1 text-xs">
-                <span>
-                  ชื่อ: {patient.firstName} {patient.lastName}
-                </span>
-                <span className="font-mono text-chunjai-700">HN: {patient.hn}</span>
-              </div>
-
-              {/* Drug Name & Strength */}
-              <div className="py-1">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-black text-sm text-slate-950">
-                    {item.drug?.genericName || "ยาชนิดเม็ด"} {item.drug?.strength}
-                  </span>
-                  <span className="font-extrabold text-chunjai-700 font-mono text-xs">
-                    จำนวน {item.quantity} {item.drug?.unit || "เม็ด"}
-                  </span>
-                </div>
-                {item.drug?.tradeName && (
-                  <p className="text-[10px] text-slate-500 font-medium">
-                    ({item.drug.tradeName})
-                  </p>
-                )}
-              </div>
-
-              {/* Usage & Frequency Instructions */}
-              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
-                <p className="font-bold text-chunjai-900 text-xs">
-                  วิธีใช้: {item.dosage} {item.frequency}
-                </p>
-                {item.instruction && (
-                  <p className="text-[11px] text-slate-700 font-medium">
-                    คำแนะนำ: {item.instruction}
-                  </p>
-                )}
-              </div>
-
-              {/* Footer Pharmacist Signature Line */}
-              <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1">
-                <span>เภสัชกรผู้จ่ายยา: {pharmacistName || "เภสัชกรประจำคลินิก"}</span>
-                <span className="font-mono">โทร. 02-123-4567</span>
-              </div>
-            </div>
-          ))}
+              ปิดหน้าต่าง
+            </Button>
+          </div>
         </div>
       </div>
     </div>

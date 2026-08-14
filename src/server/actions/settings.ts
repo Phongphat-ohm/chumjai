@@ -22,6 +22,12 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   OPENING_HOURS: "จันทร์ - ศุกร์: 08:00 - 20:00 น. | เสาร์ - อาทิตย์: 09:00 - 17:00 น.",
   MIN_STOCK_THRESHOLD: "10",
   EXPIRY_WARNING_DAYS: "90",
+  // Level 2: Document Template
+  DOC_LOGO_URL: "",
+  DOC_ACCENT_COLOR: "#1b5e3b",
+  DOC_SHOW_LOGO: "false",
+  DOC_FOOTER_TEXT: "",
+  DOC_SIGNATURE_TITLE: "",
 };
 
 // ----------------------------------------------------
@@ -72,6 +78,11 @@ export async function updateClinicSettingsAction(
       openingHours,
       minStockThreshold,
       expiryWarningDays,
+      docLogoUrl,
+      docAccentColor,
+      docShowLogo,
+      docFooterText,
+      docSignatureTitle,
     } = validated.data;
 
     const itemsToUpsert = [
@@ -85,6 +96,12 @@ export async function updateClinicSettingsAction(
       { key: "OPENING_HOURS", value: openingHours || "" },
       { key: "MIN_STOCK_THRESHOLD", value: minStockThreshold.toString() },
       { key: "EXPIRY_WARNING_DAYS", value: expiryWarningDays.toString() },
+      // Level 2: Document Template
+      { key: "DOC_LOGO_URL", value: docLogoUrl || "" },
+      { key: "DOC_ACCENT_COLOR", value: docAccentColor || "#1b5e3b" },
+      { key: "DOC_SHOW_LOGO", value: docShowLogo ? "true" : "false" },
+      { key: "DOC_FOOTER_TEXT", value: docFooterText || "" },
+      { key: "DOC_SIGNATURE_TITLE", value: docSignatureTitle || "" },
     ];
 
     await prisma.$transaction(

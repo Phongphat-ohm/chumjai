@@ -23,6 +23,7 @@ import { getLabOrdersAction } from "@/server/actions/lab";
 import { CreateLabOrderModal } from "@/components/lab/CreateLabOrderModal";
 import { RecordLabResultModal } from "@/components/lab/RecordLabResultModal";
 import { LabOrderStatus } from "@/generated/client";
+import { useClinicSettings } from "@/hooks/useClinicSettings";
 
 const LabReportModal = dynamic(
   () => import("@/components/lab/LabReportModal").then((mod) => mod.LabReportModal),
@@ -31,6 +32,7 @@ const LabReportModal = dynamic(
 
 export default function LaboratoryHubPage() {
   const [isPending, startTransition] = useTransition();
+  const { clinicInfo } = useClinicSettings();
 
   const [activeTab, setActiveTab] = useState<LabOrderStatus | "ALL">("ALL");
   const [orders, setOrders] = useState<any[]>([]);
@@ -333,6 +335,7 @@ export default function LaboratoryHubPage() {
 
       <LabReportModal
         isOpen={isReportModalOpen}
+        clinicInfo={clinicInfo}
         labOrder={selectedOrder}
         onClose={() => {
           setIsReportModalOpen(false);

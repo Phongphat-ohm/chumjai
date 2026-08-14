@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requirePermission } from "@/server/permissions/guard";
 import { triageRecordSchema } from "@/schemas/triage";
-import { TriageUrgency, VisitStatus, QueueType, QueueStatus } from "@/generated/client";
+import { TriageUrgency, VisitStatus, QueueStatus } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -20,6 +20,35 @@ export async function calculateBmiServer(weightKg?: number, heightCm?: number): 
   const heightMeters = heightCm / 100;
   const bmi = weightKg / (heightMeters * heightMeters);
   return parseFloat(bmi.toFixed(2));
+}
+
+// ----------------------------------------------------
+// Helper: Generate Doctor Queue Number
+// ----------------------------------------------------
+async function generateDocQueueNumber(docType: any, dbClient: any = prisma): Promise<string> {
+  const prefix = docType.prefix || "A";
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const lastQueue = await dbClient.queue.findFirst({
+    where: {
+      queueTypeId: docType.id,
+      createdAt: { gte: startOfDay },
+    },
+    orderBy: { queueNumber: "desc" },
+    select: { queueNumber: true },
+  });
+
+  let nextSeq = 1;
+  if (lastQueue?.queueNumber) {
+    const currentNumStr = lastQueue.queueNumber.replace(prefix, "");
+    const parsed = parseInt(currentNumStr, 10);
+    if (!isNaN(parsed)) {
+      nextSeq = parsed + 1;
+    }
+  }
+
+  return `${prefix}${nextSeq.toString().padStart(3, "0")}`;
 }
 
 // ----------------------------------------------------
@@ -107,17 +136,7 @@ export async function saveTriageRecordAction(
       });
 
       if (docType) {
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const countTodayDoc = await tx.queue.count({
-          where: {
-            queueTypeId: docType.id,
-            createdAt: { gte: startOfDay },
-          },
-        });
-
-        const docQueueNumber = `${docType.prefix}${(countTodayDoc + 1).toString().padStart(3, "0")}`;
+        const docQueueNumber = await generateDocQueueNumber(docType, tx);
 
         await tx.queue.create({
           data: {
@@ -160,12 +179,8 @@ export async function getWaitingTriageVisitsAction(): Promise<ActionResult<any[]
   try {
     const session = await requirePermission("TRIAGE_VIEW");
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
     const visits = await prisma.visit.findMany({
       where: {
-        createdAt: { gte: startOfDay },
         status: { in: [VisitStatus.REGISTERED, VisitStatus.WAITING_TRIAGE] },
       },
       orderBy: { createdAt: "asc" },
@@ -180,6 +195,8 @@ export async function getWaitingTriageVisitsAction(): Promise<ActionResult<any[]
             gender: true,
             phoneNumber: true,
             allergies: true,
+            conditions: true,
+            medications: true,
           },
         },
         queues: {
@@ -192,5 +209,75 @@ export async function getWaitingTriageVisitsAction(): Promise<ActionResult<any[]
     return { success: true, data: visits };
   } catch (error: any) {
     return { success: false, error: error.message || "เกิดข้อผิดพลาดในการดึงรายการผู้ป่วยรอคัดกรอง" };
+  }
+}
+
+// ----------------------------------------------------
+// Action 3: Get Patient Latest Vitals & Anamnesis History
+// ----------------------------------------------------
+export async function getPatientLatestVitalsAndHistoryAction(patientId: string): Promise<
+  ActionResult<{
+    latestVital: any | null;
+    patientHistory: {
+      allergies: any[];
+      conditions: any[];
+      medications: any[];
+    };
+  }>
+> {
+  try {
+    await requirePermission("TRIAGE_VIEW");
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: {
+        allergies: true,
+        conditions: true,
+        medications: true,
+      },
+    });
+
+    if (!patient) {
+      return { success: false, error: "ไม่พบข้อมูลผู้ป่วย" };
+    }
+
+    // Find the latest vital sign recorded across all visits for this patient
+    const latestVital = await prisma.vitalSign.findFirst({
+      where: {
+        visit: { patientId },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        visit: {
+          select: {
+            id: true,
+            visitNumber: true,
+            createdAt: true,
+            chiefComplaint: true,
+            triageRecord: {
+              select: {
+                urgency: true,
+                triageNote: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        latestVital,
+        patientHistory: {
+          allergies: patient.allergies || [],
+          conditions: patient.conditions || [],
+          medications: patient.medications || [],
+        },
+      },
+    };
+  } catch (error: any) {
+    console.error("Error in getPatientLatestVitalsAndHistoryAction:", error);
+    return { success: false, error: error.message || "ไม่สามารถดึงประวัติสัญญาณชีพล่าสุดได้" };
   }
 }

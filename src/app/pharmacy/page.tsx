@@ -26,9 +26,11 @@ import {
 import { DrugLabelModal } from "@/components/pharmacy/DrugLabelModal";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
 import { VisitStatus } from "@/generated/client";
+import { useClinicSettings } from "@/hooks/useClinicSettings";
 
 export default function PharmacistDispensingPage() {
   const [isPending, startTransition] = useTransition();
+  const { clinicInfo } = useClinicSettings();
   const [visits, setVisits] = useState<any[]>([]);
   const [selectedVisit, setSelectedVisit] = useState<any | null>(null);
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
@@ -419,6 +421,7 @@ export default function PharmacistDispensingPage() {
       {selectedVisit && (
         <DrugLabelModal
           isOpen={isLabelModalOpen}
+          clinicInfo={clinicInfo}
           patient={selectedVisit.patient}
           items={items}
           onClose={() => setIsLabelModalOpen(false)}

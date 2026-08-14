@@ -1,150 +1,167 @@
 "use client";
 
-import React from "react";
-import { Printer, X, HeartPulse, CalendarDays } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Printer, Download, X, Loader2, CalendarDays, CheckCircle2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { DocumentClinicInfo } from "@/components/documents/DocumentHeader";
+import {
+  AppointmentSlipTemplate,
+  type AppointmentSlipData,
+} from "@/components/documents/templates/AppointmentSlipTemplate";
+import { printElementAsPdf, downloadElementAsPdf } from "@/lib/pdf/printPdfHelper";
 
 interface AppointmentSlipModalProps {
   isOpen: boolean;
-  appointment: {
-    id: string;
-    appointmentDate: string;
-    reason?: string;
-    notes?: string;
-    patient: {
-      hn: string;
-      firstName: string;
-      lastName: string;
-      rightsType?: string;
-    };
-  } | null;
+  clinicInfo: DocumentClinicInfo;
+  appointment: AppointmentSlipData | null;
   onClose: () => void;
 }
 
 export function AppointmentSlipModal({
   isOpen,
+  clinicInfo,
   appointment,
   onClose,
 }: AppointmentSlipModalProps) {
+  const printRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
   if (!isOpen || !appointment) return null;
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrintPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await printElementAsPdf(printRef.current, {
+        filename: `appointment_${appointment.patient.hn}_${appointment.id}.pdf`,
+        orientation: "portrait",
+      });
+    } catch (err) {
+      console.error("PDF generation failed, falling back to window.print()", err);
+      window.print();
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
-  const appDate = new Date(appointment.appointmentDate);
-  const dateStr = appDate.toLocaleDateString("th-TH", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const timeStr = appDate.toLocaleTimeString("th-TH", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const handleDownloadPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await downloadElementAsPdf(
+        printRef.current,
+        `appointment_${appointment.patient.hn}_${appointment.id}.pdf`,
+        { orientation: "portrait" }
+      );
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch (err) {
+      console.error("PDF download failed", err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
-      <div className="relative w-full max-w-lg rounded-xl bg-white shadow-2xl border border-chunjai-100 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-chunjai-100 px-6 py-4 bg-chunjai-50/60 rounded-t-xl shrink-0 print:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white">
-              <Printer className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-4 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+        {/* Header Bar */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50/90 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-chunjai-600 text-white shadow-md">
+              <CalendarDays className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-chunjai-950">
-                ตัวอย่างใบนัดหมายผู้ป่วย (Appointment Slip)
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-950">
+                  ใบนัดหมายผู้ป่วย (Appointment Slip PDF)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">
+                  ใบนัดติดตามผล
+                </span>
+              </div>
               <p className="text-xs text-slate-500">
-                ใบนัดหมายติดตามผลสำหรับมอบให้ผู้ป่วย
+                ผู้ป่วย: {appointment.patient.firstName} {appointment.patient.lastName} (HN: {appointment.patient.hn})
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              onClick={handlePrint}
-              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs"
+              variant="outline"
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="text-xs font-semibold h-9 px-3.5 border-slate-300 hover:bg-slate-100 shadow-xs"
             >
-              <Printer className="mr-1.5 h-4 w-4" />
-              พิมพ์ใบนัดหมาย (Print)
+              {downloadSuccess ? (
+                <>
+                  <CheckCircle2 className="mr-1.5 h-4 w-4 text-emerald-600" />
+                  บันทึกสำเร็จ
+                </>
+              ) : (
+                <>
+                  <Download className="mr-1.5 h-4 w-4" />
+                  ดาวน์โหลด PDF
+                </>
+              )}
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <Button
+              size="sm"
+              onClick={handlePrintPdf}
+              disabled={isGeneratingPdf}
+              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs h-9 px-4 shadow-sm"
+            >
+              {isGeneratingPdf ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  กำลังสร้าง PDF...
+                </>
+              ) : (
+                <>
+                  <Printer className="mr-1.5 h-4 w-4" />
+                  พิมพ์ใบนัดหมาย (PDF Print)
+                </>
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-9 w-9 text-slate-500 hover:text-slate-900 rounded-lg ml-1"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Printable Appointment Slip Card */}
-        <div className="p-6 text-xs space-y-4">
-          <div className="border-2 border-slate-900 rounded-xl p-6 bg-white space-y-4 shadow-sm print:border-black print:shadow-none">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chunjai-600 text-white">
-                  <HeartPulse className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-base font-bold text-slate-950">
-                    ใบนัดหมายตรวจรักษา — ชุมใจคลินิก
-                  </h2>
-                  <p className="text-[10px] text-slate-500">
-                    Community Clinic & Smart Health Tracking System
-                  </p>
-                </div>
-              </div>
-            </div>
+        {/* Document Preview Workstation */}
+        <div className="p-4 sm:p-6 overflow-y-auto bg-slate-100/70 flex-1 flex justify-center items-start">
+          <div className="w-full max-w-xl">
+            <AppointmentSlipTemplate
+              ref={printRef}
+              clinicInfo={clinicInfo}
+              appointment={appointment}
+            />
+          </div>
+        </div>
 
-            {/* Patient Line */}
-            <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 font-bold">
-              <div>
-                <span className="text-slate-500 text-[10px] block font-normal">ชื่อผู้ป่วย:</span>
-                <span className="text-sm text-slate-950">
-                  {appointment.patient.firstName} {appointment.patient.lastName}
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-slate-500 text-[10px] block font-normal">HN:</span>
-                <span className="text-sm font-mono text-chunjai-700">{appointment.patient.hn}</span>
-              </div>
-            </div>
-
-            {/* Appointment Date & Time */}
-            <div className="border-l-4 border-chunjai-600 bg-chunjai-50 p-4 rounded-r-lg space-y-1">
-              <span className="text-chunjai-800 text-[11px] font-bold block uppercase tracking-wider">
-                กำหนดวันและเวลานัดหมาย
-              </span>
-              <div className="text-lg font-black text-chunjai-950">{dateStr}</div>
-              <div className="text-sm font-extrabold text-chunjai-700 font-mono">
-                เวลา {timeStr} น.
-              </div>
-            </div>
-
-            {/* Reason */}
-            <div className="space-y-1">
-              <span className="font-bold text-slate-900 block">วัตถุประสงค์การนัดหมาย:</span>
-              <p className="text-slate-700 bg-slate-50 p-2.5 rounded border border-slate-200 font-medium">
-                {appointment.reason || "ตรวจติดตามอาการทั่วไป"}
-              </p>
-            </div>
-
-            {/* Notes & Instructions */}
-            {appointment.notes && (
-              <div className="space-y-1">
-                <span className="font-bold text-amber-800 block">คำแนะนำการเตรียมตัวผู้ป่วย:</span>
-                <p className="text-amber-900 bg-amber-50 p-2.5 rounded border border-amber-200 font-medium">
-                  {appointment.notes}
-                </p>
-              </div>
-            )}
-
-            {/* Footer */}
-            <div className="border-t border-slate-200 pt-3 text-[10px] text-slate-500 flex justify-between items-center">
-              <span>* กรุณานำใบนัดหมายและบัตรประชาชนมาแสดง ณ จุดลงทะเบียน</span>
-              <span className="font-mono">โทร. 02-123-4567</span>
-            </div>
+        {/* Bottom Control Bar */}
+        <div className="flex items-center justify-between border-t border-slate-200 px-6 py-3 bg-white text-xs text-slate-500 shrink-0">
+          <div className="flex items-center gap-1.5 font-medium">
+            <Eye className="h-3.5 w-3.5 text-slate-400" />
+            <span>ใบนัดหมายผู้ป่วยนอก ฟอนต์สารบรรณ (Sarabun)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-xs font-medium text-slate-600 hover:text-slate-900"
+            >
+              ปิดหน้าต่าง
+            </Button>
           </div>
         </div>
       </div>

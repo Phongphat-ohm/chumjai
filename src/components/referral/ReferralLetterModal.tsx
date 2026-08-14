@@ -1,222 +1,167 @@
 "use client";
 
-import React from "react";
-import { Printer, X, Send, Building2, User, FileText } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Printer, Download, X, Loader2, FileText, CheckCircle2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import type { DocumentClinicInfo } from "@/components/documents/DocumentHeader";
+import {
+  ReferralLetterTemplate,
+  type ReferralLetterData,
+} from "@/components/documents/templates/ReferralLetterTemplate";
+import { printElementAsPdf, downloadElementAsPdf } from "@/lib/pdf/printPdfHelper";
 
 interface ReferralLetterModalProps {
   isOpen: boolean;
-  referral: {
-    id: string;
-    hospitalName: string;
-    reason: string;
-    diagnosisSummary?: string;
-    status: string;
-    createdAt: string;
-    patient: {
-      hn: string;
-      nationalId?: string;
-      firstName: string;
-      lastName: string;
-      gender: string;
-      dateOfBirth: string;
-      phoneNumber: string;
-      address?: string;
-    };
-    visit: {
-      visitNumber: string;
-      vitalSigns?: any[];
-      consultation?: {
-        soapNote?: {
-          subjective?: string;
-          objective?: string;
-          assessment?: string;
-          plan?: string;
-        };
-        diagnoses?: any[];
-      };
-    };
-  } | null;
+  clinicInfo: DocumentClinicInfo;
+  referral: ReferralLetterData | null;
   onClose: () => void;
 }
 
 export function ReferralLetterModal({
   isOpen,
+  clinicInfo,
   referral,
   onClose,
 }: ReferralLetterModalProps) {
+  const printRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
   if (!isOpen || !referral) return null;
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrintPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await printElementAsPdf(printRef.current, {
+        filename: `referral_${referral.patient.hn}_${referral.id}.pdf`,
+        orientation: "portrait",
+      });
+    } catch (err) {
+      console.error("PDF generation failed, falling back to window.print()", err);
+      window.print();
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
-  const patient = referral.patient;
-  const visit = referral.visit;
-  const vitals = visit.vitalSigns?.[0];
-  const soap = visit.consultation?.soapNote;
+  const handleDownloadPdf = async () => {
+    if (!printRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      await downloadElementAsPdf(
+        printRef.current,
+        `referral_${referral.patient.hn}_${referral.id}.pdf`,
+        { orientation: "portrait" }
+      );
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch (err) {
+      console.error("PDF download failed", err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
-      <div className="relative w-full max-w-3xl rounded-xl bg-white shadow-2xl border border-chunjai-100 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-chunjai-100 px-6 py-4 bg-chunjai-50/60 rounded-t-xl shrink-0 print:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white">
-              <Printer className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-4 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-5xl rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+        {/* Header Bar */}
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50/90 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-chunjai-600 text-white shadow-md">
+              <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-chunjai-950">
-                หนังสือส่งตัวผู้ป่วยเพื่อการตรวจและรักษาต่อ (Official Referral Letter)
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-950">
+                  หนังสือส่งตัวผู้ป่วย (Referral Letter PDF)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-chunjai-100 text-chunjai-800">
+                  แบบฟอร์มทางการ
+                </span>
+              </div>
               <p className="text-xs text-slate-500">
-                เอกสารทางการสำหรับยื่นต่อสถานพยาบาลปลายทางรับส่งต่อ
+                ผู้ป่วย: {referral.patient.firstName} {referral.patient.lastName} (HN: {referral.patient.hn}) · ส่งต่อไปยัง: {referral.hospitalName}
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              onClick={handlePrint}
-              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs"
+              variant="outline"
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="text-xs font-semibold h-9 px-3.5 border-slate-300 hover:bg-slate-100 shadow-xs"
             >
-              <Printer className="mr-1.5 h-4 w-4" />
-              พิมพ์หนังสือส่งตัว (Print)
+              {downloadSuccess ? (
+                <>
+                  <CheckCircle2 className="mr-1.5 h-4 w-4 text-emerald-600" />
+                  บันทึกสำเร็จ
+                </>
+              ) : (
+                <>
+                  <Download className="mr-1.5 h-4 w-4" />
+                  ดาวน์โหลด PDF
+                </>
+              )}
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <Button
+              size="sm"
+              onClick={handlePrintPdf}
+              disabled={isGeneratingPdf}
+              className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-bold text-xs h-9 px-4 shadow-sm"
+            >
+              {isGeneratingPdf ? (
+                <>
+                  <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                  กำลังสร้าง PDF...
+                </>
+              ) : (
+                <>
+                  <Printer className="mr-1.5 h-4 w-4" />
+                  พิมพ์เอกสาร (PDF Print)
+                </>
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-9 w-9 text-slate-500 hover:text-slate-900 rounded-lg ml-1"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Printable Official Referral Letter Body */}
-        <div className="p-6 text-xs space-y-4 max-h-[80vh] overflow-y-auto">
-          <div className="border-2 border-slate-900 rounded-xl p-8 bg-white space-y-6 shadow-sm print:border-black print:shadow-none">
-            {/* Header Banner */}
-            <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4">
-              <div>
-                <h1 className="text-lg font-black text-slate-950">
-                  ชุมใจคลินิกเวชกรรม (Chunjai Community Clinic)
-                </h1>
-                <p className="text-xs text-slate-600">
-                  99/1 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110 · โทร. 02-123-4567
-                </p>
-              </div>
-              <div className="text-right">
-                <Badge variant="outline" className="border-slate-900 font-mono text-xs px-3 py-1 font-bold">
-                  หนังสือส่งตัวผู้ป่วย
-                </Badge>
-                <p className="text-[10px] text-slate-500 mt-1 font-mono">
-                  วันที่ออก: {new Date(referral.createdAt).toLocaleDateString("th-TH")}
-                </p>
-              </div>
-            </div>
+        {/* Document Preview Workstation (Realistic A4 Page Canvas) */}
+        <div className="p-4 sm:p-6 overflow-y-auto bg-slate-100/70 flex-1 flex justify-center items-start">
+          <div className="w-full flex justify-center">
+            <ReferralLetterTemplate
+              ref={printRef}
+              clinicInfo={clinicInfo}
+              referral={referral}
+            />
+          </div>
+        </div>
 
-            {/* Destination Info */}
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-300 space-y-1">
-              <span className="text-slate-500 font-bold text-[11px]">เรียน:</span>
-              <h2 className="text-base font-black text-slate-950">
-                ผู้อำนวยการ / ทีมแพทย์รับส่งต่อ {referral.hospitalName}
-              </h2>
-              <p className="text-xs text-slate-700">
-                เรื่อง: ขอส่งตัวผู้ป่วยเพื่อรับการตรวจวินิจฉัยและรักษาต่อ
-              </p>
-            </div>
-
-            {/* Patient Demographics */}
-            <div className="space-y-2">
-              <h3 className="font-bold text-slate-900 text-xs flex items-center gap-1.5 border-b border-slate-200 pb-1">
-                <User className="h-4 w-4 text-chunjai-600" />
-                1. ข้อมูลประจำตัวผู้ป่วย (Patient Demographics)
-              </h3>
-              <div className="grid grid-cols-3 gap-3 pl-2">
-                <div>
-                  <span className="text-slate-500 text-[10px] block">ชื่อ-นามสกุล:</span>
-                  <span className="font-bold text-slate-950 text-sm">
-                    {patient.firstName} {patient.lastName}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px] block">HN:</span>
-                  <span className="font-bold font-mono text-chunjai-700">{patient.hn}</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px] block">เลขประจำตัวประชาชน:</span>
-                  <span className="font-mono font-bold text-slate-900">
-                    {patient.nationalId || "ไม่ระบุ"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px] block">เพศ / เบอร์โทร:</span>
-                  <span className="font-bold text-slate-900">
-                    {patient.gender === "MALE" ? "ชาย" : "หญิง"} · {patient.phoneNumber}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-slate-500 text-[10px] block">ที่อยู่ตามทะเบียน:</span>
-                  <span className="text-slate-900">{patient.address || "ไม่ระบุ"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Vitals & SOAP Summary */}
-            <div className="space-y-2">
-              <h3 className="font-bold text-slate-900 text-xs flex items-center gap-1.5 border-b border-slate-200 pb-1">
-                <FileText className="h-4 w-4 text-chunjai-600" />
-                2. สรุปประวัติและสัญญาณชีพเบื้องต้น (Clinical History & Vitals)
-              </h3>
-              <div className="pl-2 space-y-2">
-                {vitals && (
-                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs font-mono">
-                    BP: <strong>{vitals.systolicBp}/{vitals.diastolicBp} mmHg</strong> · PR: <strong>{vitals.pulseRate} bpm</strong> · Temp: <strong>{vitals.temperatureC} °C</strong> · BMI: <strong>{vitals.bmi}</strong>
-                  </div>
-                )}
-
-                {referral.diagnosisSummary && (
-                  <div>
-                    <span className="text-slate-500 text-[10px] block font-bold">การวินิจฉัยโรคเบื้องต้น:</span>
-                    <p className="font-semibold text-slate-900 bg-amber-50/60 p-2.5 rounded border border-amber-200">
-                      {referral.diagnosisSummary}
-                    </p>
-                  </div>
-                )}
-
-                {soap?.subjective && (
-                  <div>
-                    <span className="text-slate-500 text-[10px] block">อาการสำคัญ (Chief Complaint):</span>
-                    <p className="text-slate-800">{soap.subjective}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Reason for Referral */}
-            <div className="space-y-2">
-              <h3 className="font-bold text-slate-900 text-xs flex items-center gap-1.5 border-b border-slate-200 pb-1">
-                <Send className="h-4 w-4 text-chunjai-600" />
-                3. เหตุผลและจุดประสงค์ในการส่งตัว (Reason for Referral)
-              </h3>
-              <div className="pl-2">
-                <p className="font-bold text-chunjai-950 bg-chunjai-50 p-3 rounded-lg border border-chunjai-200 text-sm">
-                  {referral.reason}
-                </p>
-              </div>
-            </div>
-
-            {/* Doctor Signature */}
-            <div className="border-t border-slate-300 pt-8 flex justify-between items-end">
-              <div className="text-[10px] text-slate-500">
-                <p>* เอกสารส่งตัวฉบับนี้ออกโดยระบบบริหารจัดการคลินิก ชุมใจ (Chunjai)</p>
-                <p className="font-mono">Ref ID: {referral.id}</p>
-              </div>
-
-              <div className="text-center space-y-1">
-                <div className="w-48 border-b border-slate-400 mx-auto"></div>
-                <p className="font-bold text-slate-950">แพทย์ผู้ตรวจและส่งตัวผู้ป่วย</p>
-                <p className="text-[10px] text-slate-500">ชุมใจคลินิกเวชกรรม</p>
-              </div>
-            </div>
+        {/* Bottom Control Bar */}
+        <div className="flex items-center justify-between border-t border-slate-200 px-6 py-3 bg-white text-xs text-slate-500 shrink-0">
+          <div className="flex items-center gap-1.5 font-medium">
+            <Eye className="h-3.5 w-3.5 text-slate-400" />
+            <span>ตัวอย่างเอกสารฟอนต์สารบรรณ (TH Sarabun) ขนาด A4</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-xs font-medium text-slate-600 hover:text-slate-900"
+            >
+              ปิดหน้าต่าง
+            </Button>
           </div>
         </div>
       </div>

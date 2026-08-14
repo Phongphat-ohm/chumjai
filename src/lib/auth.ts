@@ -63,7 +63,7 @@ export async function decryptSession(
 
 export async function setSessionCookie(payload: UserSessionPayload) {
   const token = await encryptSession(payload);
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
@@ -75,7 +75,7 @@ export async function setSessionCookie(payload: UserSessionPayload) {
 }
 
 export async function getSession(): Promise<UserSessionPayload | null> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
 
@@ -83,7 +83,7 @@ export async function getSession(): Promise<UserSessionPayload | null> {
 }
 
 export async function clearSessionCookie() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
 

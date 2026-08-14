@@ -17,6 +17,11 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-kanit)", "Kanit", "var(--font-sarabun)", "sans-serif"],
+        kanit: ["var(--font-kanit)", "Kanit", "sans-serif"],
+        sarabun: ["var(--font-sarabun)", "TH Sarabun New", "TH Sarabun PSK", "Sarabun", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

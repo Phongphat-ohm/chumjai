@@ -79,6 +79,17 @@ export async function getPatientsAction(params: {
         include: {
           allergies: true,
           conditions: true,
+          visits: {
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            select: {
+              id: true,
+              visitNumber: true,
+              status: true,
+              chiefComplaint: true,
+              createdAt: true,
+            },
+          },
         },
       }),
       prisma.patient.count({ where }),
@@ -115,11 +126,29 @@ export async function getPatientDetailAction(id: string): Promise<ActionResult<a
         conditions: true,
         medications: true,
         visits: {
-          take: 5,
           orderBy: { createdAt: "desc" },
           include: {
             triageRecord: true,
-            consultation: true,
+            vitalSigns: {
+              take: 1,
+              orderBy: { createdAt: "desc" },
+            },
+            consultation: {
+              include: {
+                soapNote: true,
+                diagnoses: true,
+              },
+            },
+            prescription: {
+              include: {
+                items: {
+                  include: { drug: true },
+                },
+              },
+            },
+            labOrders: {
+              include: { results: true },
+            },
           },
         },
       },
@@ -143,6 +172,83 @@ export async function getPatientDetailAction(id: string): Promise<ActionResult<a
     return { success: true, data: patient };
   } catch (error: any) {
     return { success: false, error: error.message || "เกิดข้อผิดพลาดในการดึงข้อมูล" };
+  }
+}
+
+// ----------------------------------------------------
+// Action 2.1: Verify Patient Identity for PDPA & Full Visit Access
+// ----------------------------------------------------
+export async function verifyPatientIdentityAction(
+  patientId: string,
+  last4Digits: string
+): Promise<ActionResult<{ verified: boolean }>> {
+  try {
+    const session = await requirePermission("PATIENT_VIEW");
+
+    if (!last4Digits || last4Digits.trim().length !== 4) {
+      return { success: false, error: "กรุณากรอกเลขยืนยันตัวตน 4 หลักให้ครบถ้วน" };
+    }
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: {
+        id: true,
+        nationalId: true,
+        phoneNumber: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
+
+    if (!patient) {
+      return { success: false, error: "ไม่พบข้อมูลผู้ป่วยในระบบ" };
+    }
+
+    // Clean patient identifiers (remove hyphens, spaces)
+    const cleanNationalId = (patient.nationalId || "").replace(/[^0-9a-zA-Z]/g, "");
+    const cleanPhone = (patient.phoneNumber || "").replace(/[^0-9]/g, "");
+
+    const expectedLast4NatId = cleanNationalId.slice(-4);
+    const expectedLast4Phone = cleanPhone.slice(-4);
+    const inputClean = last4Digits.trim();
+
+    const isMatch =
+      (expectedLast4NatId.length === 4 && inputClean === expectedLast4NatId) ||
+      (!cleanNationalId && expectedLast4Phone.length === 4 && inputClean === expectedLast4Phone);
+
+    if (isMatch) {
+      // Record Audit Log for successful verification
+      await prisma.auditLog.create({
+        data: {
+          userId: session.userId,
+          action: "PATIENT_PDPA_VERIFIED",
+          resourceType: "PATIENT",
+          resourceId: patientId,
+          success: true,
+        },
+      });
+
+      return { success: true, data: { verified: true } };
+    } else {
+      // Record Audit Log for failed attempt
+      await prisma.auditLog.create({
+        data: {
+          userId: session.userId,
+          action: "PATIENT_PDPA_VERIFY_FAILED",
+          resourceType: "PATIENT",
+          resourceId: patientId,
+          success: false,
+        },
+      });
+
+      return {
+        success: false,
+        error: "รหัส 4 ตัวท้ายไม่ถูกต้อง กรุณาตรวจสอบเลข 4 ตัวท้ายของบัตรประชาชนผู้ป่วย",
+      };
+    }
+  } catch (error: any) {
+    console.error("Error in verifyPatientIdentityAction:", error);
+    return { success: false, error: error.message || "เกิดข้อผิดพลาดในการยืนยันตัวตน" };
   }
 }
 
