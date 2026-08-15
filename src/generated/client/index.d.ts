@@ -74,6 +74,16 @@ export type QueueType = $Result.DefaultSelection<Prisma.$QueueTypePayload>
  */
 export type Queue = $Result.DefaultSelection<Prisma.$QueuePayload>
 /**
+ * Model ServiceStation
+ * 
+ */
+export type ServiceStation = $Result.DefaultSelection<Prisma.$ServiceStationPayload>
+/**
+ * Model StationSchedule
+ * 
+ */
+export type StationSchedule = $Result.DefaultSelection<Prisma.$StationSchedulePayload>
+/**
  * Model Consultation
  * 
  */
@@ -299,11 +309,23 @@ export const ReferralStatus: {
   PENDING: 'PENDING',
   SENT: 'SENT',
   ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED'
 };
 
 export type ReferralStatus = (typeof ReferralStatus)[keyof typeof ReferralStatus]
+
+
+export const StationType: {
+  TRIAGE: 'TRIAGE',
+  DOCTOR: 'DOCTOR',
+  PHARMACY: 'PHARMACY',
+  CASHIER: 'CASHIER',
+  LAB: 'LAB'
+};
+
+export type StationType = (typeof StationType)[keyof typeof StationType]
 
 }
 
@@ -354,6 +376,10 @@ export const LabOrderStatus: typeof $Enums.LabOrderStatus
 export type ReferralStatus = $Enums.ReferralStatus
 
 export const ReferralStatus: typeof $Enums.ReferralStatus
+
+export type StationType = $Enums.StationType
+
+export const StationType: typeof $Enums.StationType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -592,6 +618,26 @@ export class PrismaClient<
     * ```
     */
   get queue(): Prisma.QueueDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.serviceStation`: Exposes CRUD operations for the **ServiceStation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceStations
+    * const serviceStations = await prisma.serviceStation.findMany()
+    * ```
+    */
+  get serviceStation(): Prisma.ServiceStationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.stationSchedule`: Exposes CRUD operations for the **StationSchedule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StationSchedules
+    * const stationSchedules = await prisma.stationSchedule.findMany()
+    * ```
+    */
+  get stationSchedule(): Prisma.StationScheduleDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.consultation`: Exposes CRUD operations for the **Consultation** model.
@@ -1235,6 +1281,8 @@ export namespace Prisma {
     TriageRecord: 'TriageRecord',
     QueueType: 'QueueType',
     Queue: 'Queue',
+    ServiceStation: 'ServiceStation',
+    StationSchedule: 'StationSchedule',
     Consultation: 'Consultation',
     SoapNote: 'SoapNote',
     Diagnosis: 'Diagnosis',
@@ -1272,7 +1320,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "permission" | "userPermission" | "patient" | "patientAllergy" | "patientCondition" | "patientMedication" | "visit" | "vitalSign" | "triageRecord" | "queueType" | "queue" | "consultation" | "soapNote" | "diagnosis" | "drug" | "drugBatch" | "inventoryTransaction" | "prescription" | "prescriptionItem" | "dispensation" | "appointment" | "vaccine" | "vaccination" | "labOrder" | "labResult" | "referral" | "auditLog" | "notification" | "clinicSetting" | "systemSetting"
+      modelProps: "user" | "permission" | "userPermission" | "patient" | "patientAllergy" | "patientCondition" | "patientMedication" | "visit" | "vitalSign" | "triageRecord" | "queueType" | "queue" | "serviceStation" | "stationSchedule" | "consultation" | "soapNote" | "diagnosis" | "drug" | "drugBatch" | "inventoryTransaction" | "prescription" | "prescriptionItem" | "dispensation" | "appointment" | "vaccine" | "vaccination" | "labOrder" | "labResult" | "referral" | "auditLog" | "notification" | "clinicSetting" | "systemSetting"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2161,6 +2209,154 @@ export namespace Prisma {
           count: {
             args: Prisma.QueueCountArgs<ExtArgs>
             result: $Utils.Optional<QueueCountAggregateOutputType> | number
+          }
+        }
+      }
+      ServiceStation: {
+        payload: Prisma.$ServiceStationPayload<ExtArgs>
+        fields: Prisma.ServiceStationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ServiceStationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ServiceStationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          findFirst: {
+            args: Prisma.ServiceStationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ServiceStationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          findMany: {
+            args: Prisma.ServiceStationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>[]
+          }
+          create: {
+            args: Prisma.ServiceStationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          createMany: {
+            args: Prisma.ServiceStationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ServiceStationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>[]
+          }
+          delete: {
+            args: Prisma.ServiceStationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          update: {
+            args: Prisma.ServiceStationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          deleteMany: {
+            args: Prisma.ServiceStationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ServiceStationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ServiceStationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>[]
+          }
+          upsert: {
+            args: Prisma.ServiceStationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceStationPayload>
+          }
+          aggregate: {
+            args: Prisma.ServiceStationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateServiceStation>
+          }
+          groupBy: {
+            args: Prisma.ServiceStationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ServiceStationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ServiceStationCountArgs<ExtArgs>
+            result: $Utils.Optional<ServiceStationCountAggregateOutputType> | number
+          }
+        }
+      }
+      StationSchedule: {
+        payload: Prisma.$StationSchedulePayload<ExtArgs>
+        fields: Prisma.StationScheduleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StationScheduleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StationScheduleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          findFirst: {
+            args: Prisma.StationScheduleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StationScheduleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          findMany: {
+            args: Prisma.StationScheduleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>[]
+          }
+          create: {
+            args: Prisma.StationScheduleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          createMany: {
+            args: Prisma.StationScheduleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StationScheduleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>[]
+          }
+          delete: {
+            args: Prisma.StationScheduleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          update: {
+            args: Prisma.StationScheduleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          deleteMany: {
+            args: Prisma.StationScheduleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StationScheduleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StationScheduleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>[]
+          }
+          upsert: {
+            args: Prisma.StationScheduleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StationSchedulePayload>
+          }
+          aggregate: {
+            args: Prisma.StationScheduleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStationSchedule>
+          }
+          groupBy: {
+            args: Prisma.StationScheduleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StationScheduleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StationScheduleCountArgs<ExtArgs>
+            result: $Utils.Optional<StationScheduleCountAggregateOutputType> | number
           }
         }
       }
@@ -3678,6 +3874,8 @@ export namespace Prisma {
     triageRecord?: TriageRecordOmit
     queueType?: QueueTypeOmit
     queue?: QueueOmit
+    serviceStation?: ServiceStationOmit
+    stationSchedule?: StationScheduleOmit
     consultation?: ConsultationOmit
     soapNote?: SoapNoteOmit
     diagnosis?: DiagnosisOmit
@@ -3786,6 +3984,9 @@ export namespace Prisma {
     auditLogs: number
     inventoryTx: number
     vaccinationsGiven: number
+    activeStations: number
+    scheduledShifts: number
+    createdSchedules: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3798,6 +3999,9 @@ export namespace Prisma {
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
     inventoryTx?: boolean | UserCountOutputTypeCountInventoryTxArgs
     vaccinationsGiven?: boolean | UserCountOutputTypeCountVaccinationsGivenArgs
+    activeStations?: boolean | UserCountOutputTypeCountActiveStationsArgs
+    scheduledShifts?: boolean | UserCountOutputTypeCountScheduledShiftsArgs
+    createdSchedules?: boolean | UserCountOutputTypeCountCreatedSchedulesArgs
   }
 
   // Custom InputTypes
@@ -3872,6 +4076,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountVaccinationsGivenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VaccinationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountActiveStationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceStationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountScheduledShiftsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StationScheduleWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedSchedulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StationScheduleWhereInput
   }
 
 
@@ -4085,6 +4310,46 @@ export namespace Prisma {
    * QueueTypeCountOutputType without action
    */
   export type QueueTypeCountOutputTypeCountQueuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QueueWhereInput
+  }
+
+
+  /**
+   * Count Type ServiceStationCountOutputType
+   */
+
+  export type ServiceStationCountOutputType = {
+    schedules: number
+    queues: number
+  }
+
+  export type ServiceStationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    schedules?: boolean | ServiceStationCountOutputTypeCountSchedulesArgs
+    queues?: boolean | ServiceStationCountOutputTypeCountQueuesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ServiceStationCountOutputType without action
+   */
+  export type ServiceStationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStationCountOutputType
+     */
+    select?: ServiceStationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ServiceStationCountOutputType without action
+   */
+  export type ServiceStationCountOutputTypeCountSchedulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StationScheduleWhereInput
+  }
+
+  /**
+   * ServiceStationCountOutputType without action
+   */
+  export type ServiceStationCountOutputTypeCountQueuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: QueueWhereInput
   }
 
@@ -4488,6 +4753,9 @@ export namespace Prisma {
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     inventoryTx?: boolean | User$inventoryTxArgs<ExtArgs>
     vaccinationsGiven?: boolean | User$vaccinationsGivenArgs<ExtArgs>
+    activeStations?: boolean | User$activeStationsArgs<ExtArgs>
+    scheduledShifts?: boolean | User$scheduledShiftsArgs<ExtArgs>
+    createdSchedules?: boolean | User$createdSchedulesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4545,6 +4813,9 @@ export namespace Prisma {
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     inventoryTx?: boolean | User$inventoryTxArgs<ExtArgs>
     vaccinationsGiven?: boolean | User$vaccinationsGivenArgs<ExtArgs>
+    activeStations?: boolean | User$activeStationsArgs<ExtArgs>
+    scheduledShifts?: boolean | User$scheduledShiftsArgs<ExtArgs>
+    createdSchedules?: boolean | User$createdSchedulesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4563,6 +4834,9 @@ export namespace Prisma {
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
       inventoryTx: Prisma.$InventoryTransactionPayload<ExtArgs>[]
       vaccinationsGiven: Prisma.$VaccinationPayload<ExtArgs>[]
+      activeStations: Prisma.$ServiceStationPayload<ExtArgs>[]
+      scheduledShifts: Prisma.$StationSchedulePayload<ExtArgs>[]
+      createdSchedules: Prisma.$StationSchedulePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4980,6 +5254,9 @@ export namespace Prisma {
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     inventoryTx<T extends User$inventoryTxArgs<ExtArgs> = {}>(args?: Subset<T, User$inventoryTxArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     vaccinationsGiven<T extends User$vaccinationsGivenArgs<ExtArgs> = {}>(args?: Subset<T, User$vaccinationsGivenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VaccinationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activeStations<T extends User$activeStationsArgs<ExtArgs> = {}>(args?: Subset<T, User$activeStationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    scheduledShifts<T extends User$scheduledShiftsArgs<ExtArgs> = {}>(args?: Subset<T, User$scheduledShiftsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdSchedules<T extends User$createdSchedulesArgs<ExtArgs> = {}>(args?: Subset<T, User$createdSchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5640,6 +5917,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: VaccinationScalarFieldEnum | VaccinationScalarFieldEnum[]
+  }
+
+  /**
+   * User.activeStations
+   */
+  export type User$activeStationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    where?: ServiceStationWhereInput
+    orderBy?: ServiceStationOrderByWithRelationInput | ServiceStationOrderByWithRelationInput[]
+    cursor?: ServiceStationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceStationScalarFieldEnum | ServiceStationScalarFieldEnum[]
+  }
+
+  /**
+   * User.scheduledShifts
+   */
+  export type User$scheduledShiftsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    where?: StationScheduleWhereInput
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    cursor?: StationScheduleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * User.createdSchedules
+   */
+  export type User$createdSchedulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    where?: StationScheduleWhereInput
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    cursor?: StationScheduleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
   }
 
   /**
@@ -17310,6 +17659,7 @@ export namespace Prisma {
     queueNumber: string | null
     queueTypeId: string | null
     visitId: string | null
+    serviceStationId: string | null
     status: $Enums.QueueStatus | null
     calledAt: Date | null
     servedAt: Date | null
@@ -17323,6 +17673,7 @@ export namespace Prisma {
     queueNumber: string | null
     queueTypeId: string | null
     visitId: string | null
+    serviceStationId: string | null
     status: $Enums.QueueStatus | null
     calledAt: Date | null
     servedAt: Date | null
@@ -17336,6 +17687,7 @@ export namespace Prisma {
     queueNumber: number
     queueTypeId: number
     visitId: number
+    serviceStationId: number
     status: number
     calledAt: number
     servedAt: number
@@ -17351,6 +17703,7 @@ export namespace Prisma {
     queueNumber?: true
     queueTypeId?: true
     visitId?: true
+    serviceStationId?: true
     status?: true
     calledAt?: true
     servedAt?: true
@@ -17364,6 +17717,7 @@ export namespace Prisma {
     queueNumber?: true
     queueTypeId?: true
     visitId?: true
+    serviceStationId?: true
     status?: true
     calledAt?: true
     servedAt?: true
@@ -17377,6 +17731,7 @@ export namespace Prisma {
     queueNumber?: true
     queueTypeId?: true
     visitId?: true
+    serviceStationId?: true
     status?: true
     calledAt?: true
     servedAt?: true
@@ -17463,6 +17818,7 @@ export namespace Prisma {
     queueNumber: string
     queueTypeId: string
     visitId: string
+    serviceStationId: string | null
     status: $Enums.QueueStatus
     calledAt: Date | null
     servedAt: Date | null
@@ -17493,6 +17849,7 @@ export namespace Prisma {
     queueNumber?: boolean
     queueTypeId?: boolean
     visitId?: boolean
+    serviceStationId?: boolean
     status?: boolean
     calledAt?: boolean
     servedAt?: boolean
@@ -17501,6 +17858,7 @@ export namespace Prisma {
     updatedAt?: boolean
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }, ExtArgs["result"]["queue"]>
 
   export type QueueSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17508,6 +17866,7 @@ export namespace Prisma {
     queueNumber?: boolean
     queueTypeId?: boolean
     visitId?: boolean
+    serviceStationId?: boolean
     status?: boolean
     calledAt?: boolean
     servedAt?: boolean
@@ -17516,6 +17875,7 @@ export namespace Prisma {
     updatedAt?: boolean
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }, ExtArgs["result"]["queue"]>
 
   export type QueueSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17523,6 +17883,7 @@ export namespace Prisma {
     queueNumber?: boolean
     queueTypeId?: boolean
     visitId?: boolean
+    serviceStationId?: boolean
     status?: boolean
     calledAt?: boolean
     servedAt?: boolean
@@ -17531,6 +17892,7 @@ export namespace Prisma {
     updatedAt?: boolean
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }, ExtArgs["result"]["queue"]>
 
   export type QueueSelectScalar = {
@@ -17538,6 +17900,7 @@ export namespace Prisma {
     queueNumber?: boolean
     queueTypeId?: boolean
     visitId?: boolean
+    serviceStationId?: boolean
     status?: boolean
     calledAt?: boolean
     servedAt?: boolean
@@ -17546,18 +17909,21 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type QueueOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "queueNumber" | "queueTypeId" | "visitId" | "status" | "calledAt" | "servedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["queue"]>
+  export type QueueOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "queueNumber" | "queueTypeId" | "visitId" | "serviceStationId" | "status" | "calledAt" | "servedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["queue"]>
   export type QueueInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }
   export type QueueIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }
   export type QueueIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     queueType?: boolean | QueueTypeDefaultArgs<ExtArgs>
     visit?: boolean | VisitDefaultArgs<ExtArgs>
+    serviceStation?: boolean | Queue$serviceStationArgs<ExtArgs>
   }
 
   export type $QueuePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17565,12 +17931,14 @@ export namespace Prisma {
     objects: {
       queueType: Prisma.$QueueTypePayload<ExtArgs>
       visit: Prisma.$VisitPayload<ExtArgs>
+      serviceStation: Prisma.$ServiceStationPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       queueNumber: string
       queueTypeId: string
       visitId: string
+      serviceStationId: string | null
       status: $Enums.QueueStatus
       calledAt: Date | null
       servedAt: Date | null
@@ -17973,6 +18341,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     queueType<T extends QueueTypeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, QueueTypeDefaultArgs<ExtArgs>>): Prisma__QueueTypeClient<$Result.GetResult<Prisma.$QueueTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     visit<T extends VisitDefaultArgs<ExtArgs> = {}>(args?: Subset<T, VisitDefaultArgs<ExtArgs>>): Prisma__VisitClient<$Result.GetResult<Prisma.$VisitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    serviceStation<T extends Queue$serviceStationArgs<ExtArgs> = {}>(args?: Subset<T, Queue$serviceStationArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18006,6 +18375,7 @@ export namespace Prisma {
     readonly queueNumber: FieldRef<"Queue", 'String'>
     readonly queueTypeId: FieldRef<"Queue", 'String'>
     readonly visitId: FieldRef<"Queue", 'String'>
+    readonly serviceStationId: FieldRef<"Queue", 'String'>
     readonly status: FieldRef<"Queue", 'QueueStatus'>
     readonly calledAt: FieldRef<"Queue", 'DateTime'>
     readonly servedAt: FieldRef<"Queue", 'DateTime'>
@@ -18408,6 +18778,25 @@ export namespace Prisma {
   }
 
   /**
+   * Queue.serviceStation
+   */
+  export type Queue$serviceStationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    where?: ServiceStationWhereInput
+  }
+
+  /**
    * Queue without action
    */
   export type QueueDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18423,6 +18812,2392 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: QueueInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ServiceStation
+   */
+
+  export type AggregateServiceStation = {
+    _count: ServiceStationCountAggregateOutputType | null
+    _avg: ServiceStationAvgAggregateOutputType | null
+    _sum: ServiceStationSumAggregateOutputType | null
+    _min: ServiceStationMinAggregateOutputType | null
+    _max: ServiceStationMaxAggregateOutputType | null
+  }
+
+  export type ServiceStationAvgAggregateOutputType = {
+    stationNumber: number | null
+  }
+
+  export type ServiceStationSumAggregateOutputType = {
+    stationNumber: number | null
+  }
+
+  export type ServiceStationMinAggregateOutputType = {
+    id: string | null
+    code: string | null
+    name: string | null
+    stationNumber: number | null
+    type: $Enums.StationType | null
+    isActive: boolean | null
+    activeUserId: string | null
+    isLocked: boolean | null
+    occupiedUntil: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ServiceStationMaxAggregateOutputType = {
+    id: string | null
+    code: string | null
+    name: string | null
+    stationNumber: number | null
+    type: $Enums.StationType | null
+    isActive: boolean | null
+    activeUserId: string | null
+    isLocked: boolean | null
+    occupiedUntil: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ServiceStationCountAggregateOutputType = {
+    id: number
+    code: number
+    name: number
+    stationNumber: number
+    type: number
+    isActive: number
+    activeUserId: number
+    isLocked: number
+    occupiedUntil: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ServiceStationAvgAggregateInputType = {
+    stationNumber?: true
+  }
+
+  export type ServiceStationSumAggregateInputType = {
+    stationNumber?: true
+  }
+
+  export type ServiceStationMinAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    stationNumber?: true
+    type?: true
+    isActive?: true
+    activeUserId?: true
+    isLocked?: true
+    occupiedUntil?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ServiceStationMaxAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    stationNumber?: true
+    type?: true
+    isActive?: true
+    activeUserId?: true
+    isLocked?: true
+    occupiedUntil?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ServiceStationCountAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    stationNumber?: true
+    type?: true
+    isActive?: true
+    activeUserId?: true
+    isLocked?: true
+    occupiedUntil?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ServiceStationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceStation to aggregate.
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceStations to fetch.
+     */
+    orderBy?: ServiceStationOrderByWithRelationInput | ServiceStationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ServiceStationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceStations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceStations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ServiceStations
+    **/
+    _count?: true | ServiceStationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ServiceStationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ServiceStationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ServiceStationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ServiceStationMaxAggregateInputType
+  }
+
+  export type GetServiceStationAggregateType<T extends ServiceStationAggregateArgs> = {
+        [P in keyof T & keyof AggregateServiceStation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateServiceStation[P]>
+      : GetScalarType<T[P], AggregateServiceStation[P]>
+  }
+
+
+
+
+  export type ServiceStationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceStationWhereInput
+    orderBy?: ServiceStationOrderByWithAggregationInput | ServiceStationOrderByWithAggregationInput[]
+    by: ServiceStationScalarFieldEnum[] | ServiceStationScalarFieldEnum
+    having?: ServiceStationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ServiceStationCountAggregateInputType | true
+    _avg?: ServiceStationAvgAggregateInputType
+    _sum?: ServiceStationSumAggregateInputType
+    _min?: ServiceStationMinAggregateInputType
+    _max?: ServiceStationMaxAggregateInputType
+  }
+
+  export type ServiceStationGroupByOutputType = {
+    id: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive: boolean
+    activeUserId: string | null
+    isLocked: boolean
+    occupiedUntil: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ServiceStationCountAggregateOutputType | null
+    _avg: ServiceStationAvgAggregateOutputType | null
+    _sum: ServiceStationSumAggregateOutputType | null
+    _min: ServiceStationMinAggregateOutputType | null
+    _max: ServiceStationMaxAggregateOutputType | null
+  }
+
+  type GetServiceStationGroupByPayload<T extends ServiceStationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ServiceStationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ServiceStationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ServiceStationGroupByOutputType[P]>
+            : GetScalarType<T[P], ServiceStationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ServiceStationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    stationNumber?: boolean
+    type?: boolean
+    isActive?: boolean
+    activeUserId?: boolean
+    isLocked?: boolean
+    occupiedUntil?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+    schedules?: boolean | ServiceStation$schedulesArgs<ExtArgs>
+    queues?: boolean | ServiceStation$queuesArgs<ExtArgs>
+    _count?: boolean | ServiceStationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceStation"]>
+
+  export type ServiceStationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    stationNumber?: boolean
+    type?: boolean
+    isActive?: boolean
+    activeUserId?: boolean
+    isLocked?: boolean
+    occupiedUntil?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceStation"]>
+
+  export type ServiceStationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    stationNumber?: boolean
+    type?: boolean
+    isActive?: boolean
+    activeUserId?: boolean
+    isLocked?: boolean
+    occupiedUntil?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceStation"]>
+
+  export type ServiceStationSelectScalar = {
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    stationNumber?: boolean
+    type?: boolean
+    isActive?: boolean
+    activeUserId?: boolean
+    isLocked?: boolean
+    occupiedUntil?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ServiceStationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "stationNumber" | "type" | "isActive" | "activeUserId" | "isLocked" | "occupiedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["serviceStation"]>
+  export type ServiceStationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+    schedules?: boolean | ServiceStation$schedulesArgs<ExtArgs>
+    queues?: boolean | ServiceStation$queuesArgs<ExtArgs>
+    _count?: boolean | ServiceStationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ServiceStationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+  }
+  export type ServiceStationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    activeUser?: boolean | ServiceStation$activeUserArgs<ExtArgs>
+  }
+
+  export type $ServiceStationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ServiceStation"
+    objects: {
+      activeUser: Prisma.$UserPayload<ExtArgs> | null
+      schedules: Prisma.$StationSchedulePayload<ExtArgs>[]
+      queues: Prisma.$QueuePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      code: string
+      name: string
+      stationNumber: number
+      type: $Enums.StationType
+      isActive: boolean
+      activeUserId: string | null
+      isLocked: boolean
+      occupiedUntil: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["serviceStation"]>
+    composites: {}
+  }
+
+  type ServiceStationGetPayload<S extends boolean | null | undefined | ServiceStationDefaultArgs> = $Result.GetResult<Prisma.$ServiceStationPayload, S>
+
+  type ServiceStationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ServiceStationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ServiceStationCountAggregateInputType | true
+    }
+
+  export interface ServiceStationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ServiceStation'], meta: { name: 'ServiceStation' } }
+    /**
+     * Find zero or one ServiceStation that matches the filter.
+     * @param {ServiceStationFindUniqueArgs} args - Arguments to find a ServiceStation
+     * @example
+     * // Get one ServiceStation
+     * const serviceStation = await prisma.serviceStation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ServiceStationFindUniqueArgs>(args: SelectSubset<T, ServiceStationFindUniqueArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ServiceStation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ServiceStationFindUniqueOrThrowArgs} args - Arguments to find a ServiceStation
+     * @example
+     * // Get one ServiceStation
+     * const serviceStation = await prisma.serviceStation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ServiceStationFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceStationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceStation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationFindFirstArgs} args - Arguments to find a ServiceStation
+     * @example
+     * // Get one ServiceStation
+     * const serviceStation = await prisma.serviceStation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ServiceStationFindFirstArgs>(args?: SelectSubset<T, ServiceStationFindFirstArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceStation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationFindFirstOrThrowArgs} args - Arguments to find a ServiceStation
+     * @example
+     * // Get one ServiceStation
+     * const serviceStation = await prisma.serviceStation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ServiceStationFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceStationFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ServiceStations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ServiceStations
+     * const serviceStations = await prisma.serviceStation.findMany()
+     * 
+     * // Get first 10 ServiceStations
+     * const serviceStations = await prisma.serviceStation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const serviceStationWithIdOnly = await prisma.serviceStation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ServiceStationFindManyArgs>(args?: SelectSubset<T, ServiceStationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ServiceStation.
+     * @param {ServiceStationCreateArgs} args - Arguments to create a ServiceStation.
+     * @example
+     * // Create one ServiceStation
+     * const ServiceStation = await prisma.serviceStation.create({
+     *   data: {
+     *     // ... data to create a ServiceStation
+     *   }
+     * })
+     * 
+     */
+    create<T extends ServiceStationCreateArgs>(args: SelectSubset<T, ServiceStationCreateArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ServiceStations.
+     * @param {ServiceStationCreateManyArgs} args - Arguments to create many ServiceStations.
+     * @example
+     * // Create many ServiceStations
+     * const serviceStation = await prisma.serviceStation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ServiceStationCreateManyArgs>(args?: SelectSubset<T, ServiceStationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ServiceStations and returns the data saved in the database.
+     * @param {ServiceStationCreateManyAndReturnArgs} args - Arguments to create many ServiceStations.
+     * @example
+     * // Create many ServiceStations
+     * const serviceStation = await prisma.serviceStation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ServiceStations and only return the `id`
+     * const serviceStationWithIdOnly = await prisma.serviceStation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ServiceStationCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceStationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ServiceStation.
+     * @param {ServiceStationDeleteArgs} args - Arguments to delete one ServiceStation.
+     * @example
+     * // Delete one ServiceStation
+     * const ServiceStation = await prisma.serviceStation.delete({
+     *   where: {
+     *     // ... filter to delete one ServiceStation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ServiceStationDeleteArgs>(args: SelectSubset<T, ServiceStationDeleteArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ServiceStation.
+     * @param {ServiceStationUpdateArgs} args - Arguments to update one ServiceStation.
+     * @example
+     * // Update one ServiceStation
+     * const serviceStation = await prisma.serviceStation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ServiceStationUpdateArgs>(args: SelectSubset<T, ServiceStationUpdateArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ServiceStations.
+     * @param {ServiceStationDeleteManyArgs} args - Arguments to filter ServiceStations to delete.
+     * @example
+     * // Delete a few ServiceStations
+     * const { count } = await prisma.serviceStation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ServiceStationDeleteManyArgs>(args?: SelectSubset<T, ServiceStationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceStations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ServiceStations
+     * const serviceStation = await prisma.serviceStation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ServiceStationUpdateManyArgs>(args: SelectSubset<T, ServiceStationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceStations and returns the data updated in the database.
+     * @param {ServiceStationUpdateManyAndReturnArgs} args - Arguments to update many ServiceStations.
+     * @example
+     * // Update many ServiceStations
+     * const serviceStation = await prisma.serviceStation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ServiceStations and only return the `id`
+     * const serviceStationWithIdOnly = await prisma.serviceStation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ServiceStationUpdateManyAndReturnArgs>(args: SelectSubset<T, ServiceStationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ServiceStation.
+     * @param {ServiceStationUpsertArgs} args - Arguments to update or create a ServiceStation.
+     * @example
+     * // Update or create a ServiceStation
+     * const serviceStation = await prisma.serviceStation.upsert({
+     *   create: {
+     *     // ... data to create a ServiceStation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ServiceStation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ServiceStationUpsertArgs>(args: SelectSubset<T, ServiceStationUpsertArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ServiceStations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationCountArgs} args - Arguments to filter ServiceStations to count.
+     * @example
+     * // Count the number of ServiceStations
+     * const count = await prisma.serviceStation.count({
+     *   where: {
+     *     // ... the filter for the ServiceStations we want to count
+     *   }
+     * })
+    **/
+    count<T extends ServiceStationCountArgs>(
+      args?: Subset<T, ServiceStationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ServiceStationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ServiceStation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ServiceStationAggregateArgs>(args: Subset<T, ServiceStationAggregateArgs>): Prisma.PrismaPromise<GetServiceStationAggregateType<T>>
+
+    /**
+     * Group by ServiceStation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceStationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ServiceStationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ServiceStationGroupByArgs['orderBy'] }
+        : { orderBy?: ServiceStationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ServiceStationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceStationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ServiceStation model
+   */
+  readonly fields: ServiceStationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ServiceStation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ServiceStationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    activeUser<T extends ServiceStation$activeUserArgs<ExtArgs> = {}>(args?: Subset<T, ServiceStation$activeUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    schedules<T extends ServiceStation$schedulesArgs<ExtArgs> = {}>(args?: Subset<T, ServiceStation$schedulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    queues<T extends ServiceStation$queuesArgs<ExtArgs> = {}>(args?: Subset<T, ServiceStation$queuesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ServiceStation model
+   */
+  interface ServiceStationFieldRefs {
+    readonly id: FieldRef<"ServiceStation", 'String'>
+    readonly code: FieldRef<"ServiceStation", 'String'>
+    readonly name: FieldRef<"ServiceStation", 'String'>
+    readonly stationNumber: FieldRef<"ServiceStation", 'Int'>
+    readonly type: FieldRef<"ServiceStation", 'StationType'>
+    readonly isActive: FieldRef<"ServiceStation", 'Boolean'>
+    readonly activeUserId: FieldRef<"ServiceStation", 'String'>
+    readonly isLocked: FieldRef<"ServiceStation", 'Boolean'>
+    readonly occupiedUntil: FieldRef<"ServiceStation", 'DateTime'>
+    readonly createdAt: FieldRef<"ServiceStation", 'DateTime'>
+    readonly updatedAt: FieldRef<"ServiceStation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ServiceStation findUnique
+   */
+  export type ServiceStationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceStation to fetch.
+     */
+    where: ServiceStationWhereUniqueInput
+  }
+
+  /**
+   * ServiceStation findUniqueOrThrow
+   */
+  export type ServiceStationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceStation to fetch.
+     */
+    where: ServiceStationWhereUniqueInput
+  }
+
+  /**
+   * ServiceStation findFirst
+   */
+  export type ServiceStationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceStation to fetch.
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceStations to fetch.
+     */
+    orderBy?: ServiceStationOrderByWithRelationInput | ServiceStationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceStations.
+     */
+    cursor?: ServiceStationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceStations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceStations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceStations.
+     */
+    distinct?: ServiceStationScalarFieldEnum | ServiceStationScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceStation findFirstOrThrow
+   */
+  export type ServiceStationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceStation to fetch.
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceStations to fetch.
+     */
+    orderBy?: ServiceStationOrderByWithRelationInput | ServiceStationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceStations.
+     */
+    cursor?: ServiceStationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceStations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceStations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceStations.
+     */
+    distinct?: ServiceStationScalarFieldEnum | ServiceStationScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceStation findMany
+   */
+  export type ServiceStationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceStations to fetch.
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceStations to fetch.
+     */
+    orderBy?: ServiceStationOrderByWithRelationInput | ServiceStationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ServiceStations.
+     */
+    cursor?: ServiceStationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceStations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceStations.
+     */
+    skip?: number
+    distinct?: ServiceStationScalarFieldEnum | ServiceStationScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceStation create
+   */
+  export type ServiceStationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ServiceStation.
+     */
+    data: XOR<ServiceStationCreateInput, ServiceStationUncheckedCreateInput>
+  }
+
+  /**
+   * ServiceStation createMany
+   */
+  export type ServiceStationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ServiceStations.
+     */
+    data: ServiceStationCreateManyInput | ServiceStationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceStation createManyAndReturn
+   */
+  export type ServiceStationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * The data used to create many ServiceStations.
+     */
+    data: ServiceStationCreateManyInput | ServiceStationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceStation update
+   */
+  export type ServiceStationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ServiceStation.
+     */
+    data: XOR<ServiceStationUpdateInput, ServiceStationUncheckedUpdateInput>
+    /**
+     * Choose, which ServiceStation to update.
+     */
+    where: ServiceStationWhereUniqueInput
+  }
+
+  /**
+   * ServiceStation updateMany
+   */
+  export type ServiceStationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ServiceStations.
+     */
+    data: XOR<ServiceStationUpdateManyMutationInput, ServiceStationUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceStations to update
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * Limit how many ServiceStations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceStation updateManyAndReturn
+   */
+  export type ServiceStationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * The data used to update ServiceStations.
+     */
+    data: XOR<ServiceStationUpdateManyMutationInput, ServiceStationUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceStations to update
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * Limit how many ServiceStations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceStation upsert
+   */
+  export type ServiceStationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ServiceStation to update in case it exists.
+     */
+    where: ServiceStationWhereUniqueInput
+    /**
+     * In case the ServiceStation found by the `where` argument doesn't exist, create a new ServiceStation with this data.
+     */
+    create: XOR<ServiceStationCreateInput, ServiceStationUncheckedCreateInput>
+    /**
+     * In case the ServiceStation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ServiceStationUpdateInput, ServiceStationUncheckedUpdateInput>
+  }
+
+  /**
+   * ServiceStation delete
+   */
+  export type ServiceStationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+    /**
+     * Filter which ServiceStation to delete.
+     */
+    where: ServiceStationWhereUniqueInput
+  }
+
+  /**
+   * ServiceStation deleteMany
+   */
+  export type ServiceStationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceStations to delete
+     */
+    where?: ServiceStationWhereInput
+    /**
+     * Limit how many ServiceStations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceStation.activeUser
+   */
+  export type ServiceStation$activeUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ServiceStation.schedules
+   */
+  export type ServiceStation$schedulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    where?: StationScheduleWhereInput
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    cursor?: StationScheduleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceStation.queues
+   */
+  export type ServiceStation$queuesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Queue
+     */
+    select?: QueueSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Queue
+     */
+    omit?: QueueOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QueueInclude<ExtArgs> | null
+    where?: QueueWhereInput
+    orderBy?: QueueOrderByWithRelationInput | QueueOrderByWithRelationInput[]
+    cursor?: QueueWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QueueScalarFieldEnum | QueueScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceStation without action
+   */
+  export type ServiceStationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceStation
+     */
+    select?: ServiceStationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceStation
+     */
+    omit?: ServiceStationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceStationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model StationSchedule
+   */
+
+  export type AggregateStationSchedule = {
+    _count: StationScheduleCountAggregateOutputType | null
+    _min: StationScheduleMinAggregateOutputType | null
+    _max: StationScheduleMaxAggregateOutputType | null
+  }
+
+  export type StationScheduleMinAggregateOutputType = {
+    id: string | null
+    serviceStationId: string | null
+    userId: string | null
+    startTime: Date | null
+    endTime: Date | null
+    isLocked: boolean | null
+    notes: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StationScheduleMaxAggregateOutputType = {
+    id: string | null
+    serviceStationId: string | null
+    userId: string | null
+    startTime: Date | null
+    endTime: Date | null
+    isLocked: boolean | null
+    notes: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StationScheduleCountAggregateOutputType = {
+    id: number
+    serviceStationId: number
+    userId: number
+    startTime: number
+    endTime: number
+    isLocked: number
+    notes: number
+    createdById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StationScheduleMinAggregateInputType = {
+    id?: true
+    serviceStationId?: true
+    userId?: true
+    startTime?: true
+    endTime?: true
+    isLocked?: true
+    notes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StationScheduleMaxAggregateInputType = {
+    id?: true
+    serviceStationId?: true
+    userId?: true
+    startTime?: true
+    endTime?: true
+    isLocked?: true
+    notes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StationScheduleCountAggregateInputType = {
+    id?: true
+    serviceStationId?: true
+    userId?: true
+    startTime?: true
+    endTime?: true
+    isLocked?: true
+    notes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StationScheduleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StationSchedule to aggregate.
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StationSchedules to fetch.
+     */
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StationSchedules
+    **/
+    _count?: true | StationScheduleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StationScheduleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StationScheduleMaxAggregateInputType
+  }
+
+  export type GetStationScheduleAggregateType<T extends StationScheduleAggregateArgs> = {
+        [P in keyof T & keyof AggregateStationSchedule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStationSchedule[P]>
+      : GetScalarType<T[P], AggregateStationSchedule[P]>
+  }
+
+
+
+
+  export type StationScheduleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StationScheduleWhereInput
+    orderBy?: StationScheduleOrderByWithAggregationInput | StationScheduleOrderByWithAggregationInput[]
+    by: StationScheduleScalarFieldEnum[] | StationScheduleScalarFieldEnum
+    having?: StationScheduleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StationScheduleCountAggregateInputType | true
+    _min?: StationScheduleMinAggregateInputType
+    _max?: StationScheduleMaxAggregateInputType
+  }
+
+  export type StationScheduleGroupByOutputType = {
+    id: string
+    serviceStationId: string
+    userId: string
+    startTime: Date
+    endTime: Date
+    isLocked: boolean
+    notes: string | null
+    createdById: string
+    createdAt: Date
+    updatedAt: Date
+    _count: StationScheduleCountAggregateOutputType | null
+    _min: StationScheduleMinAggregateOutputType | null
+    _max: StationScheduleMaxAggregateOutputType | null
+  }
+
+  type GetStationScheduleGroupByPayload<T extends StationScheduleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StationScheduleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StationScheduleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StationScheduleGroupByOutputType[P]>
+            : GetScalarType<T[P], StationScheduleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StationScheduleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceStationId?: boolean
+    userId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isLocked?: boolean
+    notes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stationSchedule"]>
+
+  export type StationScheduleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceStationId?: boolean
+    userId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isLocked?: boolean
+    notes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stationSchedule"]>
+
+  export type StationScheduleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceStationId?: boolean
+    userId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isLocked?: boolean
+    notes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stationSchedule"]>
+
+  export type StationScheduleSelectScalar = {
+    id?: boolean
+    serviceStationId?: boolean
+    userId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isLocked?: boolean
+    notes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StationScheduleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "serviceStationId" | "userId" | "startTime" | "endTime" | "isLocked" | "notes" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["stationSchedule"]>
+  export type StationScheduleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type StationScheduleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type StationScheduleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    serviceStation?: boolean | ServiceStationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $StationSchedulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StationSchedule"
+    objects: {
+      serviceStation: Prisma.$ServiceStationPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      serviceStationId: string
+      userId: string
+      startTime: Date
+      endTime: Date
+      isLocked: boolean
+      notes: string | null
+      createdById: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["stationSchedule"]>
+    composites: {}
+  }
+
+  type StationScheduleGetPayload<S extends boolean | null | undefined | StationScheduleDefaultArgs> = $Result.GetResult<Prisma.$StationSchedulePayload, S>
+
+  type StationScheduleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StationScheduleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StationScheduleCountAggregateInputType | true
+    }
+
+  export interface StationScheduleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StationSchedule'], meta: { name: 'StationSchedule' } }
+    /**
+     * Find zero or one StationSchedule that matches the filter.
+     * @param {StationScheduleFindUniqueArgs} args - Arguments to find a StationSchedule
+     * @example
+     * // Get one StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StationScheduleFindUniqueArgs>(args: SelectSubset<T, StationScheduleFindUniqueArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StationSchedule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StationScheduleFindUniqueOrThrowArgs} args - Arguments to find a StationSchedule
+     * @example
+     * // Get one StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StationScheduleFindUniqueOrThrowArgs>(args: SelectSubset<T, StationScheduleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StationSchedule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleFindFirstArgs} args - Arguments to find a StationSchedule
+     * @example
+     * // Get one StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StationScheduleFindFirstArgs>(args?: SelectSubset<T, StationScheduleFindFirstArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StationSchedule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleFindFirstOrThrowArgs} args - Arguments to find a StationSchedule
+     * @example
+     * // Get one StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StationScheduleFindFirstOrThrowArgs>(args?: SelectSubset<T, StationScheduleFindFirstOrThrowArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StationSchedules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StationSchedules
+     * const stationSchedules = await prisma.stationSchedule.findMany()
+     * 
+     * // Get first 10 StationSchedules
+     * const stationSchedules = await prisma.stationSchedule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const stationScheduleWithIdOnly = await prisma.stationSchedule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StationScheduleFindManyArgs>(args?: SelectSubset<T, StationScheduleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StationSchedule.
+     * @param {StationScheduleCreateArgs} args - Arguments to create a StationSchedule.
+     * @example
+     * // Create one StationSchedule
+     * const StationSchedule = await prisma.stationSchedule.create({
+     *   data: {
+     *     // ... data to create a StationSchedule
+     *   }
+     * })
+     * 
+     */
+    create<T extends StationScheduleCreateArgs>(args: SelectSubset<T, StationScheduleCreateArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StationSchedules.
+     * @param {StationScheduleCreateManyArgs} args - Arguments to create many StationSchedules.
+     * @example
+     * // Create many StationSchedules
+     * const stationSchedule = await prisma.stationSchedule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StationScheduleCreateManyArgs>(args?: SelectSubset<T, StationScheduleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StationSchedules and returns the data saved in the database.
+     * @param {StationScheduleCreateManyAndReturnArgs} args - Arguments to create many StationSchedules.
+     * @example
+     * // Create many StationSchedules
+     * const stationSchedule = await prisma.stationSchedule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StationSchedules and only return the `id`
+     * const stationScheduleWithIdOnly = await prisma.stationSchedule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StationScheduleCreateManyAndReturnArgs>(args?: SelectSubset<T, StationScheduleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StationSchedule.
+     * @param {StationScheduleDeleteArgs} args - Arguments to delete one StationSchedule.
+     * @example
+     * // Delete one StationSchedule
+     * const StationSchedule = await prisma.stationSchedule.delete({
+     *   where: {
+     *     // ... filter to delete one StationSchedule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StationScheduleDeleteArgs>(args: SelectSubset<T, StationScheduleDeleteArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StationSchedule.
+     * @param {StationScheduleUpdateArgs} args - Arguments to update one StationSchedule.
+     * @example
+     * // Update one StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StationScheduleUpdateArgs>(args: SelectSubset<T, StationScheduleUpdateArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StationSchedules.
+     * @param {StationScheduleDeleteManyArgs} args - Arguments to filter StationSchedules to delete.
+     * @example
+     * // Delete a few StationSchedules
+     * const { count } = await prisma.stationSchedule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StationScheduleDeleteManyArgs>(args?: SelectSubset<T, StationScheduleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StationSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StationSchedules
+     * const stationSchedule = await prisma.stationSchedule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StationScheduleUpdateManyArgs>(args: SelectSubset<T, StationScheduleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StationSchedules and returns the data updated in the database.
+     * @param {StationScheduleUpdateManyAndReturnArgs} args - Arguments to update many StationSchedules.
+     * @example
+     * // Update many StationSchedules
+     * const stationSchedule = await prisma.stationSchedule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StationSchedules and only return the `id`
+     * const stationScheduleWithIdOnly = await prisma.stationSchedule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StationScheduleUpdateManyAndReturnArgs>(args: SelectSubset<T, StationScheduleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StationSchedule.
+     * @param {StationScheduleUpsertArgs} args - Arguments to update or create a StationSchedule.
+     * @example
+     * // Update or create a StationSchedule
+     * const stationSchedule = await prisma.stationSchedule.upsert({
+     *   create: {
+     *     // ... data to create a StationSchedule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StationSchedule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StationScheduleUpsertArgs>(args: SelectSubset<T, StationScheduleUpsertArgs<ExtArgs>>): Prisma__StationScheduleClient<$Result.GetResult<Prisma.$StationSchedulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StationSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleCountArgs} args - Arguments to filter StationSchedules to count.
+     * @example
+     * // Count the number of StationSchedules
+     * const count = await prisma.stationSchedule.count({
+     *   where: {
+     *     // ... the filter for the StationSchedules we want to count
+     *   }
+     * })
+    **/
+    count<T extends StationScheduleCountArgs>(
+      args?: Subset<T, StationScheduleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StationScheduleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StationSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StationScheduleAggregateArgs>(args: Subset<T, StationScheduleAggregateArgs>): Prisma.PrismaPromise<GetStationScheduleAggregateType<T>>
+
+    /**
+     * Group by StationSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StationScheduleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StationScheduleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StationScheduleGroupByArgs['orderBy'] }
+        : { orderBy?: StationScheduleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StationScheduleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStationScheduleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StationSchedule model
+   */
+  readonly fields: StationScheduleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StationSchedule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StationScheduleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    serviceStation<T extends ServiceStationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceStationDefaultArgs<ExtArgs>>): Prisma__ServiceStationClient<$Result.GetResult<Prisma.$ServiceStationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StationSchedule model
+   */
+  interface StationScheduleFieldRefs {
+    readonly id: FieldRef<"StationSchedule", 'String'>
+    readonly serviceStationId: FieldRef<"StationSchedule", 'String'>
+    readonly userId: FieldRef<"StationSchedule", 'String'>
+    readonly startTime: FieldRef<"StationSchedule", 'DateTime'>
+    readonly endTime: FieldRef<"StationSchedule", 'DateTime'>
+    readonly isLocked: FieldRef<"StationSchedule", 'Boolean'>
+    readonly notes: FieldRef<"StationSchedule", 'String'>
+    readonly createdById: FieldRef<"StationSchedule", 'String'>
+    readonly createdAt: FieldRef<"StationSchedule", 'DateTime'>
+    readonly updatedAt: FieldRef<"StationSchedule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StationSchedule findUnique
+   */
+  export type StationScheduleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which StationSchedule to fetch.
+     */
+    where: StationScheduleWhereUniqueInput
+  }
+
+  /**
+   * StationSchedule findUniqueOrThrow
+   */
+  export type StationScheduleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which StationSchedule to fetch.
+     */
+    where: StationScheduleWhereUniqueInput
+  }
+
+  /**
+   * StationSchedule findFirst
+   */
+  export type StationScheduleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which StationSchedule to fetch.
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StationSchedules to fetch.
+     */
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StationSchedules.
+     */
+    cursor?: StationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StationSchedules.
+     */
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * StationSchedule findFirstOrThrow
+   */
+  export type StationScheduleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which StationSchedule to fetch.
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StationSchedules to fetch.
+     */
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StationSchedules.
+     */
+    cursor?: StationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StationSchedules.
+     */
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * StationSchedule findMany
+   */
+  export type StationScheduleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which StationSchedules to fetch.
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StationSchedules to fetch.
+     */
+    orderBy?: StationScheduleOrderByWithRelationInput | StationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StationSchedules.
+     */
+    cursor?: StationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StationSchedules.
+     */
+    skip?: number
+    distinct?: StationScheduleScalarFieldEnum | StationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * StationSchedule create
+   */
+  export type StationScheduleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StationSchedule.
+     */
+    data: XOR<StationScheduleCreateInput, StationScheduleUncheckedCreateInput>
+  }
+
+  /**
+   * StationSchedule createMany
+   */
+  export type StationScheduleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StationSchedules.
+     */
+    data: StationScheduleCreateManyInput | StationScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StationSchedule createManyAndReturn
+   */
+  export type StationScheduleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to create many StationSchedules.
+     */
+    data: StationScheduleCreateManyInput | StationScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StationSchedule update
+   */
+  export type StationScheduleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StationSchedule.
+     */
+    data: XOR<StationScheduleUpdateInput, StationScheduleUncheckedUpdateInput>
+    /**
+     * Choose, which StationSchedule to update.
+     */
+    where: StationScheduleWhereUniqueInput
+  }
+
+  /**
+   * StationSchedule updateMany
+   */
+  export type StationScheduleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StationSchedules.
+     */
+    data: XOR<StationScheduleUpdateManyMutationInput, StationScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which StationSchedules to update
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * Limit how many StationSchedules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StationSchedule updateManyAndReturn
+   */
+  export type StationScheduleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to update StationSchedules.
+     */
+    data: XOR<StationScheduleUpdateManyMutationInput, StationScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which StationSchedules to update
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * Limit how many StationSchedules to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StationSchedule upsert
+   */
+  export type StationScheduleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StationSchedule to update in case it exists.
+     */
+    where: StationScheduleWhereUniqueInput
+    /**
+     * In case the StationSchedule found by the `where` argument doesn't exist, create a new StationSchedule with this data.
+     */
+    create: XOR<StationScheduleCreateInput, StationScheduleUncheckedCreateInput>
+    /**
+     * In case the StationSchedule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StationScheduleUpdateInput, StationScheduleUncheckedUpdateInput>
+  }
+
+  /**
+   * StationSchedule delete
+   */
+  export type StationScheduleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter which StationSchedule to delete.
+     */
+    where: StationScheduleWhereUniqueInput
+  }
+
+  /**
+   * StationSchedule deleteMany
+   */
+  export type StationScheduleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StationSchedules to delete
+     */
+    where?: StationScheduleWhereInput
+    /**
+     * Limit how many StationSchedules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StationSchedule without action
+   */
+  export type StationScheduleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StationSchedule
+     */
+    select?: StationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StationSchedule
+     */
+    omit?: StationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StationScheduleInclude<ExtArgs> | null
   }
 
 
@@ -39596,6 +42371,7 @@ export namespace Prisma {
     queueNumber: 'queueNumber',
     queueTypeId: 'queueTypeId',
     visitId: 'visitId',
+    serviceStationId: 'serviceStationId',
     status: 'status',
     calledAt: 'calledAt',
     servedAt: 'servedAt',
@@ -39605,6 +42381,39 @@ export namespace Prisma {
   };
 
   export type QueueScalarFieldEnum = (typeof QueueScalarFieldEnum)[keyof typeof QueueScalarFieldEnum]
+
+
+  export const ServiceStationScalarFieldEnum: {
+    id: 'id',
+    code: 'code',
+    name: 'name',
+    stationNumber: 'stationNumber',
+    type: 'type',
+    isActive: 'isActive',
+    activeUserId: 'activeUserId',
+    isLocked: 'isLocked',
+    occupiedUntil: 'occupiedUntil',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ServiceStationScalarFieldEnum = (typeof ServiceStationScalarFieldEnum)[keyof typeof ServiceStationScalarFieldEnum]
+
+
+  export const StationScheduleScalarFieldEnum: {
+    id: 'id',
+    serviceStationId: 'serviceStationId',
+    userId: 'userId',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    isLocked: 'isLocked',
+    notes: 'notes',
+    createdById: 'createdById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StationScheduleScalarFieldEnum = (typeof StationScheduleScalarFieldEnum)[keyof typeof StationScheduleScalarFieldEnum]
 
 
   export const ConsultationScalarFieldEnum: {
@@ -40038,6 +42847,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'StationType'
+   */
+  export type EnumStationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'StationType[]'
+   */
+  export type ListEnumStationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StationType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DiagnosisType'
    */
   export type EnumDiagnosisTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiagnosisType'>
@@ -40149,6 +42972,9 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     inventoryTx?: InventoryTransactionListRelationFilter
     vaccinationsGiven?: VaccinationListRelationFilter
+    activeStations?: ServiceStationListRelationFilter
+    scheduledShifts?: StationScheduleListRelationFilter
+    createdSchedules?: StationScheduleListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -40173,6 +42999,9 @@ export namespace Prisma {
     auditLogs?: AuditLogOrderByRelationAggregateInput
     inventoryTx?: InventoryTransactionOrderByRelationAggregateInput
     vaccinationsGiven?: VaccinationOrderByRelationAggregateInput
+    activeStations?: ServiceStationOrderByRelationAggregateInput
+    scheduledShifts?: StationScheduleOrderByRelationAggregateInput
+    createdSchedules?: StationScheduleOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -40200,6 +43029,9 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     inventoryTx?: InventoryTransactionListRelationFilter
     vaccinationsGiven?: VaccinationListRelationFilter
+    activeStations?: ServiceStationListRelationFilter
+    scheduledShifts?: StationScheduleListRelationFilter
+    createdSchedules?: StationScheduleListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -41039,6 +43871,7 @@ export namespace Prisma {
     queueNumber?: StringFilter<"Queue"> | string
     queueTypeId?: StringFilter<"Queue"> | string
     visitId?: StringFilter<"Queue"> | string
+    serviceStationId?: StringNullableFilter<"Queue"> | string | null
     status?: EnumQueueStatusFilter<"Queue"> | $Enums.QueueStatus
     calledAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
     servedAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
@@ -41047,6 +43880,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Queue"> | Date | string
     queueType?: XOR<QueueTypeScalarRelationFilter, QueueTypeWhereInput>
     visit?: XOR<VisitScalarRelationFilter, VisitWhereInput>
+    serviceStation?: XOR<ServiceStationNullableScalarRelationFilter, ServiceStationWhereInput> | null
   }
 
   export type QueueOrderByWithRelationInput = {
@@ -41054,6 +43888,7 @@ export namespace Prisma {
     queueNumber?: SortOrder
     queueTypeId?: SortOrder
     visitId?: SortOrder
+    serviceStationId?: SortOrderInput | SortOrder
     status?: SortOrder
     calledAt?: SortOrderInput | SortOrder
     servedAt?: SortOrderInput | SortOrder
@@ -41062,6 +43897,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     queueType?: QueueTypeOrderByWithRelationInput
     visit?: VisitOrderByWithRelationInput
+    serviceStation?: ServiceStationOrderByWithRelationInput
   }
 
   export type QueueWhereUniqueInput = Prisma.AtLeast<{
@@ -41072,6 +43908,7 @@ export namespace Prisma {
     queueNumber?: StringFilter<"Queue"> | string
     queueTypeId?: StringFilter<"Queue"> | string
     visitId?: StringFilter<"Queue"> | string
+    serviceStationId?: StringNullableFilter<"Queue"> | string | null
     status?: EnumQueueStatusFilter<"Queue"> | $Enums.QueueStatus
     calledAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
     servedAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
@@ -41080,6 +43917,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Queue"> | Date | string
     queueType?: XOR<QueueTypeScalarRelationFilter, QueueTypeWhereInput>
     visit?: XOR<VisitScalarRelationFilter, VisitWhereInput>
+    serviceStation?: XOR<ServiceStationNullableScalarRelationFilter, ServiceStationWhereInput> | null
   }, "id">
 
   export type QueueOrderByWithAggregationInput = {
@@ -41087,6 +43925,7 @@ export namespace Prisma {
     queueNumber?: SortOrder
     queueTypeId?: SortOrder
     visitId?: SortOrder
+    serviceStationId?: SortOrderInput | SortOrder
     status?: SortOrder
     calledAt?: SortOrderInput | SortOrder
     servedAt?: SortOrderInput | SortOrder
@@ -41106,12 +43945,192 @@ export namespace Prisma {
     queueNumber?: StringWithAggregatesFilter<"Queue"> | string
     queueTypeId?: StringWithAggregatesFilter<"Queue"> | string
     visitId?: StringWithAggregatesFilter<"Queue"> | string
+    serviceStationId?: StringNullableWithAggregatesFilter<"Queue"> | string | null
     status?: EnumQueueStatusWithAggregatesFilter<"Queue"> | $Enums.QueueStatus
     calledAt?: DateTimeNullableWithAggregatesFilter<"Queue"> | Date | string | null
     servedAt?: DateTimeNullableWithAggregatesFilter<"Queue"> | Date | string | null
     completedAt?: DateTimeNullableWithAggregatesFilter<"Queue"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Queue"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Queue"> | Date | string
+  }
+
+  export type ServiceStationWhereInput = {
+    AND?: ServiceStationWhereInput | ServiceStationWhereInput[]
+    OR?: ServiceStationWhereInput[]
+    NOT?: ServiceStationWhereInput | ServiceStationWhereInput[]
+    id?: StringFilter<"ServiceStation"> | string
+    code?: StringFilter<"ServiceStation"> | string
+    name?: StringFilter<"ServiceStation"> | string
+    stationNumber?: IntFilter<"ServiceStation"> | number
+    type?: EnumStationTypeFilter<"ServiceStation"> | $Enums.StationType
+    isActive?: BoolFilter<"ServiceStation"> | boolean
+    activeUserId?: StringNullableFilter<"ServiceStation"> | string | null
+    isLocked?: BoolFilter<"ServiceStation"> | boolean
+    occupiedUntil?: DateTimeNullableFilter<"ServiceStation"> | Date | string | null
+    createdAt?: DateTimeFilter<"ServiceStation"> | Date | string
+    updatedAt?: DateTimeFilter<"ServiceStation"> | Date | string
+    activeUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    schedules?: StationScheduleListRelationFilter
+    queues?: QueueListRelationFilter
+  }
+
+  export type ServiceStationOrderByWithRelationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    stationNumber?: SortOrder
+    type?: SortOrder
+    isActive?: SortOrder
+    activeUserId?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    occupiedUntil?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    activeUser?: UserOrderByWithRelationInput
+    schedules?: StationScheduleOrderByRelationAggregateInput
+    queues?: QueueOrderByRelationAggregateInput
+  }
+
+  export type ServiceStationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    code?: string
+    AND?: ServiceStationWhereInput | ServiceStationWhereInput[]
+    OR?: ServiceStationWhereInput[]
+    NOT?: ServiceStationWhereInput | ServiceStationWhereInput[]
+    name?: StringFilter<"ServiceStation"> | string
+    stationNumber?: IntFilter<"ServiceStation"> | number
+    type?: EnumStationTypeFilter<"ServiceStation"> | $Enums.StationType
+    isActive?: BoolFilter<"ServiceStation"> | boolean
+    activeUserId?: StringNullableFilter<"ServiceStation"> | string | null
+    isLocked?: BoolFilter<"ServiceStation"> | boolean
+    occupiedUntil?: DateTimeNullableFilter<"ServiceStation"> | Date | string | null
+    createdAt?: DateTimeFilter<"ServiceStation"> | Date | string
+    updatedAt?: DateTimeFilter<"ServiceStation"> | Date | string
+    activeUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    schedules?: StationScheduleListRelationFilter
+    queues?: QueueListRelationFilter
+  }, "id" | "code">
+
+  export type ServiceStationOrderByWithAggregationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    stationNumber?: SortOrder
+    type?: SortOrder
+    isActive?: SortOrder
+    activeUserId?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    occupiedUntil?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ServiceStationCountOrderByAggregateInput
+    _avg?: ServiceStationAvgOrderByAggregateInput
+    _max?: ServiceStationMaxOrderByAggregateInput
+    _min?: ServiceStationMinOrderByAggregateInput
+    _sum?: ServiceStationSumOrderByAggregateInput
+  }
+
+  export type ServiceStationScalarWhereWithAggregatesInput = {
+    AND?: ServiceStationScalarWhereWithAggregatesInput | ServiceStationScalarWhereWithAggregatesInput[]
+    OR?: ServiceStationScalarWhereWithAggregatesInput[]
+    NOT?: ServiceStationScalarWhereWithAggregatesInput | ServiceStationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ServiceStation"> | string
+    code?: StringWithAggregatesFilter<"ServiceStation"> | string
+    name?: StringWithAggregatesFilter<"ServiceStation"> | string
+    stationNumber?: IntWithAggregatesFilter<"ServiceStation"> | number
+    type?: EnumStationTypeWithAggregatesFilter<"ServiceStation"> | $Enums.StationType
+    isActive?: BoolWithAggregatesFilter<"ServiceStation"> | boolean
+    activeUserId?: StringNullableWithAggregatesFilter<"ServiceStation"> | string | null
+    isLocked?: BoolWithAggregatesFilter<"ServiceStation"> | boolean
+    occupiedUntil?: DateTimeNullableWithAggregatesFilter<"ServiceStation"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ServiceStation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ServiceStation"> | Date | string
+  }
+
+  export type StationScheduleWhereInput = {
+    AND?: StationScheduleWhereInput | StationScheduleWhereInput[]
+    OR?: StationScheduleWhereInput[]
+    NOT?: StationScheduleWhereInput | StationScheduleWhereInput[]
+    id?: StringFilter<"StationSchedule"> | string
+    serviceStationId?: StringFilter<"StationSchedule"> | string
+    userId?: StringFilter<"StationSchedule"> | string
+    startTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    endTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    isLocked?: BoolFilter<"StationSchedule"> | boolean
+    notes?: StringNullableFilter<"StationSchedule"> | string | null
+    createdById?: StringFilter<"StationSchedule"> | string
+    createdAt?: DateTimeFilter<"StationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"StationSchedule"> | Date | string
+    serviceStation?: XOR<ServiceStationScalarRelationFilter, ServiceStationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type StationScheduleOrderByWithRelationInput = {
+    id?: SortOrder
+    serviceStationId?: SortOrder
+    userId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isLocked?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    serviceStation?: ServiceStationOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type StationScheduleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StationScheduleWhereInput | StationScheduleWhereInput[]
+    OR?: StationScheduleWhereInput[]
+    NOT?: StationScheduleWhereInput | StationScheduleWhereInput[]
+    serviceStationId?: StringFilter<"StationSchedule"> | string
+    userId?: StringFilter<"StationSchedule"> | string
+    startTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    endTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    isLocked?: BoolFilter<"StationSchedule"> | boolean
+    notes?: StringNullableFilter<"StationSchedule"> | string | null
+    createdById?: StringFilter<"StationSchedule"> | string
+    createdAt?: DateTimeFilter<"StationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"StationSchedule"> | Date | string
+    serviceStation?: XOR<ServiceStationScalarRelationFilter, ServiceStationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type StationScheduleOrderByWithAggregationInput = {
+    id?: SortOrder
+    serviceStationId?: SortOrder
+    userId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isLocked?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StationScheduleCountOrderByAggregateInput
+    _max?: StationScheduleMaxOrderByAggregateInput
+    _min?: StationScheduleMinOrderByAggregateInput
+  }
+
+  export type StationScheduleScalarWhereWithAggregatesInput = {
+    AND?: StationScheduleScalarWhereWithAggregatesInput | StationScheduleScalarWhereWithAggregatesInput[]
+    OR?: StationScheduleScalarWhereWithAggregatesInput[]
+    NOT?: StationScheduleScalarWhereWithAggregatesInput | StationScheduleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StationSchedule"> | string
+    serviceStationId?: StringWithAggregatesFilter<"StationSchedule"> | string
+    userId?: StringWithAggregatesFilter<"StationSchedule"> | string
+    startTime?: DateTimeWithAggregatesFilter<"StationSchedule"> | Date | string
+    endTime?: DateTimeWithAggregatesFilter<"StationSchedule"> | Date | string
+    isLocked?: BoolWithAggregatesFilter<"StationSchedule"> | boolean
+    notes?: StringNullableWithAggregatesFilter<"StationSchedule"> | string | null
+    createdById?: StringWithAggregatesFilter<"StationSchedule"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"StationSchedule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StationSchedule"> | Date | string
   }
 
   export type ConsultationWhereInput = {
@@ -42458,6 +45477,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -42482,6 +45504,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -42506,6 +45531,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -42530,6 +45558,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -43466,6 +46497,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     queueType: QueueTypeCreateNestedOneWithoutQueuesInput
     visit: VisitCreateNestedOneWithoutQueuesInput
+    serviceStation?: ServiceStationCreateNestedOneWithoutQueuesInput
   }
 
   export type QueueUncheckedCreateInput = {
@@ -43473,6 +46505,7 @@ export namespace Prisma {
     queueNumber: string
     queueTypeId: string
     visitId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -43492,6 +46525,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queueType?: QueueTypeUpdateOneRequiredWithoutQueuesNestedInput
     visit?: VisitUpdateOneRequiredWithoutQueuesNestedInput
+    serviceStation?: ServiceStationUpdateOneWithoutQueuesNestedInput
   }
 
   export type QueueUncheckedUpdateInput = {
@@ -43499,6 +46533,7 @@ export namespace Prisma {
     queueNumber?: StringFieldUpdateOperationsInput | string
     queueTypeId?: StringFieldUpdateOperationsInput | string
     visitId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43512,6 +46547,7 @@ export namespace Prisma {
     queueNumber: string
     queueTypeId: string
     visitId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -43536,10 +46572,204 @@ export namespace Prisma {
     queueNumber?: StringFieldUpdateOperationsInput | string
     queueTypeId?: StringFieldUpdateOperationsInput | string
     visitId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceStationCreateInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activeUser?: UserCreateNestedOneWithoutActiveStationsInput
+    schedules?: StationScheduleCreateNestedManyWithoutServiceStationInput
+    queues?: QueueCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationUncheckedCreateInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    activeUserId?: string | null
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schedules?: StationScheduleUncheckedCreateNestedManyWithoutServiceStationInput
+    queues?: QueueUncheckedCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUser?: UserUpdateOneWithoutActiveStationsNestedInput
+    schedules?: StationScheduleUpdateManyWithoutServiceStationNestedInput
+    queues?: QueueUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    activeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schedules?: StationScheduleUncheckedUpdateManyWithoutServiceStationNestedInput
+    queues?: QueueUncheckedUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationCreateManyInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    activeUserId?: string | null
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ServiceStationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceStationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    activeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleCreateInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceStation: ServiceStationCreateNestedOneWithoutSchedulesInput
+    user: UserCreateNestedOneWithoutScheduledShiftsInput
+    createdBy: UserCreateNestedOneWithoutCreatedSchedulesInput
+  }
+
+  export type StationScheduleUncheckedCreateInput = {
+    id?: string
+    serviceStationId: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceStation?: ServiceStationUpdateOneRequiredWithoutSchedulesNestedInput
+    user?: UserUpdateOneRequiredWithoutScheduledShiftsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedSchedulesNestedInput
+  }
+
+  export type StationScheduleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleCreateManyInput = {
+    id?: string
+    serviceStationId: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45058,6 +48288,18 @@ export namespace Prisma {
     none?: VaccinationWhereInput
   }
 
+  export type ServiceStationListRelationFilter = {
+    every?: ServiceStationWhereInput
+    some?: ServiceStationWhereInput
+    none?: ServiceStationWhereInput
+  }
+
+  export type StationScheduleListRelationFilter = {
+    every?: StationScheduleWhereInput
+    some?: StationScheduleWhereInput
+    none?: StationScheduleWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -45096,6 +48338,14 @@ export namespace Prisma {
   }
 
   export type VaccinationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ServiceStationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StationScheduleOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -45866,11 +49116,17 @@ export namespace Prisma {
     isNot?: QueueTypeWhereInput
   }
 
+  export type ServiceStationNullableScalarRelationFilter = {
+    is?: ServiceStationWhereInput | null
+    isNot?: ServiceStationWhereInput | null
+  }
+
   export type QueueCountOrderByAggregateInput = {
     id?: SortOrder
     queueNumber?: SortOrder
     queueTypeId?: SortOrder
     visitId?: SortOrder
+    serviceStationId?: SortOrder
     status?: SortOrder
     calledAt?: SortOrder
     servedAt?: SortOrder
@@ -45884,6 +49140,7 @@ export namespace Prisma {
     queueNumber?: SortOrder
     queueTypeId?: SortOrder
     visitId?: SortOrder
+    serviceStationId?: SortOrder
     status?: SortOrder
     calledAt?: SortOrder
     servedAt?: SortOrder
@@ -45897,6 +49154,7 @@ export namespace Prisma {
     queueNumber?: SortOrder
     queueTypeId?: SortOrder
     visitId?: SortOrder
+    serviceStationId?: SortOrder
     status?: SortOrder
     calledAt?: SortOrder
     servedAt?: SortOrder
@@ -45913,6 +49171,144 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumQueueStatusFilter<$PrismaModel>
     _max?: NestedEnumQueueStatusFilter<$PrismaModel>
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type EnumStationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StationType | EnumStationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStationTypeFilter<$PrismaModel> | $Enums.StationType
+  }
+
+  export type ServiceStationCountOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    stationNumber?: SortOrder
+    type?: SortOrder
+    isActive?: SortOrder
+    activeUserId?: SortOrder
+    isLocked?: SortOrder
+    occupiedUntil?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ServiceStationAvgOrderByAggregateInput = {
+    stationNumber?: SortOrder
+  }
+
+  export type ServiceStationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    stationNumber?: SortOrder
+    type?: SortOrder
+    isActive?: SortOrder
+    activeUserId?: SortOrder
+    isLocked?: SortOrder
+    occupiedUntil?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ServiceStationMinOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    stationNumber?: SortOrder
+    type?: SortOrder
+    isActive?: SortOrder
+    activeUserId?: SortOrder
+    isLocked?: SortOrder
+    occupiedUntil?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ServiceStationSumOrderByAggregateInput = {
+    stationNumber?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumStationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StationType | EnumStationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStationTypeWithAggregatesFilter<$PrismaModel> | $Enums.StationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStationTypeFilter<$PrismaModel>
+    _max?: NestedEnumStationTypeFilter<$PrismaModel>
+  }
+
+  export type ServiceStationScalarRelationFilter = {
+    is?: ServiceStationWhereInput
+    isNot?: ServiceStationWhereInput
+  }
+
+  export type StationScheduleCountOrderByAggregateInput = {
+    id?: SortOrder
+    serviceStationId?: SortOrder
+    userId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isLocked?: SortOrder
+    notes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StationScheduleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    serviceStationId?: SortOrder
+    userId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isLocked?: SortOrder
+    notes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StationScheduleMinOrderByAggregateInput = {
+    id?: SortOrder
+    serviceStationId?: SortOrder
+    userId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isLocked?: SortOrder
+    notes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SoapNoteNullableScalarRelationFilter = {
@@ -46048,17 +49444,6 @@ export namespace Prisma {
     _max?: NestedEnumDiagnosisTypeFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type DrugBatchListRelationFilter = {
     every?: DrugBatchWhereInput
     some?: DrugBatchWhereInput
@@ -46132,22 +49517,6 @@ export namespace Prisma {
   export type DrugSumOrderByAggregateInput = {
     minStockLevel?: SortOrder
     totalStock?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DrugScalarRelationFilter = {
@@ -46816,6 +50185,27 @@ export namespace Prisma {
     connect?: VaccinationWhereUniqueInput | VaccinationWhereUniqueInput[]
   }
 
+  export type ServiceStationCreateNestedManyWithoutActiveUserInput = {
+    create?: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput> | ServiceStationCreateWithoutActiveUserInput[] | ServiceStationUncheckedCreateWithoutActiveUserInput[]
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutActiveUserInput | ServiceStationCreateOrConnectWithoutActiveUserInput[]
+    createMany?: ServiceStationCreateManyActiveUserInputEnvelope
+    connect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+  }
+
+  export type StationScheduleCreateNestedManyWithoutUserInput = {
+    create?: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput> | StationScheduleCreateWithoutUserInput[] | StationScheduleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutUserInput | StationScheduleCreateOrConnectWithoutUserInput[]
+    createMany?: StationScheduleCreateManyUserInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+  }
+
+  export type StationScheduleCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput> | StationScheduleCreateWithoutCreatedByInput[] | StationScheduleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutCreatedByInput | StationScheduleCreateOrConnectWithoutCreatedByInput[]
+    createMany?: StationScheduleCreateManyCreatedByInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+  }
+
   export type PatientUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<PatientCreateWithoutUserInput, PatientUncheckedCreateWithoutUserInput>
     connectOrCreate?: PatientCreateOrConnectWithoutUserInput
@@ -46883,6 +50273,27 @@ export namespace Prisma {
     connectOrCreate?: VaccinationCreateOrConnectWithoutVaccinatorInput | VaccinationCreateOrConnectWithoutVaccinatorInput[]
     createMany?: VaccinationCreateManyVaccinatorInputEnvelope
     connect?: VaccinationWhereUniqueInput | VaccinationWhereUniqueInput[]
+  }
+
+  export type ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput = {
+    create?: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput> | ServiceStationCreateWithoutActiveUserInput[] | ServiceStationUncheckedCreateWithoutActiveUserInput[]
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutActiveUserInput | ServiceStationCreateOrConnectWithoutActiveUserInput[]
+    createMany?: ServiceStationCreateManyActiveUserInputEnvelope
+    connect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+  }
+
+  export type StationScheduleUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput> | StationScheduleCreateWithoutUserInput[] | StationScheduleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutUserInput | StationScheduleCreateOrConnectWithoutUserInput[]
+    createMany?: StationScheduleCreateManyUserInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+  }
+
+  export type StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput> | StationScheduleCreateWithoutCreatedByInput[] | StationScheduleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutCreatedByInput | StationScheduleCreateOrConnectWithoutCreatedByInput[]
+    createMany?: StationScheduleCreateManyCreatedByInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -47045,6 +50456,48 @@ export namespace Prisma {
     deleteMany?: VaccinationScalarWhereInput | VaccinationScalarWhereInput[]
   }
 
+  export type ServiceStationUpdateManyWithoutActiveUserNestedInput = {
+    create?: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput> | ServiceStationCreateWithoutActiveUserInput[] | ServiceStationUncheckedCreateWithoutActiveUserInput[]
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutActiveUserInput | ServiceStationCreateOrConnectWithoutActiveUserInput[]
+    upsert?: ServiceStationUpsertWithWhereUniqueWithoutActiveUserInput | ServiceStationUpsertWithWhereUniqueWithoutActiveUserInput[]
+    createMany?: ServiceStationCreateManyActiveUserInputEnvelope
+    set?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    disconnect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    delete?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    connect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    update?: ServiceStationUpdateWithWhereUniqueWithoutActiveUserInput | ServiceStationUpdateWithWhereUniqueWithoutActiveUserInput[]
+    updateMany?: ServiceStationUpdateManyWithWhereWithoutActiveUserInput | ServiceStationUpdateManyWithWhereWithoutActiveUserInput[]
+    deleteMany?: ServiceStationScalarWhereInput | ServiceStationScalarWhereInput[]
+  }
+
+  export type StationScheduleUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput> | StationScheduleCreateWithoutUserInput[] | StationScheduleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutUserInput | StationScheduleCreateOrConnectWithoutUserInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutUserInput | StationScheduleUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StationScheduleCreateManyUserInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutUserInput | StationScheduleUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutUserInput | StationScheduleUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+  }
+
+  export type StationScheduleUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput> | StationScheduleCreateWithoutCreatedByInput[] | StationScheduleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutCreatedByInput | StationScheduleCreateOrConnectWithoutCreatedByInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutCreatedByInput | StationScheduleUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: StationScheduleCreateManyCreatedByInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutCreatedByInput | StationScheduleUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutCreatedByInput | StationScheduleUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+  }
+
   export type PatientUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<PatientCreateWithoutUserInput, PatientUncheckedCreateWithoutUserInput>
     connectOrCreate?: PatientCreateOrConnectWithoutUserInput
@@ -47179,6 +50632,48 @@ export namespace Prisma {
     update?: VaccinationUpdateWithWhereUniqueWithoutVaccinatorInput | VaccinationUpdateWithWhereUniqueWithoutVaccinatorInput[]
     updateMany?: VaccinationUpdateManyWithWhereWithoutVaccinatorInput | VaccinationUpdateManyWithWhereWithoutVaccinatorInput[]
     deleteMany?: VaccinationScalarWhereInput | VaccinationScalarWhereInput[]
+  }
+
+  export type ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput = {
+    create?: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput> | ServiceStationCreateWithoutActiveUserInput[] | ServiceStationUncheckedCreateWithoutActiveUserInput[]
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutActiveUserInput | ServiceStationCreateOrConnectWithoutActiveUserInput[]
+    upsert?: ServiceStationUpsertWithWhereUniqueWithoutActiveUserInput | ServiceStationUpsertWithWhereUniqueWithoutActiveUserInput[]
+    createMany?: ServiceStationCreateManyActiveUserInputEnvelope
+    set?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    disconnect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    delete?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    connect?: ServiceStationWhereUniqueInput | ServiceStationWhereUniqueInput[]
+    update?: ServiceStationUpdateWithWhereUniqueWithoutActiveUserInput | ServiceStationUpdateWithWhereUniqueWithoutActiveUserInput[]
+    updateMany?: ServiceStationUpdateManyWithWhereWithoutActiveUserInput | ServiceStationUpdateManyWithWhereWithoutActiveUserInput[]
+    deleteMany?: ServiceStationScalarWhereInput | ServiceStationScalarWhereInput[]
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput> | StationScheduleCreateWithoutUserInput[] | StationScheduleUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutUserInput | StationScheduleCreateOrConnectWithoutUserInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutUserInput | StationScheduleUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StationScheduleCreateManyUserInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutUserInput | StationScheduleUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutUserInput | StationScheduleUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput> | StationScheduleCreateWithoutCreatedByInput[] | StationScheduleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutCreatedByInput | StationScheduleCreateOrConnectWithoutCreatedByInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutCreatedByInput | StationScheduleUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: StationScheduleCreateManyCreatedByInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutCreatedByInput | StationScheduleUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutCreatedByInput | StationScheduleUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
   }
 
   export type UserPermissionCreateNestedManyWithoutPermissionInput = {
@@ -48097,6 +51592,12 @@ export namespace Prisma {
     connect?: VisitWhereUniqueInput
   }
 
+  export type ServiceStationCreateNestedOneWithoutQueuesInput = {
+    create?: XOR<ServiceStationCreateWithoutQueuesInput, ServiceStationUncheckedCreateWithoutQueuesInput>
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutQueuesInput
+    connect?: ServiceStationWhereUniqueInput
+  }
+
   export type EnumQueueStatusFieldUpdateOperationsInput = {
     set?: $Enums.QueueStatus
   }
@@ -48115,6 +51616,170 @@ export namespace Prisma {
     upsert?: VisitUpsertWithoutQueuesInput
     connect?: VisitWhereUniqueInput
     update?: XOR<XOR<VisitUpdateToOneWithWhereWithoutQueuesInput, VisitUpdateWithoutQueuesInput>, VisitUncheckedUpdateWithoutQueuesInput>
+  }
+
+  export type ServiceStationUpdateOneWithoutQueuesNestedInput = {
+    create?: XOR<ServiceStationCreateWithoutQueuesInput, ServiceStationUncheckedCreateWithoutQueuesInput>
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutQueuesInput
+    upsert?: ServiceStationUpsertWithoutQueuesInput
+    disconnect?: ServiceStationWhereInput | boolean
+    delete?: ServiceStationWhereInput | boolean
+    connect?: ServiceStationWhereUniqueInput
+    update?: XOR<XOR<ServiceStationUpdateToOneWithWhereWithoutQueuesInput, ServiceStationUpdateWithoutQueuesInput>, ServiceStationUncheckedUpdateWithoutQueuesInput>
+  }
+
+  export type UserCreateNestedOneWithoutActiveStationsInput = {
+    create?: XOR<UserCreateWithoutActiveStationsInput, UserUncheckedCreateWithoutActiveStationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActiveStationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type StationScheduleCreateNestedManyWithoutServiceStationInput = {
+    create?: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput> | StationScheduleCreateWithoutServiceStationInput[] | StationScheduleUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutServiceStationInput | StationScheduleCreateOrConnectWithoutServiceStationInput[]
+    createMany?: StationScheduleCreateManyServiceStationInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+  }
+
+  export type QueueCreateNestedManyWithoutServiceStationInput = {
+    create?: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput> | QueueCreateWithoutServiceStationInput[] | QueueUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: QueueCreateOrConnectWithoutServiceStationInput | QueueCreateOrConnectWithoutServiceStationInput[]
+    createMany?: QueueCreateManyServiceStationInputEnvelope
+    connect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+  }
+
+  export type StationScheduleUncheckedCreateNestedManyWithoutServiceStationInput = {
+    create?: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput> | StationScheduleCreateWithoutServiceStationInput[] | StationScheduleUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutServiceStationInput | StationScheduleCreateOrConnectWithoutServiceStationInput[]
+    createMany?: StationScheduleCreateManyServiceStationInputEnvelope
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+  }
+
+  export type QueueUncheckedCreateNestedManyWithoutServiceStationInput = {
+    create?: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput> | QueueCreateWithoutServiceStationInput[] | QueueUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: QueueCreateOrConnectWithoutServiceStationInput | QueueCreateOrConnectWithoutServiceStationInput[]
+    createMany?: QueueCreateManyServiceStationInputEnvelope
+    connect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EnumStationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.StationType
+  }
+
+  export type UserUpdateOneWithoutActiveStationsNestedInput = {
+    create?: XOR<UserCreateWithoutActiveStationsInput, UserUncheckedCreateWithoutActiveStationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActiveStationsInput
+    upsert?: UserUpsertWithoutActiveStationsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActiveStationsInput, UserUpdateWithoutActiveStationsInput>, UserUncheckedUpdateWithoutActiveStationsInput>
+  }
+
+  export type StationScheduleUpdateManyWithoutServiceStationNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput> | StationScheduleCreateWithoutServiceStationInput[] | StationScheduleUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutServiceStationInput | StationScheduleCreateOrConnectWithoutServiceStationInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutServiceStationInput | StationScheduleUpsertWithWhereUniqueWithoutServiceStationInput[]
+    createMany?: StationScheduleCreateManyServiceStationInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutServiceStationInput | StationScheduleUpdateWithWhereUniqueWithoutServiceStationInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutServiceStationInput | StationScheduleUpdateManyWithWhereWithoutServiceStationInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+  }
+
+  export type QueueUpdateManyWithoutServiceStationNestedInput = {
+    create?: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput> | QueueCreateWithoutServiceStationInput[] | QueueUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: QueueCreateOrConnectWithoutServiceStationInput | QueueCreateOrConnectWithoutServiceStationInput[]
+    upsert?: QueueUpsertWithWhereUniqueWithoutServiceStationInput | QueueUpsertWithWhereUniqueWithoutServiceStationInput[]
+    createMany?: QueueCreateManyServiceStationInputEnvelope
+    set?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    disconnect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    delete?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    connect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    update?: QueueUpdateWithWhereUniqueWithoutServiceStationInput | QueueUpdateWithWhereUniqueWithoutServiceStationInput[]
+    updateMany?: QueueUpdateManyWithWhereWithoutServiceStationInput | QueueUpdateManyWithWhereWithoutServiceStationInput[]
+    deleteMany?: QueueScalarWhereInput | QueueScalarWhereInput[]
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutServiceStationNestedInput = {
+    create?: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput> | StationScheduleCreateWithoutServiceStationInput[] | StationScheduleUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: StationScheduleCreateOrConnectWithoutServiceStationInput | StationScheduleCreateOrConnectWithoutServiceStationInput[]
+    upsert?: StationScheduleUpsertWithWhereUniqueWithoutServiceStationInput | StationScheduleUpsertWithWhereUniqueWithoutServiceStationInput[]
+    createMany?: StationScheduleCreateManyServiceStationInputEnvelope
+    set?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    disconnect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    delete?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    connect?: StationScheduleWhereUniqueInput | StationScheduleWhereUniqueInput[]
+    update?: StationScheduleUpdateWithWhereUniqueWithoutServiceStationInput | StationScheduleUpdateWithWhereUniqueWithoutServiceStationInput[]
+    updateMany?: StationScheduleUpdateManyWithWhereWithoutServiceStationInput | StationScheduleUpdateManyWithWhereWithoutServiceStationInput[]
+    deleteMany?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+  }
+
+  export type QueueUncheckedUpdateManyWithoutServiceStationNestedInput = {
+    create?: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput> | QueueCreateWithoutServiceStationInput[] | QueueUncheckedCreateWithoutServiceStationInput[]
+    connectOrCreate?: QueueCreateOrConnectWithoutServiceStationInput | QueueCreateOrConnectWithoutServiceStationInput[]
+    upsert?: QueueUpsertWithWhereUniqueWithoutServiceStationInput | QueueUpsertWithWhereUniqueWithoutServiceStationInput[]
+    createMany?: QueueCreateManyServiceStationInputEnvelope
+    set?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    disconnect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    delete?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    connect?: QueueWhereUniqueInput | QueueWhereUniqueInput[]
+    update?: QueueUpdateWithWhereUniqueWithoutServiceStationInput | QueueUpdateWithWhereUniqueWithoutServiceStationInput[]
+    updateMany?: QueueUpdateManyWithWhereWithoutServiceStationInput | QueueUpdateManyWithWhereWithoutServiceStationInput[]
+    deleteMany?: QueueScalarWhereInput | QueueScalarWhereInput[]
+  }
+
+  export type ServiceStationCreateNestedOneWithoutSchedulesInput = {
+    create?: XOR<ServiceStationCreateWithoutSchedulesInput, ServiceStationUncheckedCreateWithoutSchedulesInput>
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutSchedulesInput
+    connect?: ServiceStationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutScheduledShiftsInput = {
+    create?: XOR<UserCreateWithoutScheduledShiftsInput, UserUncheckedCreateWithoutScheduledShiftsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledShiftsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCreatedSchedulesInput = {
+    create?: XOR<UserCreateWithoutCreatedSchedulesInput, UserUncheckedCreateWithoutCreatedSchedulesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedSchedulesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ServiceStationUpdateOneRequiredWithoutSchedulesNestedInput = {
+    create?: XOR<ServiceStationCreateWithoutSchedulesInput, ServiceStationUncheckedCreateWithoutSchedulesInput>
+    connectOrCreate?: ServiceStationCreateOrConnectWithoutSchedulesInput
+    upsert?: ServiceStationUpsertWithoutSchedulesInput
+    connect?: ServiceStationWhereUniqueInput
+    update?: XOR<XOR<ServiceStationUpdateToOneWithWhereWithoutSchedulesInput, ServiceStationUpdateWithoutSchedulesInput>, ServiceStationUncheckedUpdateWithoutSchedulesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutScheduledShiftsNestedInput = {
+    create?: XOR<UserCreateWithoutScheduledShiftsInput, UserUncheckedCreateWithoutScheduledShiftsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledShiftsInput
+    upsert?: UserUpsertWithoutScheduledShiftsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutScheduledShiftsInput, UserUpdateWithoutScheduledShiftsInput>, UserUncheckedUpdateWithoutScheduledShiftsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCreatedSchedulesNestedInput = {
+    create?: XOR<UserCreateWithoutCreatedSchedulesInput, UserUncheckedCreateWithoutCreatedSchedulesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedSchedulesInput
+    upsert?: UserUpsertWithoutCreatedSchedulesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedSchedulesInput, UserUpdateWithoutCreatedSchedulesInput>, UserUncheckedUpdateWithoutCreatedSchedulesInput>
   }
 
   export type VisitCreateNestedOneWithoutConsultationInput = {
@@ -48291,14 +51956,6 @@ export namespace Prisma {
     connectOrCreate?: InventoryTransactionCreateOrConnectWithoutDrugInput | InventoryTransactionCreateOrConnectWithoutDrugInput[]
     createMany?: InventoryTransactionCreateManyDrugInputEnvelope
     connect?: InventoryTransactionWhereUniqueInput | InventoryTransactionWhereUniqueInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type DrugBatchUpdateManyWithoutDrugNestedInput = {
@@ -49137,21 +52794,11 @@ export namespace Prisma {
     _max?: NestedEnumQueueStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumDiagnosisTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.DiagnosisType | EnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumDiagnosisTypeFilter<$PrismaModel> | $Enums.DiagnosisType
-  }
-
-  export type NestedEnumDiagnosisTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DiagnosisType | EnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumDiagnosisTypeWithAggregatesFilter<$PrismaModel> | $Enums.DiagnosisType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDiagnosisTypeFilter<$PrismaModel>
-    _max?: NestedEnumDiagnosisTypeFilter<$PrismaModel>
+  export type NestedEnumStationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StationType | EnumStationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStationTypeFilter<$PrismaModel> | $Enums.StationType
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -49179,6 +52826,33 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumStationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StationType | EnumStationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StationType[] | ListEnumStationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStationTypeWithAggregatesFilter<$PrismaModel> | $Enums.StationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStationTypeFilter<$PrismaModel>
+    _max?: NestedEnumStationTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDiagnosisTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiagnosisType | EnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiagnosisTypeFilter<$PrismaModel> | $Enums.DiagnosisType
+  }
+
+  export type NestedEnumDiagnosisTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DiagnosisType | EnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DiagnosisType[] | ListEnumDiagnosisTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumDiagnosisTypeWithAggregatesFilter<$PrismaModel> | $Enums.DiagnosisType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDiagnosisTypeFilter<$PrismaModel>
+    _max?: NestedEnumDiagnosisTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumInventoryTransactionTypeFilter<$PrismaModel = never> = {
@@ -49607,6 +53281,114 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ServiceStationCreateWithoutActiveUserInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schedules?: StationScheduleCreateNestedManyWithoutServiceStationInput
+    queues?: QueueCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationUncheckedCreateWithoutActiveUserInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schedules?: StationScheduleUncheckedCreateNestedManyWithoutServiceStationInput
+    queues?: QueueUncheckedCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationCreateOrConnectWithoutActiveUserInput = {
+    where: ServiceStationWhereUniqueInput
+    create: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput>
+  }
+
+  export type ServiceStationCreateManyActiveUserInputEnvelope = {
+    data: ServiceStationCreateManyActiveUserInput | ServiceStationCreateManyActiveUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StationScheduleCreateWithoutUserInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceStation: ServiceStationCreateNestedOneWithoutSchedulesInput
+    createdBy: UserCreateNestedOneWithoutCreatedSchedulesInput
+  }
+
+  export type StationScheduleUncheckedCreateWithoutUserInput = {
+    id?: string
+    serviceStationId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleCreateOrConnectWithoutUserInput = {
+    where: StationScheduleWhereUniqueInput
+    create: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput>
+  }
+
+  export type StationScheduleCreateManyUserInputEnvelope = {
+    data: StationScheduleCreateManyUserInput | StationScheduleCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StationScheduleCreateWithoutCreatedByInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceStation: ServiceStationCreateNestedOneWithoutSchedulesInput
+    user: UserCreateNestedOneWithoutScheduledShiftsInput
+  }
+
+  export type StationScheduleUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    serviceStationId: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleCreateOrConnectWithoutCreatedByInput = {
+    where: StationScheduleWhereUniqueInput
+    create: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type StationScheduleCreateManyCreatedByInputEnvelope = {
+    data: StationScheduleCreateManyCreatedByInput | StationScheduleCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PatientUpsertWithoutUserInput = {
     update: XOR<PatientUpdateWithoutUserInput, PatientUncheckedUpdateWithoutUserInput>
     create: XOR<PatientCreateWithoutUserInput, PatientUncheckedCreateWithoutUserInput>
@@ -49941,6 +53723,87 @@ export namespace Prisma {
     vaccinatorId?: StringFilter<"Vaccination"> | string
   }
 
+  export type ServiceStationUpsertWithWhereUniqueWithoutActiveUserInput = {
+    where: ServiceStationWhereUniqueInput
+    update: XOR<ServiceStationUpdateWithoutActiveUserInput, ServiceStationUncheckedUpdateWithoutActiveUserInput>
+    create: XOR<ServiceStationCreateWithoutActiveUserInput, ServiceStationUncheckedCreateWithoutActiveUserInput>
+  }
+
+  export type ServiceStationUpdateWithWhereUniqueWithoutActiveUserInput = {
+    where: ServiceStationWhereUniqueInput
+    data: XOR<ServiceStationUpdateWithoutActiveUserInput, ServiceStationUncheckedUpdateWithoutActiveUserInput>
+  }
+
+  export type ServiceStationUpdateManyWithWhereWithoutActiveUserInput = {
+    where: ServiceStationScalarWhereInput
+    data: XOR<ServiceStationUpdateManyMutationInput, ServiceStationUncheckedUpdateManyWithoutActiveUserInput>
+  }
+
+  export type ServiceStationScalarWhereInput = {
+    AND?: ServiceStationScalarWhereInput | ServiceStationScalarWhereInput[]
+    OR?: ServiceStationScalarWhereInput[]
+    NOT?: ServiceStationScalarWhereInput | ServiceStationScalarWhereInput[]
+    id?: StringFilter<"ServiceStation"> | string
+    code?: StringFilter<"ServiceStation"> | string
+    name?: StringFilter<"ServiceStation"> | string
+    stationNumber?: IntFilter<"ServiceStation"> | number
+    type?: EnumStationTypeFilter<"ServiceStation"> | $Enums.StationType
+    isActive?: BoolFilter<"ServiceStation"> | boolean
+    activeUserId?: StringNullableFilter<"ServiceStation"> | string | null
+    isLocked?: BoolFilter<"ServiceStation"> | boolean
+    occupiedUntil?: DateTimeNullableFilter<"ServiceStation"> | Date | string | null
+    createdAt?: DateTimeFilter<"ServiceStation"> | Date | string
+    updatedAt?: DateTimeFilter<"ServiceStation"> | Date | string
+  }
+
+  export type StationScheduleUpsertWithWhereUniqueWithoutUserInput = {
+    where: StationScheduleWhereUniqueInput
+    update: XOR<StationScheduleUpdateWithoutUserInput, StationScheduleUncheckedUpdateWithoutUserInput>
+    create: XOR<StationScheduleCreateWithoutUserInput, StationScheduleUncheckedCreateWithoutUserInput>
+  }
+
+  export type StationScheduleUpdateWithWhereUniqueWithoutUserInput = {
+    where: StationScheduleWhereUniqueInput
+    data: XOR<StationScheduleUpdateWithoutUserInput, StationScheduleUncheckedUpdateWithoutUserInput>
+  }
+
+  export type StationScheduleUpdateManyWithWhereWithoutUserInput = {
+    where: StationScheduleScalarWhereInput
+    data: XOR<StationScheduleUpdateManyMutationInput, StationScheduleUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type StationScheduleScalarWhereInput = {
+    AND?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+    OR?: StationScheduleScalarWhereInput[]
+    NOT?: StationScheduleScalarWhereInput | StationScheduleScalarWhereInput[]
+    id?: StringFilter<"StationSchedule"> | string
+    serviceStationId?: StringFilter<"StationSchedule"> | string
+    userId?: StringFilter<"StationSchedule"> | string
+    startTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    endTime?: DateTimeFilter<"StationSchedule"> | Date | string
+    isLocked?: BoolFilter<"StationSchedule"> | boolean
+    notes?: StringNullableFilter<"StationSchedule"> | string | null
+    createdById?: StringFilter<"StationSchedule"> | string
+    createdAt?: DateTimeFilter<"StationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"StationSchedule"> | Date | string
+  }
+
+  export type StationScheduleUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: StationScheduleWhereUniqueInput
+    update: XOR<StationScheduleUpdateWithoutCreatedByInput, StationScheduleUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<StationScheduleCreateWithoutCreatedByInput, StationScheduleUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type StationScheduleUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: StationScheduleWhereUniqueInput
+    data: XOR<StationScheduleUpdateWithoutCreatedByInput, StationScheduleUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type StationScheduleUpdateManyWithWhereWithoutCreatedByInput = {
+    where: StationScheduleScalarWhereInput
+    data: XOR<StationScheduleUpdateManyMutationInput, StationScheduleUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
   export type UserPermissionCreateWithoutPermissionInput = {
     user: UserCreateNestedOneWithoutUserPermissionsInput
   }
@@ -49996,6 +53859,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -50019,6 +53885,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -50081,6 +53950,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -50104,6 +53976,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PermissionUpsertWithoutUserPermissionsInput = {
@@ -50156,6 +54031,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPatientInput = {
@@ -50179,6 +54057,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPatientInput = {
@@ -50478,6 +54359,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPatientInput = {
@@ -50501,6 +54385,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PatientAllergyUpsertWithWhereUniqueWithoutPatientInput = {
@@ -51238,6 +55125,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedVisitsInput = {
@@ -51261,6 +55151,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedVisitsInput = {
@@ -51341,12 +55234,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     queueType: QueueTypeCreateNestedOneWithoutQueuesInput
+    serviceStation?: ServiceStationCreateNestedOneWithoutQueuesInput
   }
 
   export type QueueUncheckedCreateWithoutVisitInput = {
     id?: string
     queueNumber: string
     queueTypeId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -51613,6 +55508,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedVisitsInput = {
@@ -51636,6 +55534,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type VitalSignUpsertWithWhereUniqueWithoutVisitInput = {
@@ -51725,6 +55626,7 @@ export namespace Prisma {
     queueNumber?: StringFilter<"Queue"> | string
     queueTypeId?: StringFilter<"Queue"> | string
     visitId?: StringFilter<"Queue"> | string
+    serviceStationId?: StringNullableFilter<"Queue"> | string | null
     status?: EnumQueueStatusFilter<"Queue"> | $Enums.QueueStatus
     calledAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
     servedAt?: DateTimeNullableFilter<"Queue"> | Date | string | null
@@ -52010,6 +55912,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTriageRecordsInput = {
@@ -52033,6 +55938,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTriageRecordsInput = {
@@ -52119,6 +56027,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTriageRecordsInput = {
@@ -52142,6 +56053,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type QueueCreateWithoutQueueTypeInput = {
@@ -52154,12 +56068,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visit: VisitCreateNestedOneWithoutQueuesInput
+    serviceStation?: ServiceStationCreateNestedOneWithoutQueuesInput
   }
 
   export type QueueUncheckedCreateWithoutQueueTypeInput = {
     id?: string
     queueNumber: string
     visitId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -52256,6 +56172,41 @@ export namespace Prisma {
     create: XOR<VisitCreateWithoutQueuesInput, VisitUncheckedCreateWithoutQueuesInput>
   }
 
+  export type ServiceStationCreateWithoutQueuesInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activeUser?: UserCreateNestedOneWithoutActiveStationsInput
+    schedules?: StationScheduleCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationUncheckedCreateWithoutQueuesInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    activeUserId?: string | null
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    schedules?: StationScheduleUncheckedCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationCreateOrConnectWithoutQueuesInput = {
+    where: ServiceStationWhereUniqueInput
+    create: XOR<ServiceStationCreateWithoutQueuesInput, ServiceStationUncheckedCreateWithoutQueuesInput>
+  }
+
   export type QueueTypeUpsertWithoutQueuesInput = {
     update: XOR<QueueTypeUpdateWithoutQueuesInput, QueueTypeUncheckedUpdateWithoutQueuesInput>
     create: XOR<QueueTypeCreateWithoutQueuesInput, QueueTypeUncheckedCreateWithoutQueuesInput>
@@ -52330,6 +56281,585 @@ export namespace Prisma {
     referrals?: ReferralUncheckedUpdateManyWithoutVisitNestedInput
   }
 
+  export type ServiceStationUpsertWithoutQueuesInput = {
+    update: XOR<ServiceStationUpdateWithoutQueuesInput, ServiceStationUncheckedUpdateWithoutQueuesInput>
+    create: XOR<ServiceStationCreateWithoutQueuesInput, ServiceStationUncheckedCreateWithoutQueuesInput>
+    where?: ServiceStationWhereInput
+  }
+
+  export type ServiceStationUpdateToOneWithWhereWithoutQueuesInput = {
+    where?: ServiceStationWhereInput
+    data: XOR<ServiceStationUpdateWithoutQueuesInput, ServiceStationUncheckedUpdateWithoutQueuesInput>
+  }
+
+  export type ServiceStationUpdateWithoutQueuesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUser?: UserUpdateOneWithoutActiveStationsNestedInput
+    schedules?: StationScheduleUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationUncheckedUpdateWithoutQueuesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    activeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schedules?: StationScheduleUncheckedUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type UserCreateWithoutActiveStationsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdVisits?: VisitCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutActiveStationsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientUncheckedCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdVisits?: VisitUncheckedCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordUncheckedCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationUncheckedCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionUncheckedCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutActiveStationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActiveStationsInput, UserUncheckedCreateWithoutActiveStationsInput>
+  }
+
+  export type StationScheduleCreateWithoutServiceStationInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutScheduledShiftsInput
+    createdBy: UserCreateNestedOneWithoutCreatedSchedulesInput
+  }
+
+  export type StationScheduleUncheckedCreateWithoutServiceStationInput = {
+    id?: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleCreateOrConnectWithoutServiceStationInput = {
+    where: StationScheduleWhereUniqueInput
+    create: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput>
+  }
+
+  export type StationScheduleCreateManyServiceStationInputEnvelope = {
+    data: StationScheduleCreateManyServiceStationInput | StationScheduleCreateManyServiceStationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type QueueCreateWithoutServiceStationInput = {
+    id?: string
+    queueNumber: string
+    status?: $Enums.QueueStatus
+    calledAt?: Date | string | null
+    servedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    queueType: QueueTypeCreateNestedOneWithoutQueuesInput
+    visit: VisitCreateNestedOneWithoutQueuesInput
+  }
+
+  export type QueueUncheckedCreateWithoutServiceStationInput = {
+    id?: string
+    queueNumber: string
+    queueTypeId: string
+    visitId: string
+    status?: $Enums.QueueStatus
+    calledAt?: Date | string | null
+    servedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type QueueCreateOrConnectWithoutServiceStationInput = {
+    where: QueueWhereUniqueInput
+    create: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput>
+  }
+
+  export type QueueCreateManyServiceStationInputEnvelope = {
+    data: QueueCreateManyServiceStationInput | QueueCreateManyServiceStationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutActiveStationsInput = {
+    update: XOR<UserUpdateWithoutActiveStationsInput, UserUncheckedUpdateWithoutActiveStationsInput>
+    create: XOR<UserCreateWithoutActiveStationsInput, UserUncheckedCreateWithoutActiveStationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActiveStationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActiveStationsInput, UserUncheckedUpdateWithoutActiveStationsInput>
+  }
+
+  export type UserUpdateWithoutActiveStationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActiveStationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUncheckedUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUncheckedUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUncheckedUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUncheckedUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUncheckedUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type StationScheduleUpsertWithWhereUniqueWithoutServiceStationInput = {
+    where: StationScheduleWhereUniqueInput
+    update: XOR<StationScheduleUpdateWithoutServiceStationInput, StationScheduleUncheckedUpdateWithoutServiceStationInput>
+    create: XOR<StationScheduleCreateWithoutServiceStationInput, StationScheduleUncheckedCreateWithoutServiceStationInput>
+  }
+
+  export type StationScheduleUpdateWithWhereUniqueWithoutServiceStationInput = {
+    where: StationScheduleWhereUniqueInput
+    data: XOR<StationScheduleUpdateWithoutServiceStationInput, StationScheduleUncheckedUpdateWithoutServiceStationInput>
+  }
+
+  export type StationScheduleUpdateManyWithWhereWithoutServiceStationInput = {
+    where: StationScheduleScalarWhereInput
+    data: XOR<StationScheduleUpdateManyMutationInput, StationScheduleUncheckedUpdateManyWithoutServiceStationInput>
+  }
+
+  export type QueueUpsertWithWhereUniqueWithoutServiceStationInput = {
+    where: QueueWhereUniqueInput
+    update: XOR<QueueUpdateWithoutServiceStationInput, QueueUncheckedUpdateWithoutServiceStationInput>
+    create: XOR<QueueCreateWithoutServiceStationInput, QueueUncheckedCreateWithoutServiceStationInput>
+  }
+
+  export type QueueUpdateWithWhereUniqueWithoutServiceStationInput = {
+    where: QueueWhereUniqueInput
+    data: XOR<QueueUpdateWithoutServiceStationInput, QueueUncheckedUpdateWithoutServiceStationInput>
+  }
+
+  export type QueueUpdateManyWithWhereWithoutServiceStationInput = {
+    where: QueueScalarWhereInput
+    data: XOR<QueueUpdateManyMutationInput, QueueUncheckedUpdateManyWithoutServiceStationInput>
+  }
+
+  export type ServiceStationCreateWithoutSchedulesInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activeUser?: UserCreateNestedOneWithoutActiveStationsInput
+    queues?: QueueCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationUncheckedCreateWithoutSchedulesInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    activeUserId?: string | null
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    queues?: QueueUncheckedCreateNestedManyWithoutServiceStationInput
+  }
+
+  export type ServiceStationCreateOrConnectWithoutSchedulesInput = {
+    where: ServiceStationWhereUniqueInput
+    create: XOR<ServiceStationCreateWithoutSchedulesInput, ServiceStationUncheckedCreateWithoutSchedulesInput>
+  }
+
+  export type UserCreateWithoutScheduledShiftsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdVisits?: VisitCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutScheduledShiftsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientUncheckedCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdVisits?: VisitUncheckedCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordUncheckedCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationUncheckedCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionUncheckedCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutScheduledShiftsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutScheduledShiftsInput, UserUncheckedCreateWithoutScheduledShiftsInput>
+  }
+
+  export type UserCreateWithoutCreatedSchedulesInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdVisits?: VisitCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatedSchedulesInput = {
+    id?: string
+    username: string
+    email?: string | null
+    passwordHash: string
+    fullName: string
+    role?: $Enums.UserRole
+    phoneNumber?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    patient?: PatientUncheckedCreateNestedOneWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdVisits?: VisitUncheckedCreateNestedManyWithoutCreatedByInput
+    triageRecords?: TriageRecordUncheckedCreateNestedManyWithoutRecordedByInput
+    consultations?: ConsultationUncheckedCreateNestedManyWithoutDoctorInput
+    prescriptions?: PrescriptionUncheckedCreateNestedManyWithoutDoctorInput
+    dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
+    vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatedSchedulesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatedSchedulesInput, UserUncheckedCreateWithoutCreatedSchedulesInput>
+  }
+
+  export type ServiceStationUpsertWithoutSchedulesInput = {
+    update: XOR<ServiceStationUpdateWithoutSchedulesInput, ServiceStationUncheckedUpdateWithoutSchedulesInput>
+    create: XOR<ServiceStationCreateWithoutSchedulesInput, ServiceStationUncheckedCreateWithoutSchedulesInput>
+    where?: ServiceStationWhereInput
+  }
+
+  export type ServiceStationUpdateToOneWithWhereWithoutSchedulesInput = {
+    where?: ServiceStationWhereInput
+    data: XOR<ServiceStationUpdateWithoutSchedulesInput, ServiceStationUncheckedUpdateWithoutSchedulesInput>
+  }
+
+  export type ServiceStationUpdateWithoutSchedulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activeUser?: UserUpdateOneWithoutActiveStationsNestedInput
+    queues?: QueueUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationUncheckedUpdateWithoutSchedulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    activeUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    queues?: QueueUncheckedUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type UserUpsertWithoutScheduledShiftsInput = {
+    update: XOR<UserUpdateWithoutScheduledShiftsInput, UserUncheckedUpdateWithoutScheduledShiftsInput>
+    create: XOR<UserCreateWithoutScheduledShiftsInput, UserUncheckedCreateWithoutScheduledShiftsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutScheduledShiftsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutScheduledShiftsInput, UserUncheckedUpdateWithoutScheduledShiftsInput>
+  }
+
+  export type UserUpdateWithoutScheduledShiftsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutScheduledShiftsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUncheckedUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUncheckedUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUncheckedUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUncheckedUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUncheckedUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUpsertWithoutCreatedSchedulesInput = {
+    update: XOR<UserUpdateWithoutCreatedSchedulesInput, UserUncheckedUpdateWithoutCreatedSchedulesInput>
+    create: XOR<UserCreateWithoutCreatedSchedulesInput, UserUncheckedCreateWithoutCreatedSchedulesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatedSchedulesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatedSchedulesInput, UserUncheckedUpdateWithoutCreatedSchedulesInput>
+  }
+
+  export type UserUpdateWithoutCreatedSchedulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatedSchedulesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    patient?: PatientUncheckedUpdateOneWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdVisits?: VisitUncheckedUpdateManyWithoutCreatedByNestedInput
+    triageRecords?: TriageRecordUncheckedUpdateManyWithoutRecordedByNestedInput
+    consultations?: ConsultationUncheckedUpdateManyWithoutDoctorNestedInput
+    prescriptions?: PrescriptionUncheckedUpdateManyWithoutDoctorNestedInput
+    dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
+    vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type VisitCreateWithoutConsultationInput = {
     id?: string
     visitNumber: string
@@ -52392,6 +56922,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutConsultationsInput = {
@@ -52415,6 +56948,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutConsultationsInput = {
@@ -52554,6 +57090,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConsultationsInput = {
@@ -52577,6 +57116,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type SoapNoteUpsertWithoutConsultationInput = {
@@ -53075,6 +57617,9 @@ export namespace Prisma {
     dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutInventoryTxInput = {
@@ -53098,6 +57643,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutInventoryTxInput = {
@@ -53182,6 +57730,9 @@ export namespace Prisma {
     dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInventoryTxInput = {
@@ -53205,6 +57756,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type VisitCreateWithoutPrescriptionInput = {
@@ -53269,6 +57823,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPrescriptionsInput = {
@@ -53292,6 +57849,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPrescriptionsInput = {
@@ -53429,6 +57989,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPrescriptionsInput = {
@@ -53452,6 +58015,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PrescriptionItemUpsertWithWhereUniqueWithoutPrescriptionInput = {
@@ -53730,6 +58296,9 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDispensationsInput = {
@@ -53753,6 +58322,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDispensationsInput = {
@@ -53872,6 +58444,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDispensationsInput = {
@@ -53895,6 +58470,9 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PatientCreateWithoutAppointmentsInput = {
@@ -54198,6 +58776,9 @@ export namespace Prisma {
     dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVaccinationsGivenInput = {
@@ -54221,6 +58802,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVaccinationsGivenInput = {
@@ -54362,6 +58946,9 @@ export namespace Prisma {
     dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVaccinationsGivenInput = {
@@ -54385,6 +58972,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type VisitCreateWithoutLabOrdersInput = {
@@ -54992,6 +59582,9 @@ export namespace Prisma {
     dispensations?: DispensationCreateNestedManyWithoutPharmacistInput
     inventoryTx?: InventoryTransactionCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -55015,6 +59608,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedCreateNestedManyWithoutPharmacistInput
     inventoryTx?: InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByInput
     vaccinationsGiven?: VaccinationUncheckedCreateNestedManyWithoutVaccinatorInput
+    activeStations?: ServiceStationUncheckedCreateNestedManyWithoutActiveUserInput
+    scheduledShifts?: StationScheduleUncheckedCreateNestedManyWithoutUserInput
+    createdSchedules?: StationScheduleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -55054,6 +59650,9 @@ export namespace Prisma {
     dispensations?: DispensationUpdateManyWithoutPharmacistNestedInput
     inventoryTx?: InventoryTransactionUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -55077,6 +59676,9 @@ export namespace Prisma {
     dispensations?: DispensationUncheckedUpdateManyWithoutPharmacistNestedInput
     inventoryTx?: InventoryTransactionUncheckedUpdateManyWithoutCreatedByNestedInput
     vaccinationsGiven?: VaccinationUncheckedUpdateManyWithoutVaccinatorNestedInput
+    activeStations?: ServiceStationUncheckedUpdateManyWithoutActiveUserNestedInput
+    scheduledShifts?: StationScheduleUncheckedUpdateManyWithoutUserNestedInput
+    createdSchedules?: StationScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserPermissionCreateManyUserInput = {
@@ -55156,6 +59758,43 @@ export namespace Prisma {
     doseNumber?: number
     administeredAt?: Date | string
     injectionSite?: string | null
+  }
+
+  export type ServiceStationCreateManyActiveUserInput = {
+    id?: string
+    code: string
+    name: string
+    stationNumber: number
+    type: $Enums.StationType
+    isActive?: boolean
+    isLocked?: boolean
+    occupiedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleCreateManyUserInput = {
+    id?: string
+    serviceStationId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleCreateManyCreatedByInput = {
+    id?: string
+    serviceStationId: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserPermissionUpdateWithoutUserInput = {
@@ -55417,6 +60056,121 @@ export namespace Prisma {
     doseNumber?: IntFieldUpdateOperationsInput | number
     administeredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     injectionSite?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ServiceStationUpdateWithoutActiveUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schedules?: StationScheduleUpdateManyWithoutServiceStationNestedInput
+    queues?: QueueUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationUncheckedUpdateWithoutActiveUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    schedules?: StationScheduleUncheckedUpdateManyWithoutServiceStationNestedInput
+    queues?: QueueUncheckedUpdateManyWithoutServiceStationNestedInput
+  }
+
+  export type ServiceStationUncheckedUpdateManyWithoutActiveUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    stationNumber?: IntFieldUpdateOperationsInput | number
+    type?: EnumStationTypeFieldUpdateOperationsInput | $Enums.StationType
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    occupiedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceStation?: ServiceStationUpdateOneRequiredWithoutSchedulesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedSchedulesNestedInput
+  }
+
+  export type StationScheduleUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceStation?: ServiceStationUpdateOneRequiredWithoutSchedulesNestedInput
+    user?: UserUpdateOneRequiredWithoutScheduledShiftsNestedInput
+  }
+
+  export type StationScheduleUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserPermissionCreateManyPermissionInput = {
@@ -55797,6 +60551,7 @@ export namespace Prisma {
     id?: string
     queueNumber: string
     queueTypeId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -55884,12 +60639,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     queueType?: QueueTypeUpdateOneRequiredWithoutQueuesNestedInput
+    serviceStation?: ServiceStationUpdateOneWithoutQueuesNestedInput
   }
 
   export type QueueUncheckedUpdateWithoutVisitInput = {
     id?: StringFieldUpdateOperationsInput | string
     queueNumber?: StringFieldUpdateOperationsInput | string
     queueTypeId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -55902,6 +60659,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     queueNumber?: StringFieldUpdateOperationsInput | string
     queueTypeId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -55979,6 +60737,7 @@ export namespace Prisma {
     id?: string
     queueNumber: string
     visitId: string
+    serviceStationId?: string | null
     status?: $Enums.QueueStatus
     calledAt?: Date | string | null
     servedAt?: Date | string | null
@@ -55997,12 +60756,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visit?: VisitUpdateOneRequiredWithoutQueuesNestedInput
+    serviceStation?: ServiceStationUpdateOneWithoutQueuesNestedInput
   }
 
   export type QueueUncheckedUpdateWithoutQueueTypeInput = {
     id?: StringFieldUpdateOperationsInput | string
     queueNumber?: StringFieldUpdateOperationsInput | string
     visitId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -56014,6 +60775,107 @@ export namespace Prisma {
   export type QueueUncheckedUpdateManyWithoutQueueTypeInput = {
     id?: StringFieldUpdateOperationsInput | string
     queueNumber?: StringFieldUpdateOperationsInput | string
+    visitId?: StringFieldUpdateOperationsInput | string
+    serviceStationId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
+    calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleCreateManyServiceStationInput = {
+    id?: string
+    userId: string
+    startTime: Date | string
+    endTime: Date | string
+    isLocked?: boolean
+    notes?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type QueueCreateManyServiceStationInput = {
+    id?: string
+    queueNumber: string
+    queueTypeId: string
+    visitId: string
+    status?: $Enums.QueueStatus
+    calledAt?: Date | string | null
+    servedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StationScheduleUpdateWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutScheduledShiftsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedSchedulesNestedInput
+  }
+
+  export type StationScheduleUncheckedUpdateWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StationScheduleUncheckedUpdateManyWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type QueueUpdateWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    queueNumber?: StringFieldUpdateOperationsInput | string
+    status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
+    calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    queueType?: QueueTypeUpdateOneRequiredWithoutQueuesNestedInput
+    visit?: VisitUpdateOneRequiredWithoutQueuesNestedInput
+  }
+
+  export type QueueUncheckedUpdateWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    queueNumber?: StringFieldUpdateOperationsInput | string
+    queueTypeId?: StringFieldUpdateOperationsInput | string
+    visitId?: StringFieldUpdateOperationsInput | string
+    status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
+    calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    servedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type QueueUncheckedUpdateManyWithoutServiceStationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    queueNumber?: StringFieldUpdateOperationsInput | string
+    queueTypeId?: StringFieldUpdateOperationsInput | string
     visitId?: StringFieldUpdateOperationsInput | string
     status?: EnumQueueStatusFieldUpdateOperationsInput | $Enums.QueueStatus
     calledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

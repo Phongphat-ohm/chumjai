@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getWaitingTriageVisitsAction } from "@/server/actions/triage";
 import { TriageFormModal } from "@/components/triage/TriageFormModal";
+import { StationBadgeBar } from "@/components/stations/StationBadgeBar";
+import { StationType } from "@/generated/client";
 
 export default function TriageStationPage() {
   const [isPending, startTransition] = useTransition();
@@ -68,6 +70,9 @@ export default function TriageStationPage() {
           รีเฟรชรายการ
         </Button>
       </div>
+
+      {/* Station Active Badge Bar */}
+      <StationBadgeBar filterType={StationType.TRIAGE} />
 
       {/* Waiting Triage Patients Table */}
       <Card>

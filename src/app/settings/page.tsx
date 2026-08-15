@@ -130,18 +130,32 @@ export default function ClinicSettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div>
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white shadow-md">
-            <Settings className="h-5 w-5" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chunjai-600 text-white shadow-md">
+              <Settings className="h-5 w-5" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-chunjai-950">
+              ตั้งค่าคลินิกและระบบ (Clinic & System Settings)
+            </h1>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-chunjai-950">
-            ตั้งค่าคลินิกและระบบ (Clinic & System Settings)
-          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            จัดการข้อมูลสถานพยาบาล หัวกระดาษฉลากยา/ใบนัด และการตั้งค่าคลังยา
+          </p>
         </div>
-        <p className="text-xs text-slate-500 mt-1">
-          จัดการข้อมูลสถานพยาบาล หัวกระดาษฉลากยา/ใบนัด และการตั้งค่าคลังยา
-        </p>
+
+        <a href="/settings/stations">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="border-chunjai-300 text-chunjai-800 hover:bg-chunjai-50 font-bold text-xs shadow-xs"
+          >
+            <Building2 className="mr-1.5 h-4 w-4 text-chunjai-600" />
+            จัดการช่องบริการ & ตารางเวร
+          </Button>
+        </a>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

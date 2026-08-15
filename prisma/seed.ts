@@ -95,51 +95,44 @@ async function main() {
     });
   }
 
-  // 4. Seed Initial Sample Users with real bcrypt hashes
-  const defaultUsers = [
-    {
-      username: "admin",
-      fullName: "ผู้ดูแลระบบ ชุมใจ",
-      role: UserRole.ADMIN,
-      email: "admin@chunjai.local",
-      passwordHash: defaultPasswordHash,
+  // 4. Seed Master Admin Account ONLY
+  const adminUser = {
+    username: "admin",
+    fullName: "ผู้ดูแลระบบ ชุมใจ",
+    role: UserRole.ADMIN,
+    email: "admin@chumjai.com",
+    passwordHash: defaultPasswordHash,
+  };
+
+  console.log("👑 Seeding Master Admin account...");
+  await prisma.user.upsert({
+    where: { username: adminUser.username },
+    update: {
+      fullName: adminUser.fullName,
+      role: adminUser.role,
+      email: adminUser.email,
+      passwordHash: adminUser.passwordHash,
+      isActive: true,
     },
-    {
-      username: "doctor1",
-      fullName: "นพ. ชุมใจ รักษาดี",
-      role: UserRole.DOCTOR,
-      email: "doctor@chunjai.local",
-      passwordHash: defaultPasswordHash,
-    },
-    {
-      username: "nurse1",
-      fullName: "พยาบาล ใจดี มีสุข",
-      role: UserRole.NURSE,
-      email: "nurse@chunjai.local",
-      passwordHash: defaultPasswordHash,
-    },
-    {
-      username: "reception1",
-      fullName: "เจ้าหน้าที่ จุดลงทะเบียน",
-      role: UserRole.RECEPTIONIST,
-      email: "reception@chunjai.local",
-      passwordHash: defaultPasswordHash,
-    },
-    {
-      username: "pharmacy1",
-      fullName: "ภก. เภสัชกร ห่วงใย",
-      role: UserRole.PHARMACIST,
-      email: "pharmacy@chunjai.local",
-      passwordHash: defaultPasswordHash,
-    },
+    create: adminUser,
+  });
+
+  // 5. Seed Default Service Stations if none exist
+  const defaultStations = [
+    { code: "TRIAGE-01", name: "จุดซักประวัติ 1", stationNumber: 1, type: "TRIAGE" as const },
+    { code: "DOC-01", name: "ห้องตรวจแพทย์ 1", stationNumber: 1, type: "DOCTOR" as const },
+    { code: "DOC-02", name: "ห้องตรวจแพทย์ 2", stationNumber: 2, type: "DOCTOR" as const },
+    { code: "PHARM-01", name: "ห้องจ่ายยา 1", stationNumber: 1, type: "PHARMACY" as const },
+    { code: "CASH-01", name: "จุดการเงิน 1", stationNumber: 1, type: "CASHIER" as const },
+    { code: "LAB-01", name: "ห้องแล็บ 1", stationNumber: 1, type: "LAB" as const },
   ];
 
-  console.log("👤 Seeding default user accounts...");
-  for (const u of defaultUsers) {
-    await prisma.user.upsert({
-      where: { username: u.username },
-      update: { fullName: u.fullName, role: u.role, email: u.email, passwordHash: u.passwordHash },
-      create: u,
+  console.log("🏢 Seeding default service stations...");
+  for (const st of defaultStations) {
+    await prisma.serviceStation.upsert({
+      where: { code: st.code },
+      update: { name: st.name, stationNumber: st.stationNumber, type: st.type },
+      create: st,
     });
   }
 

@@ -23,6 +23,7 @@ import {
   Bell,
   BarChart3,
   ShieldCheck,
+  Building2,
   ChevronDown,
   ChevronRight,
   Folder,
@@ -153,6 +154,18 @@ export const navigationCategories: NavCategoryConfig[] = [
         name: "ตั้งค่าคลินิก",
         href: "/settings",
         icon: Settings,
+        allowedRoles: ["ADMIN"],
+      },
+      {
+        name: "ช่องบริการ/ห้องตรวจ",
+        href: "/settings/stations",
+        icon: Building2,
+        allowedRoles: ["ADMIN"],
+      },
+      {
+        name: "ตารางเวรปฏิบัติหน้าที่",
+        href: "/settings/schedules",
+        icon: Calendar,
         allowedRoles: ["ADMIN"],
       },
       {

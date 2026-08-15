@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Users,
   ShieldAlert,
+  Building2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,31 +27,76 @@ import {
   callQueueAction,
   updateQueueStatusAction,
 } from "@/server/actions/queue";
-import { QueueStatus, QueueType } from "@/generated/client";
+import { getServiceStationsAction } from "@/server/actions/station";
+import { broadcastQueueCall } from "@/lib/audio/queueBroadcast";
+import { QueueStatus, QueueType, StationType } from "@/generated/client";
 
 export default function QueueManagementPage() {
   const [activeTab, setActiveTab] = useState<"TRIAGE" | "DOC" | "PHARM">("TRIAGE");
   const [isPending, startTransition] = useTransition();
   const [queues, setQueues] = useState<any[]>([]);
+  const [stations, setStations] = useState<any[]>([]);
+  const [selectedStationId, setSelectedStationId] = useState<string>("");
 
-  const fetchQueues = (typeCode: string = activeTab) => {
+  const fetchQueuesAndStations = (typeCode: string = activeTab) => {
     startTransition(async () => {
-      const res = await getQueuesAction({ typeCode });
-      if (res.success && res.data) {
-        setQueues(res.data);
+      const [qRes, stRes] = await Promise.all([
+        getQueuesAction({ typeCode }),
+        getServiceStationsAction(),
+      ]);
+
+      if (qRes.success && qRes.data) {
+        setQueues(qRes.data);
+      }
+      if (stRes.success && stRes.data) {
+        setStations(stRes.data);
       }
     });
   };
 
   useEffect(() => {
-    fetchQueues(activeTab);
+    fetchQueuesAndStations(activeTab);
   }, [activeTab]);
 
-  const handleCallQueue = (queueId: string) => {
+  // Filter stations suitable for the active tab
+  const suitableStations = stations.filter((st) => {
+    if (activeTab === "TRIAGE") return st.type === StationType.TRIAGE;
+    if (activeTab === "DOC") return st.type === StationType.DOCTOR;
+    if (activeTab === "PHARM") return st.type === StationType.PHARMACY;
+    return true;
+  });
+
+  // Auto-set selected station when tab changes if empty
+  useEffect(() => {
+    if (suitableStations.length > 0) {
+      // Find occupied or first station
+      const currentOrFirst = suitableStations.find((s) => s.activeUserId) || suitableStations[0];
+      setSelectedStationId(currentOrFirst.id);
+    } else {
+      setSelectedStationId("");
+    }
+  }, [activeTab, stations]);
+
+  const handleCallQueue = (queueId: string, customStationId?: string) => {
+    const stationIdToUse = customStationId || selectedStationId || undefined;
     startTransition(async () => {
-      const res = await callQueueAction(queueId);
-      if (res.success) {
-        fetchQueues(activeTab);
+      const res = await callQueueAction(queueId, stationIdToUse);
+      if (res.success && res.data) {
+        const destStation =
+          res.data.serviceStation?.name ||
+          stations.find((s) => s.id === stationIdToUse)?.name ||
+          res.data.queueType?.name ||
+          "ช่องบริการ";
+
+        // Broadcast to TV Screen & other tabs instantly!
+        broadcastQueueCall({
+          queueId: res.data.id,
+          queueNumber: res.data.queueNumber,
+          stationName: destStation,
+          calledAt: Date.now(),
+        });
+
+        fetchQueuesAndStations(activeTab);
       }
     });
   };
@@ -59,7 +105,7 @@ export default function QueueManagementPage() {
     startTransition(async () => {
       const res = await updateQueueStatusAction(queueId, status);
       if (res.success) {
-        fetchQueues(activeTab);
+        fetchQueuesAndStations(activeTab);
       }
     });
   };
@@ -156,14 +202,45 @@ export default function QueueManagementPage() {
               ควบคุมการเรียกซ้ำและเปลี่ยนสถานะคิว
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 text-center space-y-4">
+          <CardContent className="p-5 text-center space-y-4">
+            {/* Target Destination Station Selector */}
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-left">
+              <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-chunjai-600" />
+                  เรียกเข้าช่องบริการ:
+                </span>
+                <span className="text-[10px] text-slate-400 font-normal">
+                  ({suitableStations.length} ห้อง)
+                </span>
+              </label>
+              <select
+                value={selectedStationId}
+                onChange={(e) => setSelectedStationId(e.target.value)}
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-900 focus:border-chunjai-500 focus:outline-none"
+              >
+                {suitableStations.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.name} {st.activeUser ? `(ประจำโดย: ${st.activeUser.fullName})` : "(ห้องว่าง)"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {currentCalled ? (
               <div className="space-y-4">
                 <div className="rounded-2xl border border-chunjai-200 bg-white p-6 shadow-md space-y-2">
-                  <span className="text-xs font-semibold text-chunjai-600 block uppercase tracking-wider">
-                    {currentCalled.queueType?.name}
-                  </span>
-                  <div className="text-5xl font-extrabold text-chunjai-700 font-mono tracking-tight">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-chunjai-600 block uppercase tracking-wider">
+                      {currentCalled.queueType?.name}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-chunjai-100 text-chunjai-800 px-2 py-0.5 text-[11px] font-bold border border-chunjai-200">
+                      <Building2 className="h-3 w-3 text-chunjai-600" />
+                      {currentCalled.serviceStation?.name || "ช่องบริการ"}
+                    </span>
+                  </div>
+
+                  <div className="text-5xl font-extrabold text-chunjai-700 font-mono tracking-tight py-1">
                     {currentCalled.queueNumber}
                   </div>
                   <p className="text-sm font-bold text-slate-900">
@@ -233,7 +310,7 @@ export default function QueueManagementPage() {
                 </Button>
               </div>
             ) : (
-              <div className="py-8 space-y-4">
+              <div className="py-6 space-y-4">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-chunjai-100 text-chunjai-600">
                   <Clock className="h-8 w-8" />
                 </div>
@@ -242,7 +319,7 @@ export default function QueueManagementPage() {
                     ยังไม่มีคิวที่กำลังรับบริการ
                   </p>
                   <p className="text-xs text-slate-400">
-                    กดปุ่มเรียกคิวถัดไปจากตารางด้านข้างเพื่อเริ่มบริการ
+                    เลือกช่องบริการด้านบน แล้วกดเรียกคิวถัดไป
                   </p>
                 </div>
 
@@ -277,7 +354,7 @@ export default function QueueManagementPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchQueues(activeTab)}
+              onClick={() => fetchQueuesAndStations(activeTab)}
               className="text-xs"
             >
               รีเฟรช

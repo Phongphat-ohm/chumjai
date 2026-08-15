@@ -39,9 +39,10 @@ import { getPrescriptionByVisitAction } from "@/server/actions/prescription";
 import { Icd10SearchDialog } from "@/components/doctor/Icd10SearchDialog";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
 import { CreateLabOrderModal } from "@/components/lab/CreateLabOrderModal";
+import { StationBadgeBar } from "@/components/stations/StationBadgeBar";
 import { useClinicSettings } from "@/hooks/useClinicSettings";
 import { Icd10Item } from "@/lib/icd10-data";
-import { DiagnosisType, LabOrderStatus } from "@/generated/client";
+import { DiagnosisType, LabOrderStatus, StationType } from "@/generated/client";
 
 const LabReportModal = dynamic(
   () => import("@/components/lab/LabReportModal").then((mod) => mod.LabReportModal),
@@ -379,6 +380,9 @@ export default function DoctorConsultationPage() {
           รีเฟรชคิวแพทย์
         </Button>
       </div>
+
+      {/* Station Active Badge Bar */}
+      <StationBadgeBar filterType={StationType.DOCTOR} />
 
       {/* Alert Messages */}
       {successMessage && (

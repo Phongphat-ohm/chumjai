@@ -18,20 +18,82 @@ export interface ActionResult<T = unknown> {
 }
 
 // ----------------------------------------------------
-// Action 1: Get Visits Waiting in Pharmacy Queue
+// Action 1: Get Visits Waiting in Pharmacy Queue (Today Only)
 // ----------------------------------------------------
-export async function getPharmacyQueueVisitsAction(): Promise<ActionResult<any[]>> {
+function getBangkokDateRange(dateInput?: Date | string) {
+  const d = dateInput ? new Date(dateInput) : new Date();
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const formatted = formatter.format(d); // e.g. "2026-08-15"
+
+  const startOfDay = new Date(`${formatted}T00:00:00.000+07:00`);
+  const endOfDay = new Date(`${formatted}T23:59:59.999+07:00`);
+
+  return { startOfDay, endOfDay };
+}
+
+export async function getPharmacyQueueVisitsAction(params?: {
+  date?: string;
+  scope?: "today" | "all_waiting" | "all";
+}): Promise<ActionResult<any[]>> {
   try {
     const session = await requirePermission("DISPENSE_VIEW");
 
-    const visits = await prisma.visit.findMany({
-      where: {
+    const scope = params?.scope || "today";
+    const { startOfDay, endOfDay } = getBangkokDateRange(params?.date);
+
+    let whereClause: any = {};
+
+    if (scope === "today") {
+      // Strictly ONLY TODAY's visits / prescriptions / pharmacy queues
+      whereClause = {
+        OR: [
+          // 1. Visit registered today with prescription or pharmacy queue
+          {
+            createdAt: { gte: startOfDay, lte: endOfDay },
+            OR: [
+              { status: { in: [VisitStatus.WAITING_PHARMACY, VisitStatus.DISPENSED, VisitStatus.COMPLETED] } },
+              { prescription: { isNot: null } },
+              { queues: { some: { queueType: { code: "PHARM" } } } },
+            ],
+          },
+          // 2. Prescription created today
+          {
+            prescription: {
+              createdAt: { gte: startOfDay, lte: endOfDay },
+            },
+          },
+          // 3. Pharmacy Queue created today
+          {
+            queues: {
+              some: {
+                queueType: { code: "PHARM" },
+                createdAt: { gte: startOfDay, lte: endOfDay },
+              },
+            },
+          },
+        ],
+      };
+    } else if (scope === "all_waiting") {
+      whereClause = {
+        status: VisitStatus.WAITING_PHARMACY,
+      };
+    } else {
+      whereClause = {
         OR: [
           { status: { in: [VisitStatus.WAITING_PHARMACY, VisitStatus.DISPENSED, VisitStatus.COMPLETED] } },
           { prescription: { isNot: null } },
           { queues: { some: { queueType: { code: "PHARM" } } } },
         ],
-      },
+      };
+    }
+
+    const visits = await prisma.visit.findMany({
+      where: whereClause,
       orderBy: { updatedAt: "desc" },
       include: {
         patient: {

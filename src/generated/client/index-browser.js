@@ -257,10 +257,38 @@ exports.Prisma.QueueScalarFieldEnum = {
   queueNumber: 'queueNumber',
   queueTypeId: 'queueTypeId',
   visitId: 'visitId',
+  serviceStationId: 'serviceStationId',
   status: 'status',
   calledAt: 'calledAt',
   servedAt: 'servedAt',
   completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ServiceStationScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  stationNumber: 'stationNumber',
+  type: 'type',
+  isActive: 'isActive',
+  activeUserId: 'activeUserId',
+  isLocked: 'isLocked',
+  occupiedUntil: 'occupiedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StationScheduleScalarFieldEnum = {
+  id: 'id',
+  serviceStationId: 'serviceStationId',
+  userId: 'userId',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  isLocked: 'isLocked',
+  notes: 'notes',
+  createdById: 'createdById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -528,6 +556,14 @@ exports.QueueStatus = exports.$Enums.QueueStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.StationType = exports.$Enums.StationType = {
+  TRIAGE: 'TRIAGE',
+  DOCTOR: 'DOCTOR',
+  PHARMACY: 'PHARMACY',
+  CASHIER: 'CASHIER',
+  LAB: 'LAB'
+};
+
 exports.DiagnosisType = exports.$Enums.DiagnosisType = {
   PRIMARY: 'PRIMARY',
   SECONDARY: 'SECONDARY',
@@ -569,6 +605,7 @@ exports.ReferralStatus = exports.$Enums.ReferralStatus = {
   PENDING: 'PENDING',
   SENT: 'SENT',
   ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED'
 };
@@ -586,6 +623,8 @@ exports.Prisma.ModelName = {
   TriageRecord: 'TriageRecord',
   QueueType: 'QueueType',
   Queue: 'Queue',
+  ServiceStation: 'ServiceStation',
+  StationSchedule: 'StationSchedule',
   Consultation: 'Consultation',
   SoapNote: 'SoapNote',
   Diagnosis: 'Diagnosis',

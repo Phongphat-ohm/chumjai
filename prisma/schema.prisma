@@ -108,8 +108,17 @@ enum ReferralStatus {
   PENDING
   SENT
   ACCEPTED
+  REJECTED
   COMPLETED
   CANCELLED
+}
+
+enum StationType {
+  TRIAGE
+  DOCTOR
+  PHARMACY
+  CASHIER
+  LAB
 }
 
 // ==========================================
@@ -139,6 +148,9 @@ model User {
   auditLogs         AuditLog[]
   inventoryTx       InventoryTransaction[] @relation("InventoryCreatedBy")
   vaccinationsGiven Vaccination[]          @relation("VaccinatorUser")
+  activeStations    ServiceStation[]       @relation("ActiveStationUser")
+  scheduledShifts   StationSchedule[]      @relation("ScheduledStaff")
+  createdSchedules  StationSchedule[]      @relation("ScheduleCreatedBy")
 
   @@map("users")
 }
@@ -335,23 +347,68 @@ model QueueType {
 }
 
 model Queue {
-  id          String      @id @default(uuid())
-  queueNumber String // e.g. A001
-  queueTypeId String
-  visitId     String
-  status      QueueStatus @default(WAITING)
-  calledAt    DateTime?
-  servedAt    DateTime?
-  completedAt DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id               String          @id @default(uuid())
+  queueNumber      String // e.g. A001
+  queueTypeId      String
+  visitId          String
+  serviceStationId String?
+  status           QueueStatus     @default(WAITING)
+  calledAt         DateTime?
+  servedAt         DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 
-  queueType QueueType @relation(fields: [queueTypeId], references: [id])
-  visit     Visit     @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  queueType      QueueType       @relation(fields: [queueTypeId], references: [id])
+  visit          Visit           @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  serviceStation ServiceStation? @relation(fields: [serviceStationId], references: [id])
 
   @@index([queueTypeId, status])
+  @@index([serviceStationId])
   @@index([createdAt])
   @@map("queues")
+}
+
+model ServiceStation {
+  id            String            @id @default(uuid())
+  code          String            @unique // e.g. DOC_1, TRIAGE_1, PHARM_1
+  name          String            // e.g. "ห้องตรวจ 1", "ช่องซักประวัติ 1"
+  stationNumber Int               // หมายเลขห้อง/ช่อง เช่น 1, 2, 3
+  type          StationType
+  isActive      Boolean           @default(true)
+  activeUserId  String?
+  isLocked      Boolean           @default(false)
+  occupiedUntil DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  activeUser User?             @relation("ActiveStationUser", fields: [activeUserId], references: [id])
+  schedules  StationSchedule[]
+  queues     Queue[]
+
+  @@index([type, isActive])
+  @@map("service_stations")
+}
+
+model StationSchedule {
+  id               String         @id @default(uuid())
+  serviceStationId String
+  userId           String
+  startTime        DateTime
+  endTime          DateTime
+  isLocked         Boolean        @default(false)
+  notes            String?
+  createdById      String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  serviceStation ServiceStation @relation(fields: [serviceStationId], references: [id], onDelete: Cascade)
+  user           User           @relation("ScheduledStaff", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy      User           @relation("ScheduleCreatedBy", fields: [createdById], references: [id])
+
+  @@index([serviceStationId, startTime, endTime])
+  @@index([userId, startTime, endTime])
+  @@map("station_schedules")
 }
 
 // ==========================================

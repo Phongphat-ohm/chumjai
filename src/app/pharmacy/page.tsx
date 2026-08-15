@@ -25,7 +25,8 @@ import {
 } from "@/server/actions/pharmacy";
 import { DrugLabelModal } from "@/components/pharmacy/DrugLabelModal";
 import { PrescriptionModal } from "@/components/doctor/PrescriptionModal";
-import { VisitStatus } from "@/generated/client";
+import { StationBadgeBar } from "@/components/stations/StationBadgeBar";
+import { StationType, VisitStatus } from "@/generated/client";
 import { useClinicSettings } from "@/hooks/useClinicSettings";
 
 export default function PharmacistDispensingPage() {
@@ -36,12 +37,13 @@ export default function PharmacistDispensingPage() {
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
 
+  const [filterScope, setFilterScope] = useState<"today" | "all_waiting" | "all">("today");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchPharmacyQueue = () => {
+  const fetchPharmacyQueue = (scope: "today" | "all_waiting" | "all" = filterScope) => {
     startTransition(async () => {
-      const res = await getPharmacyQueueVisitsAction();
+      const res = await getPharmacyQueueVisitsAction({ scope });
       if (res.success && res.data) {
         setVisits(res.data);
         if (res.data.length > 0) {
@@ -53,14 +55,16 @@ export default function PharmacistDispensingPage() {
             if (updated) setSelectedVisit(updated);
             else setSelectedVisit(res.data[0]);
           }
+        } else {
+          setSelectedVisit(null);
         }
       }
     });
   };
 
   useEffect(() => {
-    fetchPharmacyQueue();
-  }, []);
+    fetchPharmacyQueue(filterScope);
+  }, [filterScope]);
 
   const handleDispense = (visit: any) => {
     if (!visit.prescription) {
@@ -122,16 +126,73 @@ export default function PharmacistDispensingPage() {
         </Button>
       </div>
 
+      {/* Station Active Badge Bar */}
+      <StationBadgeBar filterType={StationType.PHARMACY} />
+
       {/* Main Grid */}
       <div className="grid gap-6 md:grid-cols-12">
         {/* Left Column: Pharmacy Queue List */}
         <div className="md:col-span-4 space-y-4">
           <Card className="border-chunjai-200">
-            <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <Users className="h-4 w-4 text-chunjai-600" />
-                คิวผู้ป่วยรอรับยา ({visits.length} คน)
-              </CardTitle>
+            <CardHeader className="pb-3 border-b border-slate-100 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <Users className="h-4 w-4 text-chunjai-600" />
+                    {filterScope === "today"
+                      ? `คิวใบสั่งยาวันนี้ (${visits.length} คน)`
+                      : filterScope === "all_waiting"
+                      ? `รอจ่ายยาทั้งหมด (${visits.length} คน)`
+                      : `ประวัติทั้งหมด (${visits.length} คน)`}
+                  </CardTitle>
+                  {filterScope === "today" && (
+                    <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                      {new Date().toLocaleDateString("th-TH", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Scope Filter Tabs */}
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setFilterScope("today")}
+                  className={`flex-1 py-1 px-2 rounded-md text-center transition-all ${
+                    filterScope === "today"
+                      ? "bg-white text-chunjai-700 shadow-xs font-bold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  วันนี้ (Today)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterScope("all_waiting")}
+                  className={`flex-1 py-1 px-2 rounded-md text-center transition-all ${
+                    filterScope === "all_waiting"
+                      ? "bg-white text-chunjai-700 shadow-xs font-bold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  รอจ่ายยา
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterScope("all")}
+                  className={`flex-1 py-1 px-2 rounded-md text-center transition-all ${
+                    filterScope === "all"
+                      ? "bg-white text-chunjai-700 shadow-xs font-bold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  ทั้งหมด
+                </button>
+              </div>
             </CardHeader>
             <CardContent className="p-2 space-y-1.5 max-h-[70vh] overflow-y-auto">
               {isPending && visits.length === 0 ? (

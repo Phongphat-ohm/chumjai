@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth, requirePermission } from "@/server/permissions/guard";
 import { callQueueSchema, updateQueueStatusSchema, transferQueueSchema } from "@/schemas/queue";
 import { QueueStatus, VisitStatus } from "@/generated/client";
+import { emitQueueEvent } from "@/server/events/queueEvents";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -52,6 +53,9 @@ export async function getQueuesAction(params?: {
       take: params?.limit || 100,
       include: {
         queueType: true,
+        serviceStation: {
+          include: { activeUser: true },
+        },
         visit: {
           include: {
             patient: {
@@ -87,18 +91,36 @@ export async function getQueuesAction(params?: {
 // ----------------------------------------------------
 // Action 2: Call Next Queue / Call Specific Queue
 // ----------------------------------------------------
-export async function callQueueAction(queueId: string): Promise<ActionResult<any>> {
+export async function callQueueAction(
+  queueId: string,
+  serviceStationId?: string
+): Promise<ActionResult<any>> {
   try {
     const session = await requireAuth();
+
+    // If serviceStationId is not passed, check if the calling user is currently occupying a station!
+    let stationIdToUse = serviceStationId;
+    if (!stationIdToUse) {
+      const activeStation = await prisma.serviceStation.findFirst({
+        where: { activeUserId: session.userId },
+      });
+      if (activeStation) {
+        stationIdToUse = activeStation.id;
+      }
+    }
 
     const queue = await prisma.queue.update({
       where: { id: queueId },
       data: {
         status: QueueStatus.CALLED,
         calledAt: new Date(),
+        serviceStationId: stationIdToUse || undefined,
       },
       include: {
         queueType: true,
+        serviceStation: {
+          include: { activeUser: true },
+        },
         visit: {
           include: { patient: true },
         },
@@ -114,6 +136,19 @@ export async function callQueueAction(queueId: string): Promise<ActionResult<any
         resourceId: queueId,
         success: true,
       },
+    });
+
+    // Emit Real-time Multi-device SSE Event
+    const stationName =
+      queue.serviceStation?.name || queue.queueType?.name || "ช่องบริการ";
+
+    emitQueueEvent({
+      type: "QUEUE_CALLED",
+      queueId: queue.id,
+      queueNumber: queue.queueNumber,
+      stationName: stationName,
+      stationId: queue.serviceStationId || undefined,
+      calledAt: Date.now(),
     });
 
     revalidatePath("/queue");
@@ -155,6 +190,12 @@ export async function updateQueueStatusAction(
         resourceId: queueId,
         success: true,
       },
+    });
+
+    // Emit Real-time Multi-device SSE Event
+    emitQueueEvent({
+      type: "QUEUE_UPDATED",
+      queueId: queue.id,
     });
 
     revalidatePath("/queue");

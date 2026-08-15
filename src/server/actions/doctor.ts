@@ -40,7 +40,11 @@ export async function startConsultationAction(visitId: string): Promise<ActionRe
         data: { status: VisitStatus.IN_CONSULTATION },
       });
 
-      // 3. Update Doctor Queue to SERVING
+      // 3. Update Doctor Queue to SERVING (Attach Doctor's Active Station)
+      const activeStation = await tx.serviceStation.findFirst({
+        where: { activeUserId: session.userId },
+      });
+
       const docQueue = await tx.queue.findFirst({
         where: {
           visitId,
@@ -52,7 +56,11 @@ export async function startConsultationAction(visitId: string): Promise<ActionRe
       if (docQueue) {
         await tx.queue.update({
           where: { id: docQueue.id },
-          data: { status: QueueStatus.SERVING, servedAt: new Date() },
+          data: {
+            status: QueueStatus.SERVING,
+            servedAt: new Date(),
+            serviceStationId: activeStation?.id || docQueue.serviceStationId || undefined,
+          },
         });
       }
 
