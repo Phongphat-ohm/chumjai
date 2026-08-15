@@ -45,7 +45,7 @@ export async function startConsultationAction(visitId: string): Promise<ActionRe
         where: {
           visitId,
           queueType: { code: "DOC" },
-          status: { in: [QueueStatus.WAITING, QueueStatus.CALLED] },
+          status: { in: [QueueStatus.WAITING, QueueStatus.CALLED, QueueStatus.SKIPPED] },
         },
       });
 
@@ -76,6 +76,92 @@ export async function startConsultationAction(visitId: string): Promise<ActionRe
   } catch (error: any) {
     console.error("Error in startConsultationAction:", error);
     return { success: false, error: error.message || "ไม่สามารถเริ่มการตรวจรักษาได้" };
+  }
+}
+
+// ----------------------------------------------------
+// Action 1.5: Hold Doctor Queue to Wait for Lab Results
+// ----------------------------------------------------
+export async function holdDoctorQueueForLabAction(
+  visitId: string,
+  draftData?: {
+    subjective?: string;
+    objective?: string;
+    assessment?: string;
+    plan?: string;
+  }
+): Promise<ActionResult<any>> {
+  try {
+    const session = await requirePermission("CONSULTATION_CREATE");
+
+    await prisma.$transaction(async (tx) => {
+      // 1. Save draft SOAP note if provided
+      if (draftData) {
+        const consult = await tx.consultation.upsert({
+          where: { visitId },
+          update: { doctorId: session.userId },
+          create: { visitId, doctorId: session.userId },
+        });
+
+        await tx.soapNote.upsert({
+          where: { consultationId: consult.id },
+          update: {
+            subjective: draftData.subjective || null,
+            objective: draftData.objective || null,
+            assessment: draftData.assessment || null,
+            plan: draftData.plan || null,
+          },
+          create: {
+            consultationId: consult.id,
+            subjective: draftData.subjective || null,
+            objective: draftData.objective || null,
+            assessment: draftData.assessment || null,
+            plan: draftData.plan || null,
+          },
+        });
+      }
+
+      // 2. Update Doctor Queue to SKIPPED (to free up current doctor's room/serving status)
+      const docQueue = await tx.queue.findFirst({
+        where: {
+          visitId,
+          queueType: { code: "DOC" },
+          status: { in: [QueueStatus.SERVING, QueueStatus.CALLED] },
+        },
+      });
+
+      if (docQueue) {
+        await tx.queue.update({
+          where: { id: docQueue.id },
+          data: { status: QueueStatus.SKIPPED },
+        });
+      }
+
+      // 3. Keep Visit status as WAITING_DOCTOR
+      await tx.visit.update({
+        where: { id: visitId },
+        data: { status: VisitStatus.WAITING_DOCTOR },
+      });
+    });
+
+    // Record Audit Log
+    await prisma.auditLog.create({
+      data: {
+        userId: session.userId,
+        action: "DOCTOR_QUEUE_HELD_FOR_LAB",
+        resourceType: "VISIT",
+        resourceId: visitId,
+        success: true,
+      },
+    });
+
+    revalidatePath("/doctor");
+    revalidatePath("/queue");
+    revalidatePath("/queue/display");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error in holdDoctorQueueForLabAction:", error);
+    return { success: false, error: error.message || "ไม่สามารถพักคิวเพื่อรอผลแล็บได้" };
   }
 }
 
@@ -139,7 +225,7 @@ export async function saveSoapAndDiagnosisAction(
         where: {
           visitId,
           queueType: { code: "DOC" },
-          status: { in: [QueueStatus.WAITING, QueueStatus.CALLED, QueueStatus.SERVING] },
+          status: { in: [QueueStatus.WAITING, QueueStatus.CALLED, QueueStatus.SERVING, QueueStatus.SKIPPED] },
         },
       });
 
@@ -150,32 +236,41 @@ export async function saveSoapAndDiagnosisAction(
         });
       }
 
-      // 6. Auto Create Pharmacy Queue (PHARM prefix P)
-      const pharmType = await tx.queueType.findUnique({
-        where: { code: "PHARM" },
+      // 6. Auto Create Pharmacy Queue (PHARM prefix P) if not already created
+      const existingPharmQueue = await tx.queue.findFirst({
+        where: {
+          visitId,
+          queueType: { code: "PHARM" },
+        },
       });
 
-      if (pharmType) {
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const countTodayPharm = await tx.queue.count({
-          where: {
-            queueTypeId: pharmType.id,
-            createdAt: { gte: startOfDay },
-          },
+      if (!existingPharmQueue) {
+        const pharmType = await tx.queueType.findUnique({
+          where: { code: "PHARM" },
         });
 
-        const pharmQueueNumber = `${pharmType.prefix}${(countTodayPharm + 1).toString().padStart(3, "0")}`;
+        if (pharmType) {
+          const startOfDay = new Date();
+          startOfDay.setHours(0, 0, 0, 0);
 
-        await tx.queue.create({
-          data: {
-            queueNumber: pharmQueueNumber,
-            queueTypeId: pharmType.id,
-            visitId,
-            status: QueueStatus.WAITING,
-          },
-        });
+          const countTodayPharm = await tx.queue.count({
+            where: {
+              queueTypeId: pharmType.id,
+              createdAt: { gte: startOfDay },
+            },
+          });
+
+          const pharmQueueNumber = `${pharmType.prefix}${(countTodayPharm + 1).toString().padStart(3, "0")}`;
+
+          await tx.queue.create({
+            data: {
+              queueNumber: pharmQueueNumber,
+              queueTypeId: pharmType.id,
+              visitId,
+              status: QueueStatus.WAITING,
+            },
+          });
+        }
       }
 
       return { consultation, soapNote };

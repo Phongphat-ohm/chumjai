@@ -66,6 +66,13 @@ export async function getQueuesAction(params?: {
               },
             },
             triageRecord: true,
+            labOrders: {
+              select: {
+                id: true,
+                testName: true,
+                status: true,
+              },
+            },
           },
         },
       },

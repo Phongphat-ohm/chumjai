@@ -167,9 +167,22 @@ export default function PublicQueueDisplayPage() {
                     <span className="text-lg font-bold text-chunjai-400 font-mono">
                       {q.queueNumber}
                     </span>
-                    <span className="text-slate-300 font-semibold">
-                      {q.visit?.patient?.firstName} {q.visit?.patient?.lastName}
-                    </span>
+                    <div>
+                      <span className="text-slate-300 font-semibold block">
+                        {q.visit?.patient?.firstName} {q.visit?.patient?.lastName}
+                      </span>
+                      {q.visit?.labOrders?.length > 0 && (
+                        q.visit.labOrders.every((l: any) => l.status === "COMPLETED") ? (
+                          <span className="text-[10px] text-emerald-400 font-bold">
+                            • ผลแล็บพร้อมแล้ว
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-amber-400 font-medium">
+                            • รอผลแล็บ
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
                   <span className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md font-mono">
                     {q.queueType?.prefix}

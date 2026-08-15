@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/server/permissions/guard";
 import { createLabOrderSchema, recordLabResultSchema } from "@/schemas/lab";
-import { LabOrderStatus } from "@/generated/client";
+import { LabOrderStatus, QueueStatus, VisitStatus } from "@/generated/client";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -165,14 +165,53 @@ export async function recordLabResultAction(
         },
       });
 
-      return order;
+      // 4. Check if all lab orders for this visit are completed
+      const remainingPendingOrders = await tx.labOrder.count({
+        where: {
+          visitId: order.visitId,
+          status: {
+            in: [LabOrderStatus.ORDERED, LabOrderStatus.COLLECTED],
+          },
+        },
+      });
+
+      // 5. If all lab orders are completed -> Auto-Resume Doctor Queue!
+      if (remainingPendingOrders === 0) {
+        // Ensure Visit status is WAITING_DOCTOR
+        await tx.visit.update({
+          where: { id: order.visitId },
+          data: { status: VisitStatus.WAITING_DOCTOR },
+        });
+
+        // Find doctor queue for this visit
+        const docQueue = await tx.queue.findFirst({
+          where: {
+            visitId: order.visitId,
+            queueType: { code: "DOC" },
+          },
+        });
+
+        if (docQueue) {
+          // If queue was SKIPPED / on hold, resume to WAITING and bump priority
+          await tx.queue.update({
+            where: { id: docQueue.id },
+            data: {
+              status: QueueStatus.WAITING,
+              calledAt: null,
+              updatedAt: new Date(),
+            },
+          });
+        }
+      }
+
+      return { order, allCompleted: remainingPendingOrders === 0 };
     });
 
-    // Record Audit Log (LAB_RESULT_RECORDED)
+    // Record Audit Log (LAB_RESULT_RECORDED & AUTO_RESUME)
     await prisma.auditLog.create({
       data: {
         userId: session.userId,
-        action: "LAB_RESULT_RECORDED",
+        action: updatedOrder.allCompleted ? "LAB_RESULT_RECORDED_AND_AUTO_RESUMED" : "LAB_RESULT_RECORDED",
         resourceType: "LAB_ORDER",
         resourceId: labOrderId,
         success: true,
@@ -181,7 +220,9 @@ export async function recordLabResultAction(
 
     revalidatePath("/lab");
     revalidatePath("/doctor");
-    return { success: true, data: updatedOrder };
+    revalidatePath("/queue");
+    revalidatePath("/queue/display");
+    return { success: true, data: updatedOrder.order };
   } catch (error: any) {
     return { success: false, error: error.message || "ไม่สามารถบันทึกผลแล็บได้" };
   }

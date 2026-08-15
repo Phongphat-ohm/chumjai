@@ -314,9 +314,22 @@ export default function QueueManagementPage() {
                         {q.queueNumber}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-bold text-slate-900 block">
-                          {q.visit?.patient?.firstName} {q.visit?.patient?.lastName}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900 block">
+                            {q.visit?.patient?.firstName} {q.visit?.patient?.lastName}
+                          </span>
+                          {q.visit?.labOrders?.length > 0 && (
+                            q.visit.labOrders.every((l: any) => l.status === "COMPLETED") ? (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                ผลแล็บพร้อมแล้ว
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                รอผลแล็บ
+                              </span>
+                            )
+                          )}
+                        </div>
                         <span className="text-[11px] text-chunjai-600 font-mono">
                           {q.visit?.patient?.hn}
                         </span>

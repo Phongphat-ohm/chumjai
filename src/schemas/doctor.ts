@@ -10,10 +10,10 @@ export const diagnosisItemSchema = z.object({
 
 export const soapNoteSchema = z.object({
   visitId: z.string().min(1, "กรุณาระบุรหัส Visit"),
-  subjective: z.string().min(1, "กรุณากรอกข้อมูล S (Subjective) อาการสำคัญที่พบ"),
-  objective: z.string().optional(),
-  assessment: z.string().optional(),
-  plan: z.string().min(1, "กรุณากรอกข้อมูล P (Plan) แผนการรักษาและคำแนะนำ"),
+  subjective: z.string().optional().default("อาการทั่วไป / ตรวจติดตาม"),
+  objective: z.string().optional().default(""),
+  assessment: z.string().optional().default(""),
+  plan: z.string().optional().default("ให้การรักษาตามผลตรวจและติดตามอาการ"),
   diagnoses: z
     .array(diagnosisItemSchema)
     .min(1, "กรุณาระบุการวินิจฉัยโรคตามรหัส ICD-10 อย่างน้อย 1 โรคหลัก"),
@@ -21,3 +21,4 @@ export const soapNoteSchema = z.object({
 
 export type SoapNoteInput = z.infer<typeof soapNoteSchema>;
 export type DiagnosisItemInput = z.infer<typeof diagnosisItemSchema>;
+
