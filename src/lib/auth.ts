@@ -5,7 +5,7 @@ import { UserRole } from "@/generated/client";
 
 const COOKIE_NAME = "chunjai_session";
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "default-chunjai-dev-secret-key-999"
+  process.env.AUTH_SECRET || process.env.JWT_SECRET || "default-chunjai-dev-secret-key-999"
 );
 
 export interface UserSessionPayload {
