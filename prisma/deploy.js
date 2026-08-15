@@ -24,14 +24,5 @@ try {
   process.exit(1);
 }
 
-// 3. Seed initial admin and system permissions
-try {
-  console.log("\n🌱 Running: npm run db:seed...");
-  execSync("npm run db:seed", { stdio: "inherit" });
-} catch (err) {
-  console.error("❌ Database seeding failed:", err);
-  process.exit(1);
-}
-
-console.log("\n✅ Database migration and seeding completed successfully!");
+console.log("\n✅ Database migration completed successfully (No seed run)!");
 console.log("==========================================\n");

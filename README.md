@@ -179,7 +179,7 @@ npm run dev
   ```bash
   npm run db:deploy && npm run build
   ```
-  *(คำสั่ง `npm run db:deploy` จะทำการตรวจสอบ Rollback สถานะที่ค้าง, สั่ง Migrate ตารางใหม่ และ Seed บัญชี Admin ให้อัตโนมัติในคำสั่งเดียว)*
+  *(คำสั่ง `npm run db:deploy` จะทำการตรวจสอบ Rollback สถานะที่ค้าง และสั่ง Migrate ตารางใน Database ให้อัตโนมัติ โดยไม่ทำการ Seed ทับข้อมูลเดิม)*
 * **Start Command:**
   ```bash
   npm run start
