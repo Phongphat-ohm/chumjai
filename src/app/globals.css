@@ -153,3 +153,87 @@
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   มาตรฐานแบบอักษรและเอกสารราชการไทย (TH Sarabun New Standard)
+   ========================================================================== */
+@font-face {
+  font-family: 'TH Sarabun New';
+  src: url('/fonts/THSarabunNew.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TH Sarabun New';
+  src: url('/fonts/THSarabunNew.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-sarabun {
+  font-family: 'TH Sarabun New', var(--font-sarabun), 'Sarabun', sans-serif !important;
+}
+
+/* มาตรฐานขนาดตัวอักษรราชการ (Thai Government Document Typography Scale) */
+.gov-doc {
+  font-family: 'TH Sarabun New', var(--font-sarabun), 'Sarabun', sans-serif !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  line-height: 1.15;
+  text-align: justify;
+}
+
+/* ชื่อเรื่องหลัก: 20-22 pt ตัวหนา จัดกึ่งกลาง */
+.gov-title {
+  font-size: 21pt;
+  line-height: 1.2;
+  font-weight: 700;
+  text-align: center;
+  color: #000000;
+}
+
+/* หัวข้อใหญ่: 18 pt ตัวหนา ชิดซ้าย */
+.gov-heading1 {
+  font-size: 18pt;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* หัวข้อย่อย: 16-18 pt ตัวหนา */
+.gov-heading2 {
+  font-size: 16.5pt;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* เนื้อหาปกติ: 16 pt */
+.gov-body {
+  font-size: 16pt;
+  line-height: 1.2;
+  font-weight: 400;
+  color: #000000;
+}
+
+/* เนื้อหาในตาราง / หมายเหตุ / เลขอ้างอิง: 14-16 pt */
+.gov-table-text {
+  font-size: 14.5pt;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.gov-caption {
+  font-size: 14pt;
+  line-height: 1.15;
+  color: #000000;
+}
+
+/* ย่อหน้าระยะเยื้องบรรทัดแรก 1.25 ซม. (~0.5 นิ้ว) */
+.gov-indent {
+  text-indent: 1.25cm;
+}
+

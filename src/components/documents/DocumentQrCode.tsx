@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import QRCode from "qrcode";
 
 interface DocumentQrCodeProps {
-  /** ค่าที่ต้องการบรรจุใน QR Code เช่น รหัสเอกสาร REF-XXXX, HN690001 หรือ JSON */
+  /** ค่าที่ต้องการบรรจุใน QR Code เช่น รหัสเอกสาร REF-XXXX, HN690001 */
   value: string;
-  /** ขนาดพิกเซล (default: 60) */
+  /** ขนาดพิกเซล (default: 64) */
   size?: number;
   /** ป้ายข้อความกำกับใต้ QR code (optional) */
   label?: string;
@@ -15,13 +15,12 @@ interface DocumentQrCodeProps {
 }
 
 /**
- * 📱 DocumentQrCode
+ * 📱 DocumentQrCode (มาตรฐานเอกสารราชการไทย - ขาวดำ 100%)
  * สร้าง QR Code สำหรับตรวจสอบและสืบค้นเอกสารทางการแพทย์
- * รองรับการสแกนด้วยเครื่องสแกนบาร์โค้ด หรือกล้องมือถือ เพื่อดึงรหัสอ้างอิงทันที
  */
 export function DocumentQrCode({
   value,
-  size = 60,
+  size = 64,
   label,
   className = "",
 }: DocumentQrCodeProps) {
@@ -30,10 +29,10 @@ export function DocumentQrCode({
   useEffect(() => {
     if (!value) return;
     QRCode.toDataURL(value, {
-      width: size * 2.5, // เรนเดอร์ 2.5x เพื่อความคมชัดสูงเมื่อพิมพ์
+      width: size * 3, // เรนเดอร์ 3x เพื่อความคมชัดสูงสุดในการพิมพ์ A4
       margin: 1,
       color: {
-        dark: "#0f172a", // Slate-900
+        dark: "#000000",
         light: "#ffffff",
       },
     })
@@ -45,7 +44,7 @@ export function DocumentQrCode({
     return (
       <div
         style={{ width: `${size}px`, height: `${size}px` }}
-        className="bg-slate-100 rounded border border-slate-200 animate-pulse shrink-0"
+        className="bg-white border border-black animate-pulse shrink-0"
       />
     );
   }
@@ -57,13 +56,14 @@ export function DocumentQrCode({
         src={dataUrl}
         alt={`QR Code: ${value}`}
         style={{ width: `${size}px`, height: `${size}px` }}
-        className="border border-slate-300 bg-white p-0.5 rounded shadow-2xs"
+        className="border border-black bg-white p-0.5"
       />
       {label && (
-        <span className="text-[8.5px] font-mono text-slate-600 font-bold mt-0.5 tracking-tight text-center leading-none">
+        <span className="font-sarabun text-[12px] font-bold text-black mt-0.5 tracking-tight text-center leading-none">
           {label}
         </span>
       )}
     </div>
   );
 }
+

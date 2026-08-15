@@ -1,9 +1,9 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { CalendarDays, AlertCircle, Phone } from "lucide-react";
 import {
   DocumentHeader,
+  DocumentFooter,
   type DocumentClinicInfo,
 } from "@/components/documents/DocumentHeader";
 
@@ -27,8 +27,8 @@ interface AppointmentSlipTemplateProps {
 }
 
 /**
- * 📅 เทมเพลต: ใบนัดหมายตรวจรักษาและติดตามผล (Hospital Outpatient Appointment Slip)
- * ออกแบบขนาดมาตรฐาน (720px) ไม่บีบอัด ไม่เบียดตัวหนังสือ
+ * 📅 เทมเพลต: ใบนัดหมายตรวจรักษาและติดตามผล (มาตรฐานเอกสารราชการไทย - ขาวดำ 100%)
+ * กระดาษมาตรฐาน A4/A5 ฟอนต์ TH Sarabun New
  */
 export const AppointmentSlipTemplate = forwardRef<HTMLDivElement, AppointmentSlipTemplateProps>(
   ({ clinicInfo, appointment }, ref) => {
@@ -44,133 +44,100 @@ export const AppointmentSlipTemplate = forwardRef<HTMLDivElement, AppointmentSli
       minute: "2-digit",
     });
 
-    const accent = clinicInfo.accentColor || "#1b5e3b";
-
     return (
       <div
         ref={ref}
-        className="font-sarabun bg-white text-slate-900 shadow-xl ring-1 ring-slate-900/5 print:shadow-none print:ring-0 print:m-0 mx-auto shrink-0"
+        className="font-sarabun bg-white text-black print:m-0 mx-auto shrink-0"
         style={{
-          width: "720px",
+          width: "794px",
           minHeight: "780px",
-          padding: "36px 44px",
+          padding: "40px 48px",
           boxSizing: "border-box",
         }}
       >
         {/* หัวกระดาษใบนัดหมาย */}
         <DocumentHeader
           clinic={clinicInfo}
-          docTitle="ใบนัดหมายผู้ป่วย"
+          docTitle="ใบนัดหมายตรวจรักษาผู้ป่วยนอก"
           docNumber={`APP-${appointment.id.slice(0, 8).toUpperCase()}`}
           qrCodeValue={`APP:${appointment.id.slice(0, 8).toUpperCase()}|HN:${appointment.patient.hn}|DATE:${appointment.appointmentDate}`}
           qrCodeLabel={`APP-${appointment.id.slice(0, 8).toUpperCase()}`}
-          rightContent={
-            <div className="flex items-center gap-1.5 justify-end text-xs text-slate-500 font-medium mt-1">
-              <CalendarDays className="h-3.5 w-3.5" style={{ color: accent }} />
-              <span>Outpatient Appointment Slip</span>
-            </div>
-          }
+          docSubtitle={`วันที่ออกเอกสาร: ${new Date().toLocaleDateString("th-TH", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}`}
         />
 
-        <div className="mt-6 space-y-5 text-sm leading-relaxed">
+        <div className="mt-5 space-y-4 text-[16pt] text-black leading-relaxed">
           {/* ข้อมูลประจำตัวผู้ป่วย */}
-          <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs">
-            <div>
-              <span className="text-slate-500 block text-[11px]">ชื่อ-นามสกุล ผู้ป่วย:</span>
-              <strong className="text-slate-950 text-sm">
-                {appointment.patient.firstName} {appointment.patient.lastName}
-              </strong>
-            </div>
-            <div className="text-right">
-              <span className="text-slate-500 block text-[11px]">เลขประจำตัว (HN):</span>
-              <strong className="font-mono text-sm" style={{ color: accent }}>
-                {appointment.patient.hn}
-              </strong>
-            </div>
-            <div>
-              <span className="text-slate-500 block text-[11px]">สิทธิการรักษา:</span>
-              <span className="font-medium text-slate-900">
-                {appointment.patient.rightsType || "หลักประกันสุขภาพถ้วนหน้า"}
-              </span>
-            </div>
-            <div className="text-right">
-              <span className="text-slate-500 block text-[11px]">เบอร์โทรศัพท์ติดต่อ:</span>
-              <span className="font-medium text-slate-900">
-                {appointment.patient.phoneNumber || clinicInfo.phone}
-              </span>
+          <div className="border border-black p-3 text-[15.5pt]">
+            <div className="grid grid-cols-2 gap-y-1 gap-x-4">
+              <div>
+                <span className="font-semibold">ชื่อ-นามสกุล ผู้ป่วย: </span>
+                <span className="font-bold">{appointment.patient.firstName} {appointment.patient.lastName}</span>
+              </div>
+              <div className="text-right">
+                <span className="font-semibold">เลขประจำตัว (HN): </span>
+                <span className="font-bold">{appointment.patient.hn}</span>
+              </div>
+              <div>
+                <span className="font-semibold">สิทธิการรักษา: </span>
+                <span>{appointment.patient.rightsType || "หลักประกันสุขภาพถ้วนหน้า"}</span>
+              </div>
+              <div className="text-right">
+                <span className="font-semibold">โทรศัพท์ติดต่อ: </span>
+                <span>{appointment.patient.phoneNumber || "-"}</span>
+              </div>
             </div>
           </div>
 
-          {/* กล่องกำหนดวัน-เวลานัดหมาย (ไฮไลต์โดดเด่นชัดเจน) */}
-          <div
-            className="p-5 rounded-xl border-2 space-y-2 text-center"
-            style={{
-              backgroundColor: `${accent}08`,
-              borderColor: accent,
-            }}
-          >
-            <span
-              className="text-xs font-bold uppercase tracking-wider block"
-              style={{ color: accent }}
-            >
-              ★ วันและเวลานัดหมายตรวจรักษา ★
-            </span>
-            <div className="text-2xl font-bold text-slate-950">
+          {/* ตารางกำหนดวันและเวลานัดหมาย */}
+          <div className="border border-black p-4 text-center space-y-1">
+            <p className="text-[16pt] font-semibold">กำหนดวันและเวลาที่นัดหมายมาตรวจ</p>
+            <p className="text-[20pt] font-bold">
               {dateStr}
-            </div>
-            <div
-              className="text-lg font-bold font-mono tracking-tight"
-              style={{ color: accent }}
-            >
+            </p>
+            <p className="text-[17pt] font-bold">
               เวลา {timeStr} น.
-            </div>
-            <p className="text-xs text-slate-600 font-medium pt-1">
-              แผนกตรวจ: ตรวจโรคทั่วไปและโรคเรื้อรัง (OPD Clinic)
             </p>
           </div>
 
-          {/* วัตถุประสงค์และเหตุผลการนัด */}
-          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-            <span className="font-bold text-slate-900 block text-xs">
-              วัตถุประสงค์ในการนัดหมาย:
-            </span>
-            <p className="text-slate-800 text-xs font-medium pl-2">
-              {appointment.reason || "ตรวจติดตามอาการและรับยาต่อเนื่องตามแผนการรักษา"}
-            </p>
+          {/* รายละเอียดและเหตุผลการนัด */}
+          <div className="border border-black p-3 space-y-2 text-[15.5pt]">
+            <div>
+              <span className="font-bold">วัตถุประสงค์ / เหตุผลที่นัดหมาย: </span>
+              <span>{appointment.reason || "ติดตามผลการรักษาและตรวจประเมินอาการต่อเนื่อง"}</span>
+            </div>
+
+            {appointment.notes && (
+              <div>
+                <span className="font-bold">คำแนะนำแพทย์เพิ่มเติม: </span>
+                <span>{appointment.notes}</span>
+              </div>
+            )}
           </div>
 
-          {/* รายการสิ่งที่ต้องเตรียมตัวก่อนมาพบแพทย์ (Pre-visit Checklist) */}
-          <div className="p-4 rounded-lg border border-amber-200 bg-amber-50/70 space-y-2">
-            <div className="flex items-center gap-1.5 font-bold text-amber-900 text-xs">
-              <AlertCircle className="h-4 w-4 text-amber-700 shrink-0" />
-              <span>คำแนะนำและการเตรียมตัวก่อนมาพบแพทย์:</span>
-            </div>
-            <ul className="text-xs text-amber-950 space-y-1.5 pl-6 list-disc">
-              {appointment.notes ? (
-                <li className="font-medium text-amber-900">{appointment.notes}</li>
-              ) : (
-                <>
-                  <li>กรุณานำใบนัดหมายฉบับนี้พร้อมบัตรประชาชนมาแสดง ณ จุดคัดกรอง</li>
-                  <li>นำซองยาเดิมที่กำลังรับประทานอยู่ทั้งหมดมาด้วยทุกครั้ง</li>
-                  <li>หากมีนัดเจาะเลือด กรุณางดน้ำและอาหารหลัง 20.00 น. ในคืนก่อนวันตรวจ</li>
-                </>
-              )}
+          {/* คำแนะนำและการเตรียมตัวก่อนมาพบแพทย์ */}
+          <div className="border border-black p-3 text-[14.5pt] space-y-1">
+            <p className="font-bold text-[15pt]">คำแนะนำและการเตรียมตัวก่อนมาพบแพทย์:</p>
+            <ul className="list-disc list-inside space-y-0.5 pl-2">
+              <li>กรุณานำใบนัดหมายนี้ บัตรประจำตัวประชาชน และบัตรสิทธิการรักษามาแสดงทุกครั้ง</li>
+              <li>หากมียาเดิมที่รับประทานประจำ กรุณานำซองยาเดิมมาด้วยเพื่อความต่อเนื่องในการรักษา</li>
+              <li>กรณีมีรายการตรวจเลือดที่ต้องงดอาหาร กรุณางดน้ำและอาหารหลัง 20.00 น. ก่อนวันนัดหมาย</li>
+              <li>หากไม่สามารถมาตามวันนัดได้ กรุณาติดต่อเลื่อนนัดล่วงหน้า โทร. {clinicInfo.phone}</li>
             </ul>
           </div>
+        </div>
 
-          {/* ท้ายใบนัดและเบอร์ติดต่อเลื่อนนัด */}
-          <div className="border-t border-slate-200 pt-4 flex justify-between items-center text-xs text-slate-500">
-            <div className="space-y-0.5">
-              <p>* หากประสงค์จะเลื่อนวันนัดหมาย กรุณาแจ้งล่วงหน้าอย่างน้อย 1-2 วันทำการ</p>
-              <p className="font-semibold text-slate-700 flex items-center gap-1">
-                <Phone className="h-3.5 w-3.5" />
-                ติดต่อศูนย์นัดหมาย: {clinicInfo.phone}
-              </p>
-            </div>
-            <div className="text-right font-mono text-xs text-slate-400">
-              {clinicInfo.clinicName}
-            </div>
-          </div>
+        {/* ท้ายเอกสารและลายมือชื่อผู้ออกใบนัด */}
+        <div className="mt-8">
+          <DocumentFooter
+            clinic={clinicInfo}
+            signatoryName={clinicInfo.directorName || "เจ้าหน้าที่ / แพทย์ผู้นัดหมาย"}
+            signatoryTitle="แพทย์ / เจ้าหน้าที่ผู้ออกใบนัดหมาย"
+            leftNote={`* สถานพยาบาลเปิดให้บริการตามวันและเวลาทำการ ติดต่อสอบถาม โทร. ${clinicInfo.phone}`}
+          />
         </div>
       </div>
     );

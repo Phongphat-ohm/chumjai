@@ -1,7 +1,6 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { Pill, AlertCircle, HeartPulse, Clock, ShieldCheck } from "lucide-react";
 import { type DocumentClinicInfo } from "@/components/documents/DocumentHeader";
 import { DocumentQrCode } from "@/components/documents/DocumentQrCode";
 
@@ -34,128 +33,104 @@ interface DrugLabelTemplateProps {
 }
 
 /**
- * 💊 เทมเพลต: ฉลากยาภาษาไทยมาตรฐานสถานพยาบาล (Thai GPP Hospital Drug Label Standard)
- * กำหนดขนาดฉลากสติ๊กเกอร์ (480px) มีระยะห่างที่สบายตา ไม่เบียดตัวหนังสือ พร้อม QR Code ตรวจสอบ
+ * 💊 เทมเพลต: ฉลากยามาตรฐานสถานพยาบาล (มาตรฐานเอกสารราชการไทย - ขาวดำ 100%)
+ * กำหนดขนาดฉลากสติ๊กเกอร์ (500px) ฟอนต์ TH Sarabun New ชัดเจน อ่านง่าย
  */
 export const DrugLabelTemplate = forwardRef<HTMLDivElement, DrugLabelTemplateProps>(
   ({ clinicInfo, patient, items, pharmacistName }, ref) => {
     const todayStr = new Date().toLocaleDateString("th-TH", {
       day: "numeric",
-      month: "short",
+      month: "long",
       year: "numeric",
     });
-
-    const accent = clinicInfo.accentColor || "#1b5e3b";
 
     return (
       <div ref={ref} className="font-sarabun w-full space-y-6 bg-transparent flex flex-col items-center">
         {items.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="bg-white border-2 border-slate-900 rounded-xl p-5 shadow-md space-y-3.5 print:border-black print:shadow-none print:break-inside-avoid print:m-0 mx-auto shrink-0"
+            className="bg-white border-2 border-black p-5 space-y-3 print:m-0 mx-auto shrink-0 text-black"
             style={{
-              width: "480px",
+              width: "500px",
               boxSizing: "border-box",
             }}
           >
             {/* ส่วนหัวฉลาก: ชื่อคลินิก & วันที่จ่ายยา & QR Code ยืนยัน */}
-            <div className="border-b-2 border-slate-800 pb-2.5 flex justify-between items-start">
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="h-8 w-8 rounded-lg flex items-center justify-center text-white shrink-0 shadow-xs"
-                  style={{ backgroundColor: accent }}
-                >
-                  <HeartPulse className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-slate-950 leading-tight">
-                    {clinicInfo.clinicName}
-                  </h2>
-                  <p className="text-[11px] text-slate-500">
-                    โทร. {clinicInfo.phone} {clinicInfo.licenseNo ? `(ใบอนุญาต ${clinicInfo.licenseNo})` : ""}
-                  </p>
-                </div>
+            <div className="border-b-2 border-black pb-2 flex justify-between items-start">
+              <div className="space-y-0.5">
+                <h2 className="text-[17pt] font-bold text-black leading-tight">
+                  {clinicInfo.clinicName}
+                </h2>
+                <p className="text-[13.5pt] text-black">
+                  โทร. {clinicInfo.phone} {clinicInfo.licenseNo ? `(ใบอนุญาต ${clinicInfo.licenseNo})` : ""}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="text-right font-mono text-xs shrink-0">
-                  <span className="text-slate-500 block text-[10px]">วันที่จ่ายยา</span>
-                  <strong className="text-slate-900">{todayStr}</strong>
+              <div className="flex items-start gap-2.5">
+                <div className="text-right text-[13.5pt]">
+                  <span className="block font-semibold">วันที่จ่ายยา</span>
+                  <strong>{todayStr}</strong>
                 </div>
                 <DocumentQrCode
                   value={`HN:${patient.hn}|RX:${item.id.slice(0, 8)}|${item.drug?.genericName || "MED"}`}
-                  size={42}
+                  size={46}
                   label={patient.hn}
                 />
               </div>
             </div>
 
             {/* ข้อมูลผู้ป่วย */}
-            <div className="flex items-center justify-between bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-xs">
+            <div className="border border-black px-3 py-1.5 flex items-center justify-between text-[15pt]">
               <div>
-                <span className="text-slate-500 text-xs mr-1.5">ชื่อผู้ป่วย:</span>
-                <strong className="text-slate-950 text-sm">
-                  {patient.firstName} {patient.lastName}
-                </strong>
+                <span className="font-semibold">ชื่อผู้ป่วย: </span>
+                <span className="font-bold">{patient.firstName} {patient.lastName}</span>
               </div>
-              <div className="font-mono text-xs">
-                <span className="text-slate-500 mr-1">HN:</span>
-                <strong className="text-sm" style={{ color: accent }}>{patient.hn}</strong>
+              <div>
+                <span className="font-semibold">HN: </span>
+                <span className="font-bold">{patient.hn}</span>
               </div>
             </div>
 
-            {/* ข้อมูลยา: ชื่อสามัญ / ชื่อการค้า / ขนาด / จำนวน */}
-            <div className="space-y-1 border-b border-slate-200 pb-2.5">
+            {/* ข้อมูลยา: ชื่อสามัญ / ขนาด / จำนวน */}
+            <div className="border-b border-black pb-2 space-y-0.5">
               <div className="flex items-baseline justify-between gap-2">
-                <h3 className="text-base font-bold text-slate-950 tracking-tight flex items-center gap-1.5">
-                  <Pill className="h-4 w-4 shrink-0" style={{ color: accent }} />
-                  <span>{item.drug?.genericName || "ยาชนิดเม็ด"} {item.drug?.strength || ""}</span>
+                <h3 className="text-[17.5pt] font-bold text-black">
+                  {item.drug?.genericName || "ยาชนิดเม็ด"} {item.drug?.strength || ""}
                 </h3>
-                <span className="font-mono font-bold text-xs px-2.5 py-0.5 rounded bg-slate-100 border border-slate-300 shrink-0">
+                <span className="font-bold text-[15pt] border border-black px-2 py-0.5">
                   จำนวน {item.quantity} {item.drug?.unit || "เม็ด"}
                 </span>
               </div>
               {item.drug?.tradeName && (
-                <p className="text-xs text-slate-600 font-medium pl-5">
+                <p className="text-[14pt] text-black">
                   (ชื่อการค้า: {item.drug.tradeName})
                 </p>
               )}
             </div>
 
-            {/* วิธีการใช้ยา (Usage Instruction Box) */}
-            <div
-              className="p-3 rounded-lg border text-xs space-y-2"
-              style={{ backgroundColor: `${accent}0A`, borderColor: `${accent}40` }}
-            >
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 shrink-0" style={{ color: accent }} />
-                <span className="font-bold text-slate-950 text-sm">
-                  วิธีใช้: {item.dosage} {item.frequency}
-                </span>
-              </div>
+            {/* วิธีการใช้ยา (Usage Instruction) */}
+            <div className="border border-black p-3 space-y-1 text-[15.5pt]">
+              <p className="font-bold text-[17pt]">
+                วิธีใช้: {item.dosage} {item.frequency}
+              </p>
 
-              {/* ข้อแนะนำเพิ่มเติม */}
               {item.instruction && (
-                <p className="text-xs font-semibold text-slate-800 pl-5 leading-normal">
+                <p className="font-semibold text-[15pt]">
                   • {item.instruction}
                 </p>
               )}
 
-              {/* คำเตือนสำคัญ */}
-              <div className="flex items-start gap-1.5 text-xs text-amber-900 font-medium bg-amber-50 p-2 rounded border border-amber-200">
-                <AlertCircle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
-                <span className="leading-tight">
-                  {item.warnings || "ยานี้ใช้เฉพาะบุคคลที่มีชื่อบนฉลากเท่านั้น เก็บในที่แห้งและพ้นมือเด็ก"}
-                </span>
+              <div className="border-t border-black pt-1 mt-1 text-[14pt]">
+                <strong>คำเตือน: </strong>
+                <span>{item.warnings || "ยานี้ใช้เฉพาะบุคคลที่มีชื่อบนฉลากเท่านั้น เก็บในที่แห้งและพ้นมือเด็ก"}</span>
               </div>
             </div>
 
             {/* ส่วนท้ายฉลาก: เภสัชกรผู้จ่ายยาและข้อควรระวัง */}
-            <div className="flex justify-between items-center text-xs text-slate-500 pt-1">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5 text-slate-400" />
+            <div className="flex justify-between items-center text-[13.5pt] pt-1">
+              <span>
                 เภสัชกร: <strong>{pharmacistName || "เภสัชกรประจำคลินิก (ภก.)"}</strong>
               </span>
-              <span className="font-mono text-[11px]">
+              <span>
                 Rx-{item.id ? item.id.slice(0, 6).toUpperCase() : "001"}
               </span>
             </div>

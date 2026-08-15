@@ -43,9 +43,9 @@ export async function generatePdfBlob(
     width: targetWidth,
     windowWidth: targetWidth,
     onclone: (clonedDoc, clonedElement) => {
-      // Ensure the cloned body has the Sarabun font family applied
+      // Ensure the cloned body has the TH Sarabun New font family applied
       if (clonedElement) {
-        clonedElement.style.fontFamily = "var(--font-sarabun), 'TH Sarabun New', 'Sarabun', sans-serif";
+        clonedElement.style.fontFamily = "'TH Sarabun New', var(--font-sarabun), 'Sarabun', sans-serif";
         clonedElement.style.margin = "0";
         clonedElement.style.transform = "none";
       }
