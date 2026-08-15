@@ -21,7 +21,8 @@
     "db:seed:drugs": "tsx prisma/seed-drugs.ts",
     "db:seed:batches": "tsx prisma/seed-batches.ts",
     "db:seed:audit": "tsx prisma/seed-audit.ts",
-    "db:seed:all": "tsx prisma/seed.ts && tsx prisma/seed-drugs.ts && tsx prisma/seed-batches.ts"
+    "db:seed:all": "tsx prisma/seed.ts && tsx prisma/seed-drugs.ts && tsx prisma/seed-batches.ts",
+    "db:deploy": "node prisma/deploy.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
