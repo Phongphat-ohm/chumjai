@@ -186,6 +186,12 @@ export const navigationCategories: NavCategoryConfig[] = [
 
 export function Sidebar({ isOpen = false, onClose, userRole }: SidebarProps) {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  // Clear pendingHref when route navigation finishes
+  React.useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
 
   // Collapsible category state (all open by default)
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
@@ -268,15 +274,23 @@ export function Sidebar({ isOpen = false, onClose, userRole }: SidebarProps) {
                     {allowedItems.map((item) => {
                       const Icon = item.icon;
                       const isActive = pathname === item.href;
+                      const isPending = pendingHref === item.href;
+                      const isSelected = isActive || isPending;
 
                       return (
                         <Link
                           key={item.name}
                           href={item.href}
-                          onClick={onClose}
+                          prefetch={true}
+                          onClick={() => {
+                            if (pathname !== item.href) {
+                              setPendingHref(item.href);
+                            }
+                            if (onClose) onClose();
+                          }}
                           className={cn(
-                            "group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-150",
-                            isActive
+                            "group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-150 active:scale-[0.98]",
+                            isSelected
                               ? "bg-chunjai-600 text-white shadow-sm shadow-chunjai-500/20"
                               : "text-slate-700 hover:bg-chunjai-50 hover:text-chunjai-900"
                           )}
@@ -285,25 +299,30 @@ export function Sidebar({ isOpen = false, onClose, userRole }: SidebarProps) {
                             <Icon
                               className={cn(
                                 "h-4 w-4 transition-colors",
-                                isActive
+                                isSelected
                                   ? "text-white"
                                   : "text-chunjai-600 group-hover:text-chunjai-700"
                               )}
                             />
                             <span>{item.name}</span>
                           </div>
-                          {item.badge && (
-                            <span
-                              className={cn(
-                                "rounded-full px-2 py-0.5 text-[10px] font-bold",
-                                isActive
-                                  ? "bg-white/20 text-white"
-                                  : "bg-chunjai-100 text-chunjai-800"
-                              )}
-                            >
-                              {item.badge}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1.5">
+                            {isPending && !isActive && (
+                              <span className="h-2 w-2 rounded-full bg-white animate-ping" />
+                            )}
+                            {item.badge && (
+                              <span
+                                className={cn(
+                                  "rounded-full px-2 py-0.5 text-[10px] font-bold",
+                                  isSelected
+                                    ? "bg-white/20 text-white"
+                                    : "bg-chunjai-100 text-chunjai-800"
+                                )}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
                         </Link>
                       );
                     })}
