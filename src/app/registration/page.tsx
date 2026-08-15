@@ -4,53 +4,31 @@ import React, { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import {
   UserPlus,
-  Search,
   Stethoscope,
   Clock,
   CheckCircle2,
-  AlertCircle,
-  UserCheck,
   Loader2,
   CalendarDays,
   PlusCircle,
   ArrowRight,
-  ShieldAlert,
+  Search,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getPatientsAction } from "@/server/actions/patient";
+import { PatientExactSearchInput } from "@/components/patients/PatientExactSearchInput";
 import { getVisitsAction, updateVisitStatusAction } from "@/server/actions/visit";
 import { CreateVisitDialog } from "@/components/registration/CreateVisitDialog";
 import { PatientFormDialog } from "@/components/patients/PatientFormDialog";
 import { VisitStatus } from "@/generated/client";
 
 export default function RegistrationPage() {
-  const [isPending, startTransition] = useTransition();
-  const [patientSearch, setPatientSearch] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
 
   const [activeVisits, setActiveVisits] = useState<any[]>([]);
   const [visitSearchPending, startVisitTransition] = useTransition();
-
-  // Search existing patients
-  const handleSearchPatients = (query: string) => {
-    setPatientSearch(query);
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    startTransition(async () => {
-      const res = await getPatientsAction({ search: query, limit: 5 });
-      if (res.success && res.data) {
-        setSearchResults(res.data.patients);
-      }
-    });
-  };
 
   // Fetch today's active visits
   const fetchActiveVisits = () => {
@@ -123,74 +101,32 @@ export default function RegistrationPage() {
             ค้นหาผู้ป่วยเพื่อเปิด Visit ใหม่
           </CardTitle>
           <CardDescription className="text-xs">
-            พิมพ์ HN, เลขบัตรประชาชน, ชื่อ-นามสกุล หรือเบอร์โทรศัพท์ เพื่อส่งเข้าจุดคัดกรอง
+            กรอก HN หรือเลขบัตรประชาชน 13 หลัก ให้ถูกต้อง 100% แล้วกด Enter หรือปุ่ม &quot;ค้นหา&quot;
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={patientSearch}
-              onChange={(e) => handleSearchPatients(e.target.value)}
-              placeholder="พิมพ์ HN, เลขบัตรประชาชน, ชื่อ-นามสกุล หรือเบอร์โทรศัพท์..."
-              className="h-11 w-full rounded-xl border border-chunjai-200 bg-white pl-9 pr-4 text-xs font-medium text-slate-900 shadow-xs focus:border-chunjai-500 focus:outline-none focus:ring-2 focus:ring-chunjai-200"
-            />
+        <CardContent className="space-y-3">
+          <PatientExactSearchInput
+            onPatientFound={(p) => {
+              setSelectedPatient(p);
+              setIsVisitModalOpen(true);
+            }}
+            inputHeight="h-11"
+            dropdownMaxHeight="max-h-64"
+          />
+          <div className="flex items-center justify-between pt-1">
+            <p className="text-[11px] text-slate-400">
+              ยังไม่มีประวัติผู้ป่วย?
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsNewPatientModalOpen(true)}
+              className="text-xs h-7"
+            >
+              <PlusCircle className="mr-1 h-3.5 w-3.5" />
+              ลงทะเบียนผู้ป่วยใหม่
+            </Button>
           </div>
-
-          {/* Search Dropdown Results */}
-          {patientSearch.trim() && (
-            <div className="rounded-xl border border-chunjai-100 bg-white p-2 shadow-md space-y-1">
-              {isPending ? (
-                <div className="p-4 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-chunjai-600" />
-                  กำลังค้นหา...
-                </div>
-              ) : searchResults.length === 0 ? (
-                <div className="p-4 text-center text-xs text-slate-500 space-y-2">
-                  <p>ไม่พบประวัติผู้ป่วยในระบบ</p>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsNewPatientModalOpen(true)}
-                    className="text-xs"
-                  >
-                    <PlusCircle className="mr-1 h-3.5 w-3.5" />
-                    ลงทะเบียนประวัติผู้ป่วยใหม่
-                  </Button>
-                </div>
-              ) : (
-                searchResults.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-chunjai-50 transition-colors border-b border-slate-50 last:border-0 text-xs"
-                  >
-                    <div>
-                      <span className="font-bold text-chunjai-700 mr-2">{p.hn}</span>
-                      <span className="font-semibold text-slate-900">
-                        {p.firstName} {p.lastName}
-                      </span>
-                      <p className="text-[11px] text-slate-500">
-                        เบอร์: {p.phoneNumber} · สิทธิ: {p.rightsType}
-                      </p>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        setSelectedPatient(p);
-                        setIsVisitModalOpen(true);
-                      }}
-                      className="bg-chunjai-600 hover:bg-chunjai-700 text-white font-medium text-xs shadow-xs"
-                    >
-                      <Stethoscope className="mr-1.5 h-3.5 w-3.5" />
-                      เปิด Visit ใหม่
-                    </Button>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
 

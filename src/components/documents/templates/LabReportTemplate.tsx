@@ -61,7 +61,7 @@ export const LabReportTemplate = forwardRef<HTMLDivElement, LabReportTemplatePro
     return (
       <div
         ref={ref}
-        className="font-sarabun bg-white text-slate-900 shadow-md print:shadow-none print:m-0"
+        className="font-sarabun bg-white text-slate-900 shadow-xl ring-1 ring-slate-900/5 print:shadow-none print:ring-0 print:m-0 mx-auto shrink-0"
         style={{
           width: "794px",
           minHeight: "1123px",
@@ -74,6 +74,8 @@ export const LabReportTemplate = forwardRef<HTMLDivElement, LabReportTemplatePro
           clinic={clinicInfo}
           docTitle="ใบรายงานผลการตรวจทางห้องปฏิบัติการ"
           docNumber={`LAB-${labOrder.id.slice(0, 8).toUpperCase()}`}
+          qrCodeValue={`LAB:${labOrder.id.slice(0, 8).toUpperCase()}|HN:${labOrder.patient.hn}|VISIT:${labOrder.visit.visitNumber}`}
+          qrCodeLabel={`LAB-${labOrder.id.slice(0, 8).toUpperCase()}`}
           docSubtitle={`วันที่ตรวจวิเคราะห์: ${reportDate} เวลา ${reportTime} น.`}
           rightContent={
             <div className="flex items-center gap-1.5 justify-end text-xs text-slate-500 font-medium mt-1">

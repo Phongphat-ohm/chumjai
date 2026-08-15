@@ -37,6 +37,7 @@ export function Header({ userSession, onToggleSidebar }: HeaderProps) {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -47,19 +48,28 @@ export function Header({ userSession, onToggleSidebar }: HeaderProps) {
     });
   };
 
-  const handleSearchChange = async (q: string) => {
-    setSearchQuery(q);
-    if (!q.trim()) {
+  /** Validate: ต้องเป็น HN หรือเลขบัตรประชาชน 13 หลักเท่านั้น */
+  const validateSearchInput = (q: string): boolean => {
+    if (!q.trim()) return false;
+    const upper = q.trim().toUpperCase();
+    if (upper.startsWith("HN") && upper.replace(/^HN/, "").replace(/[^0-9]/g, "").length >= 1) return true;
+    if (/^\d{13}$/.test(q.trim().replace(/-/g, ""))) return true;
+    return false;
+  };
+
+  const executeSearch = async (q: string) => {
+    const trimmed = q.trim();
+    if (!validateSearchInput(trimmed)) {
+      setSearchError("พิมพ์ HN (เช่น HN690001) หรือเลขบัตรประชาชน 13 หลักเท่านั้น");
       setSearchResults([]);
       setShowResults(false);
       return;
     }
-
+    setSearchError(null);
     setIsSearching(true);
     setShowResults(true);
-
     try {
-      const res = await getPatientsAction({ search: q, limit: 5 });
+      const res = await getPatientsAction({ search: trimmed, limit: 5 });
       if (res.success && res.data) {
         setSearchResults(res.data.patients);
       }
@@ -73,8 +83,7 @@ export function Header({ userSession, onToggleSidebar }: HeaderProps) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      setShowResults(false);
-      router.push(`/patient?search=${encodeURIComponent(searchQuery.trim())}`);
+      executeSearch(searchQuery);
     }
   };
 
@@ -146,12 +155,26 @@ export function Header({ userSession, onToggleSidebar }: HeaderProps) {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (searchError) setSearchError(null);
+                if (showResults) { setShowResults(false); setSearchResults([]); }
+              }}
               onFocus={() => {
                 if (searchQuery.trim() && searchResults.length > 0) setShowResults(true);
               }}
-              placeholder="ค้นหาผู้ป่วย / HN / เบอร์โทร..."
-              className="h-10 w-72 rounded-lg border border-chunjai-200 bg-slate-50/80 pl-9 pr-8 text-xs text-slate-900 transition-all focus:border-chunjai-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-chunjai-100 font-medium"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  executeSearch(searchQuery);
+                }
+              }}
+              placeholder="พิมพ์ HN หรือเลขบัตรประชาชน แล้วกด Enter"
+              className={`h-10 w-72 rounded-lg border bg-slate-50/80 pl-9 pr-8 text-xs text-slate-900 transition-all focus:bg-white focus:outline-none focus:ring-2 font-medium ${
+                searchError
+                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                  : "border-chunjai-200 focus:border-chunjai-500 focus:ring-chunjai-100"
+              }`}
             />
 
             {searchQuery && (
@@ -168,6 +191,13 @@ export function Header({ userSession, onToggleSidebar }: HeaderProps) {
               </button>
             )}
           </form>
+
+          {/* Search Error Message */}
+          {searchError && !showResults && (
+            <div className="absolute left-0 right-0 top-12 z-50 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 shadow-md">
+              <p className="text-[11px] text-rose-600 font-medium">{searchError}</p>
+            </div>
+          )}
 
           {/* Search Dropdown Results Popover */}
           {showResults && (

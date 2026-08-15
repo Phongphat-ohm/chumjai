@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useTransition } from "react";
-import { TestTube, Search, X, Loader2, AlertCircle, CheckCircle2, User, Activity } from "lucide-react";
+import { TestTube, X, Loader2, AlertCircle, CheckCircle2, User, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPatientsAction } from "@/server/actions/patient";
 import { createLabOrderAction } from "@/server/actions/lab";
+import { PatientExactSearchInput } from "@/components/patients/PatientExactSearchInput";
 
 interface CreateLabOrderModalProps {
   isOpen: boolean;
@@ -96,26 +97,6 @@ export function CreateLabOrderModal({
   }, [isOpen, initialPatient, initialVisitId, initialVisit]);
 
   if (!isOpen) return null;
-
-  const handleSearchPatient = async (q: string) => {
-    setPatientSearch(q);
-    if (!q.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      const res = await getPatientsAction({ search: q, limit: 5 });
-      if (res.success && res.data) {
-        setSearchResults(res.data.patients);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   const handleSelectPatient = (p: any) => {
     setSelectedPatient(p);
@@ -289,61 +270,12 @@ export function CreateLabOrderModal({
                 )}
               </div>
             ) : (
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  value={patientSearch}
-                  onChange={(e) => handleSearchPatient(e.target.value)}
-                  placeholder="พิมพ์ HN, ชื่อผู้ป่วย หรือเบอร์โทรศัพท์..."
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3 text-xs focus:border-chunjai-500 focus:bg-white focus:outline-none"
-                />
-
-                {/* Dropdown Results */}
-                {patientSearch.trim() && searchResults.length > 0 && (
-                  <div className="absolute left-0 right-0 top-11 z-20 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl space-y-1 max-h-48 overflow-y-auto">
-                    {searchResults.map((p) => {
-                      const activeV = p.visits?.find(
-                        (v: any) => v.status !== "CANCELLED" && v.status !== "COMPLETED"
-                      );
-                      const statusObj = activeV ? VISIT_STATUS_LABELS[activeV.status] : null;
-
-                      return (
-                        <div
-                          key={p.id}
-                          onClick={() => handleSelectPatient(p)}
-                          className="p-2.5 rounded-lg hover:bg-chunjai-50 cursor-pointer flex items-center justify-between transition-colors"
-                        >
-                          <div>
-                            <span className="font-bold text-slate-900 block text-xs">
-                              {p.firstName} {p.lastName}
-                            </span>
-                            <span className="font-mono text-[11px] text-chunjai-700 font-semibold">
-                              HN: {p.hn}
-                            </span>
-                          </div>
-
-                          <div>
-                            {statusObj ? (
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${statusObj.color}`}>
-                                {statusObj.label}
-                              </span>
-                            ) : p.visits?.length > 0 ? (
-                              <span className="px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600 font-mono">
-                                Visit ล่าสุด
-                              </span>
-                            ) : (
-                              <span className="px-2 py-0.5 rounded text-[10px] bg-rose-50 text-rose-600 font-semibold">
-                                ไม่มี Visit
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              <PatientExactSearchInput
+                onPatientFound={(p) => handleSelectPatient(p)}
+                inputHeight="h-10"
+                dropdownMaxHeight="max-h-48"
+                showVisitStatus={true}
+              />
             )}
           </div>
 

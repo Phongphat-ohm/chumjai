@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getPatientsAction } from "@/server/actions/patient";
 import { getPatientLongitudinalHealthAction } from "@/server/actions/settings";
+import { PatientExactSearchInput } from "@/components/patients/PatientExactSearchInput";
 
 export default function HealthTrackingDashboardPage() {
   const [isPending, startTransition] = useTransition();
@@ -29,21 +30,6 @@ export default function HealthTrackingDashboardPage() {
 
   const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
   const [fullPatientData, setFullPatientData] = useState<any | null>(null);
-
-  const handleSearchPatient = (q: string) => {
-    setPatientSearch(q);
-    if (!q.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    startTransition(async () => {
-      const res = await getPatientsAction({ search: q, limit: 5 });
-      if (res.success && res.data) {
-        setSearchResults(res.data.patients);
-      }
-    });
-  };
 
   const loadPatientHealth = (p: any) => {
     setSelectedPatient(p);
@@ -133,32 +119,10 @@ export default function HealthTrackingDashboardPage() {
               </Button>
             </div>
           ) : (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                value={patientSearch}
-                onChange={(e) => handleSearchPatient(e.target.value)}
-                placeholder="พิมพ์ HN, ชื่อผู้ป่วย หรือเบอร์โทรศัพท์..."
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-xs focus:border-chunjai-500 focus:outline-none"
-              />
-
-              {/* Dropdown Results */}
-              {patientSearch.trim() && searchResults.length > 0 && (
-                <div className="absolute left-0 right-0 top-11 z-10 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl space-y-1 max-h-48 overflow-y-auto">
-                  {searchResults.map((p) => (
-                    <div
-                      key={p.id}
-                      onClick={() => loadPatientHealth(p)}
-                      className="p-2.5 rounded-lg hover:bg-chunjai-50 cursor-pointer flex justify-between items-center text-xs"
-                    >
-                      <span className="font-bold text-slate-900">{p.firstName} {p.lastName}</span>
-                      <span className="font-mono text-chunjai-600 font-bold">HN: {p.hn}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <PatientExactSearchInput
+              onPatientFound={(p) => loadPatientHealth(p)}
+              dropdownMaxHeight="max-h-48"
+            />
           )}
         </CardContent>
       </Card>

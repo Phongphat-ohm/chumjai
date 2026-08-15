@@ -49,7 +49,7 @@ export const AppointmentSlipTemplate = forwardRef<HTMLDivElement, AppointmentSli
     return (
       <div
         ref={ref}
-        className="font-sarabun bg-white text-slate-900 shadow-md print:shadow-none print:m-0"
+        className="font-sarabun bg-white text-slate-900 shadow-xl ring-1 ring-slate-900/5 print:shadow-none print:ring-0 print:m-0 mx-auto shrink-0"
         style={{
           width: "720px",
           minHeight: "780px",
@@ -62,6 +62,8 @@ export const AppointmentSlipTemplate = forwardRef<HTMLDivElement, AppointmentSli
           clinic={clinicInfo}
           docTitle="ใบนัดหมายผู้ป่วย"
           docNumber={`APP-${appointment.id.slice(0, 8).toUpperCase()}`}
+          qrCodeValue={`APP:${appointment.id.slice(0, 8).toUpperCase()}|HN:${appointment.patient.hn}|DATE:${appointment.appointmentDate}`}
+          qrCodeLabel={`APP-${appointment.id.slice(0, 8).toUpperCase()}`}
           rightContent={
             <div className="flex items-center gap-1.5 justify-end text-xs text-slate-500 font-medium mt-1">
               <CalendarDays className="h-3.5 w-3.5" style={{ color: accent }} />

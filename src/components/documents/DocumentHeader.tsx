@@ -3,6 +3,8 @@
 import React from "react";
 import { Building2, ShieldCheck, HeartPulse } from "lucide-react";
 
+import { DocumentQrCode } from "@/components/documents/DocumentQrCode";
+
 export interface DocumentClinicInfo {
   clinicName: string;
   address: string;
@@ -23,6 +25,8 @@ interface DocumentHeaderProps {
   docTitle: string;
   docSubtitle?: string;
   docNumber?: string;
+  qrCodeValue?: string;
+  qrCodeLabel?: string;
   rightContent?: React.ReactNode;
 }
 
@@ -35,6 +39,8 @@ export function DocumentHeader({
   docTitle,
   docSubtitle,
   docNumber,
+  qrCodeValue,
+  qrCodeLabel,
   rightContent,
 }: DocumentHeaderProps) {
   const accent = clinic.accentColor || "#1b5e3b";
@@ -80,23 +86,33 @@ export function DocumentHeader({
         </div>
       </div>
 
-      {/* ฝั่งขวา: ป้ายชื่อเอกสารและวันที่ออก */}
-      <div className="text-right shrink-0">
-        <div
-          className="inline-block rounded-md px-3.5 py-1 text-white text-sm font-bold shadow-xs tracking-wide"
-          style={{ backgroundColor: accent }}
-        >
-          {docTitle}
+      {/* ฝั่งขวา: QR Code ยืนยันเอกสาร / ป้ายชื่อเอกสารและวันที่ออก */}
+      <div className="flex items-start gap-3 shrink-0">
+        {qrCodeValue && (
+          <DocumentQrCode
+            value={qrCodeValue}
+            size={58}
+            label={qrCodeLabel || docNumber}
+            className="mt-0.5"
+          />
+        )}
+        <div className="text-right">
+          <div
+            className="inline-block rounded-md px-3.5 py-1 text-white text-sm font-bold shadow-xs tracking-wide"
+            style={{ backgroundColor: accent }}
+          >
+            {docTitle}
+          </div>
+          {docNumber && (
+            <p className="text-xs font-mono font-semibold text-slate-700 mt-1">
+              เลขที่: {docNumber}
+            </p>
+          )}
+          {docSubtitle && (
+            <p className="text-xs text-slate-500 mt-0.5">{docSubtitle}</p>
+          )}
+          {rightContent}
         </div>
-        {docNumber && (
-          <p className="text-xs font-mono font-semibold text-slate-700 mt-1">
-            เลขที่: {docNumber}
-          </p>
-        )}
-        {docSubtitle && (
-          <p className="text-xs text-slate-500 mt-0.5">{docSubtitle}</p>
-        )}
-        {rightContent}
       </div>
     </div>
   );

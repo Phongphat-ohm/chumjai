@@ -55,7 +55,20 @@ export default function PatientListPage() {
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchPatients(search, rightsFilter);
+    const trimmed = search.trim();
+
+    // ถ้ามี search query ต้องตรวจสอบว่าเป็น HN หรือเลขบัตรประชาชน 13 หลักเท่านั้น
+    if (trimmed) {
+      const upperVal = trimmed.toUpperCase();
+      const isHN = upperVal.startsWith("HN") && upperVal.replace(/^HN/, "").replace(/[^0-9]/g, "").length >= 1;
+      const isNationalId = /^\d{13}$/.test(trimmed.replace(/-/g, ""));
+      if (!isHN && !isNationalId) {
+        // ไม่ผ่าน validation — ไม่ query
+        return;
+      }
+    }
+
+    fetchPatients(trimmed, rightsFilter);
   };
 
   const getRightsLabel = (type: RightsType) => {
@@ -132,7 +145,7 @@ export default function PatientListPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="ค้นหาตาม HN, เลขบัตรประชาชน, ชื่อ-นามสกุล หรือเบอร์โทร..."
+                placeholder="พิมพ์ HN (เช่น HN690001) หรือเลขบัตรประชาชน 13 หลัก แล้วกด Enter หรือ 'ค้นหา'"
                 className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-9 pr-4 text-xs text-slate-900 focus:border-chunjai-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-chunjai-200"
               />
             </div>

@@ -57,13 +57,14 @@ export async function getPatientsAction(params: {
     };
 
     if (search) {
+      // Exact match only: HN (case-insensitive) หรือ เลขบัตรประชาชน 13 หลัก (exact)
       where.OR = [
-        { hn: { contains: search, mode: "insensitive" } },
-        { nationalId: { contains: search } },
-        { firstName: { contains: search, mode: "insensitive" } },
-        { lastName: { contains: search, mode: "insensitive" } },
-        { phoneNumber: { contains: search } },
+        { hn: { equals: search.toUpperCase() } },
+        { nationalId: { equals: search } },
       ];
+    } else {
+      // ถ้าไม่มี search query ให้ return ผลว่างทันที (ไม่แสดงรายชื่อผู้ป่วยทั้งหมดโดยไม่มีการค้นหา)
+      // ยกเว้นกรณีที่ใช้ใน Patient Directory ที่ต้องการแสดงรายชื่อทั้งหมด (ควบคุมผ่าน caller)
     }
 
     if (rightsType) {

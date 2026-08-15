@@ -3,6 +3,7 @@
 import React, { forwardRef } from "react";
 import { Pill, AlertCircle, HeartPulse, Clock, ShieldCheck } from "lucide-react";
 import { type DocumentClinicInfo } from "@/components/documents/DocumentHeader";
+import { DocumentQrCode } from "@/components/documents/DocumentQrCode";
 
 export interface DrugLabelItem {
   id: string;
@@ -34,7 +35,7 @@ interface DrugLabelTemplateProps {
 
 /**
  * 💊 เทมเพลต: ฉลากยาภาษาไทยมาตรฐานสถานพยาบาล (Thai GPP Hospital Drug Label Standard)
- * กำหนดขนาดฉลากสติ๊กเกอร์ (480px) มีระยะห่างที่สบายตา ไม่เบียดตัวหนังสือ
+ * กำหนดขนาดฉลากสติ๊กเกอร์ (480px) มีระยะห่างที่สบายตา ไม่เบียดตัวหนังสือ พร้อม QR Code ตรวจสอบ
  */
 export const DrugLabelTemplate = forwardRef<HTMLDivElement, DrugLabelTemplateProps>(
   ({ clinicInfo, patient, items, pharmacistName }, ref) => {
@@ -51,13 +52,13 @@ export const DrugLabelTemplate = forwardRef<HTMLDivElement, DrugLabelTemplatePro
         {items.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="bg-white border-2 border-slate-900 rounded-xl p-5 shadow-sm space-y-3.5 print:border-black print:shadow-none print:break-inside-avoid print:m-0"
+            className="bg-white border-2 border-slate-900 rounded-xl p-5 shadow-md space-y-3.5 print:border-black print:shadow-none print:break-inside-avoid print:m-0 mx-auto shrink-0"
             style={{
               width: "480px",
               boxSizing: "border-box",
             }}
           >
-            {/* ส่วนหัวฉลาก: ชื่อคลินิก & วันที่จ่ายยา */}
+            {/* ส่วนหัวฉลาก: ชื่อคลินิก & วันที่จ่ายยา & QR Code ยืนยัน */}
             <div className="border-b-2 border-slate-800 pb-2.5 flex justify-between items-start">
               <div className="flex items-center gap-2.5">
                 <div
@@ -75,9 +76,16 @@ export const DrugLabelTemplate = forwardRef<HTMLDivElement, DrugLabelTemplatePro
                   </p>
                 </div>
               </div>
-              <div className="text-right font-mono text-xs shrink-0">
-                <span className="text-slate-500 block text-[10px]">วันที่จ่ายยา</span>
-                <strong className="text-slate-900">{todayStr}</strong>
+              <div className="flex items-center gap-2">
+                <div className="text-right font-mono text-xs shrink-0">
+                  <span className="text-slate-500 block text-[10px]">วันที่จ่ายยา</span>
+                  <strong className="text-slate-900">{todayStr}</strong>
+                </div>
+                <DocumentQrCode
+                  value={`HN:${patient.hn}|RX:${item.id.slice(0, 8)}|${item.drug?.genericName || "MED"}`}
+                  size={42}
+                  label={patient.hn}
+                />
               </div>
             </div>
 

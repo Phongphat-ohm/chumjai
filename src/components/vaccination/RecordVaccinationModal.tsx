@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useTransition } from "react";
-import { Syringe, Search, X, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Syringe, X, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPatientsAction } from "@/server/actions/patient";
 import {
   getVaccineCatalogAction,
   recordVaccinationAction,
 } from "@/server/actions/vaccination";
+import { PatientExactSearchInput } from "@/components/patients/PatientExactSearchInput";
 
 interface RecordVaccinationModalProps {
   isOpen: boolean;
@@ -21,10 +22,7 @@ export function RecordVaccinationModal({
   onSuccess,
 }: RecordVaccinationModalProps) {
   const [isPending, startTransition] = useTransition();
-  const [isSearching, setIsSearching] = useState(false);
 
-  const [patientSearch, setPatientSearch] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
 
   const [vaccines, setVaccines] = useState<any[]>([]);
@@ -56,25 +54,7 @@ export function RecordVaccinationModal({
 
   if (!isOpen) return null;
 
-  const handleSearchPatient = async (q: string) => {
-    setPatientSearch(q);
-    if (!q.trim()) {
-      setSearchResults([]);
-      return;
-    }
 
-    setIsSearching(true);
-    try {
-      const res = await getPatientsAction({ search: q, limit: 5 });
-      if (res.success && res.data) {
-        setSearchResults(res.data.patients);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -177,35 +157,11 @@ export function RecordVaccinationModal({
                 </Button>
               </div>
             ) : (
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  value={patientSearch}
-                  onChange={(e) => handleSearchPatient(e.target.value)}
-                  placeholder="พิมพ์ HN, ชื่อผู้ป่วย หรือเบอร์โทร..."
-                  className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-9 pr-3 text-xs focus:border-chunjai-500 focus:bg-white focus:outline-none"
-                />
-
-                {/* Dropdown Results */}
-                {patientSearch.trim() && searchResults.length > 0 && (
-                  <div className="absolute left-0 right-0 top-10 z-10 rounded-lg border border-slate-200 bg-white p-1 shadow-lg space-y-1 max-h-40 overflow-y-auto">
-                    {searchResults.map((p) => (
-                      <div
-                        key={p.id}
-                        onClick={() => {
-                          setSelectedPatient(p);
-                          setPatientSearch("");
-                        }}
-                        className="p-2 rounded hover:bg-chunjai-50 cursor-pointer flex justify-between"
-                      >
-                        <span className="font-bold text-slate-900">{p.firstName} {p.lastName}</span>
-                        <span className="font-mono text-chunjai-600">HN: {p.hn}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <PatientExactSearchInput
+                onPatientFound={(p) => setSelectedPatient(p)}
+                inputHeight="h-9"
+                dropdownMaxHeight="max-h-40"
+              />
             )}
           </div>
 

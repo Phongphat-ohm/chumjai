@@ -75,7 +75,7 @@ export const ReferralLetterTemplate = forwardRef<HTMLDivElement, ReferralLetterT
     return (
       <div
         ref={ref}
-        className="font-sarabun bg-white text-slate-900 shadow-md print:shadow-none print:m-0"
+        className="font-sarabun bg-white text-slate-900 shadow-xl ring-1 ring-slate-900/5 print:shadow-none print:ring-0 print:m-0 mx-auto shrink-0"
         style={{
           width: "794px",
           minHeight: "1123px",
@@ -88,6 +88,8 @@ export const ReferralLetterTemplate = forwardRef<HTMLDivElement, ReferralLetterT
           clinic={clinicInfo}
           docTitle="หนังสือส่งตัวผู้ป่วย"
           docNumber={`REF-${referral.id.slice(0, 8).toUpperCase()}`}
+          qrCodeValue={`REF:${referral.id.slice(0, 8).toUpperCase()}|HN:${patient.hn}|CID:${patient.nationalId || ""}`}
+          qrCodeLabel={`REF-${referral.id.slice(0, 8).toUpperCase()}`}
           docSubtitle={`วันที่ออกเอกสาร: ${new Date(referral.createdAt).toLocaleDateString("th-TH", {
             day: "numeric",
             month: "long",
@@ -116,10 +118,15 @@ export const ReferralLetterTemplate = forwardRef<HTMLDivElement, ReferralLetterT
 
           {/* ตอนที่ 1: ข้อมูลผู้ป่วย (Patient Demographics) */}
           <div className="space-y-2 border-b border-slate-200 pb-4">
-            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-              <User className="h-4 w-4 shrink-0" style={{ color: accent }} />
-              ตอนที่ 1: ข้อมูลประจำตัวและสิทธิการรักษาของผู้ป่วย
-            </h3>
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <User className="h-4 w-4 shrink-0" style={{ color: accent }} />
+                ตอนที่ 1: ข้อมูลประจำตัวและสิทธิการรักษาของผู้ป่วย
+              </h3>
+              <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                สแกนค้นหาด้วย HN: {patient.hn}
+              </span>
+            </div>
             <div className="grid grid-cols-3 gap-y-2.5 gap-x-6 pl-6 text-xs">
               <div>
                 <span className="text-slate-500 block">ชื่อ-นามสกุล:</span>
